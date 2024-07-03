@@ -40,10 +40,6 @@ class RaffleMod(loader.Module):
             if usernames_to_subscribe:
                 for username in usernames_to_subscribe:
                     await self.client(functions.channels.JoinChannelRequest(username))
-            if ms:
-                for m in ms:
-                    logging.info(m)
-                    await self.client(functions.channels.JoinChannelRequest(m))
             if "/joinchat/" in message.text:
                 ghash = message.text.split("/joinchat/")[1]
                 await self.client(functions.messages.ImportChatInviteRequest(ghash))
