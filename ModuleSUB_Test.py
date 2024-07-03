@@ -30,7 +30,7 @@ class RaffleMod(loader.Module):
     @loader.watcher(only_channels=True)
     async def subscribe_to_channel(self, message):
         chat = utils.get_chat_id(message)
-        if chat != -1002037892569:
+        if chat != 2037892569:
             return
         links_to_subscribe, usernames_to_subscribe = self.channels(message.text)
         with contextlib.suppress(Exception):
