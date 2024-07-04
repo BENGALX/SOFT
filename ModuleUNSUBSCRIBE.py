@@ -1,6 +1,3 @@
-# meta developer: @pavlyxa_rezon
-# meta_private: This module is written for personal use, and is not intended for public use, do not distribute it
-
 import logging
 from telethon.tl import functions
 from .. import loader
@@ -9,9 +6,10 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class UNSUBMod(loader.Module):
-    """Тестим UNSUBSCRIBE"""
+    """Модуль отписок от каналов.\n
+    Разработан @pavlyxa_rezon"""
 
-    strings = {"name": "TESTUNSUBSCRIBE"}
+    strings = {"name": "UNSUBSCRIBE"}
 
     @loader.watcher(only_channels=True)
     async def unsubscribe_channel(self, message):
