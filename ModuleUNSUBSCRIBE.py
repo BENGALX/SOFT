@@ -7,9 +7,9 @@ logger = logging.getLogger(__name__)
 @loader.tds
 class UNSUBMod(loader.Module):
     """Модуль отписок от каналов.\n
-    Разработан @pavlyxa_rezon"""
+    By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "UNSUBSCRIBE"}
+    strings = {"name": "BENGAL UNSUBSCRIBE"}
 
     @loader.watcher(only_channels=True)
     async def unsubscribe_channel(self, message):
