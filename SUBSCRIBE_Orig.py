@@ -113,7 +113,7 @@ class SUBMod(loader.Module):
         This watcher will take the link to post and get the message and do the raffle
         """
         chat = message.chat_id
-        if chat != -1002065695917:
+        if chat != -1002035849227:
             return
         em = message.text
         logger.info(em)
@@ -192,7 +192,7 @@ class SUBMod(loader.Module):
     @loader.watcher(only_channels=True)
     async def unsubscribe_channel(self, message):
         chat = message.chat_id
-        if chat != -1001887505663:
+        if chat != -1002035849227:
             return
         try:
             await self.client(functions.channels.LeaveChannelRequest(message.text))
