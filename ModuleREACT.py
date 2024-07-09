@@ -1,4 +1,5 @@
 import logging
+import random
 from telethon.tl import functions, types
 from .. import loader, utils
 
@@ -7,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class AutoReactMod(loader.Module):
-    """Автоматически ставит реакции"""
+    """Автоматически ставит положительные реакции на последние посты в привязанном канале"""
 
     strings = {"name": "AutoReact"}
 
@@ -15,26 +16,24 @@ class AutoReactMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "channel_id",
-                [],
-                lambda: "ID каналов, в которых будет участвовать модуль",
-                validator=loader.validators.Series(
-                    loader.validators.Union(
-                        loader.validators.Integer(),
-                    )
-                ),
-            ),
+                -1002035849227,
+                lambda: "ID канала, в котором будет работать модуль",
+                validator=loader.validators.Integer()
+            )
         )
+        self.reactions = ['👍', '❤️', '🔥']  # Положительные реакции
 
     async def auto_react(self, message):
         chat = utils.get_chat_id(message)
-        if chat in self.config["channel_id"]:
+        if chat == self.config["channel_id"]:
             try:
+                reaction = random.choice(self.reactions)
                 await self.client(functions.messages.SendReactionRequest(
                     peer=chat,
                     id=[message.id],
-                    reaction='👍'  # Замените на любую желаемую реакцию
+                    reaction=[reaction]
                 ))
-                logger.info(f'Reacted to message {message.id} in channel {chat}')
+                logger.info(f'Reacted with {reaction} to message {message.id} in channel {chat}')
             except Exception as e:
                 logger.error(f'Failed to react to message {message.id} in channel {chat}: {e}')
 
