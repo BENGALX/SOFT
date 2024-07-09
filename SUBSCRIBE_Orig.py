@@ -15,20 +15,6 @@ class SUBMod(loader.Module):
 
     strings = {"name": "BENGAL SUBSCRIBE"}
 
-    def __init__(self):
-        self.config = loader.ModuleConfig(
-            loader.ConfigValue(
-                "channel_id",
-                [],
-                lambda: "Айди каналов, в которых будет участвовать модуль",
-                validator=loader.validators.Series(
-                    loader.validators.Union(
-                        loader.validators.Integer(),
-                    )
-                ),
-            ),
-        )
-
     def channels(self, text):
         links = []
         usernames = []
