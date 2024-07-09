@@ -1,3 +1,6 @@
+# meta developer: @your_username
+# meta_private: This module is written for personal use, and is not intended for public use, do not distribute it
+
 import logging
 import random
 from telethon.tl import functions, types
@@ -25,6 +28,7 @@ class AutoReactMod(loader.Module):
 
     async def auto_react(self, message):
         chat = utils.get_chat_id(message)
+        logger.info(f'Checking message {message.id} in chat {chat}')
         if chat == self.config["channel_id"]:
             try:
                 reaction = random.choice(self.reactions)
