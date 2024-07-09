@@ -40,7 +40,14 @@ class AutoReactMod(loader.Module):
                 logger.info(f'Reacted with {reaction} to message {message.id} in channel {chat}')
             except Exception as e:
                 logger.error(f'Failed to react to message {message.id} in channel {chat}: {e}')
+        else:
+            logger.info(f'Message {message.id} is not in the configured channel {self.config["channel_id"]}')
 
     @loader.watcher(only_channels=True)
     async def reaction_watcher(self, message: types.Message):
+        logger.info(f'New message {message.id} in chat {utils.get_chat_id(message)}')
         await self.auto_react(message)
+
+    async def client_ready(self, client, db):
+        self.client = client
+        logger.info('AutoReactMod is ready')
