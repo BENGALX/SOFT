@@ -1,33 +1,30 @@
-import random
-import asyncio
-from telethon.tl import functions
-
-from .. import loader, utils
+from telethon import functions
 
 @loader.tds
-class ReactionModule(loader.Module):
-    """Модуль для ставки рандомных положительных реакций на посты в канале"""
+class ReactModule(loader.Module):
+    """Модуль для ставки реакций на посты в каналах"""
 
-    def __init__(self):
-        self.config = loader.ModuleConfig(
-            "target_channel_id",
-            [],
-            "Айди канала, на который будут ставиться реакции",
-            lambda x: list(map(int, x.split())),
-        )
-
-    @loader.watcher(only_incoming=True, pattern=r".*")
-    async def watch_and_react(self, message):
-        chat_id = message.chat_id
-        if chat_id not in self.config["target_channel_id"]:
-            return
-
+    async def place_reactions(self, channel_url, post_id):
         try:
-            await message.client(functions.messages.AddReactionRequest(
-                message.chat_id,
-                message.id,
-                random.choice(['👍', '❤️', '😊'])
+            # Получаем информацию о посте
+            channel_username, post_id = self.extract_channel_and_post_id(channel_url)
+            if not channel_username or not post_id:
+                return
+            # Получаем сообщение по ID
+            post = await self.client.get_messages(channel_username, ids=[int(post_id)])
+            # Ставим рандомную положительную реакцию
+            await self.client(functions.messages.AddReactionRequest(
+                channel_username, post.id, '😊'  # Можно заменить на любую другую реакцию
             ))
         except Exception as e:
-            print(f"Ошибка при добавлении реакции: {e}")
+            logger.error(f"Ошибка при ставке реакции: {e}")
 
+    @loader.watcher(only_channels=True)
+    async def watch_and_react(self, message):
+        # Проверяем сообщения только из определенного канала
+        if message.chat_id != -1002035849227:
+            return
+        # Ищем ссылки на посты
+        channel_links = re.findall(r'https://t.me/[^/]+/\d+', message.text)
+        for link in channel_links:
+            await self.place_reactions(link)
