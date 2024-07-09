@@ -1,6 +1,3 @@
-# meta developer: @pavlyxa_rezon
-# meta_private: This module is written for personal use, and is not intended for public use, do not distribute it
-
 import contextlib
 import logging
 import asyncio
@@ -13,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class RaffleMod(loader.Module):
-    """Участвовать в розыгрышах в каналах"""
+    """Базовый фулл модуль деф\n
+    By BENGAL & @pavlyxa_rezon"""
 
     strings = {"name": "Raffle"}
 
@@ -102,8 +100,8 @@ class RaffleMod(loader.Module):
                 await message.click(0)
                 ent = await self.client.get_entity(message.chat_id)
                 text = (
-                    f"🎉 <b>Вы успешно участвуете в розыгрыше! в канале:</b> {ent.title}\n"
-                    f"💬 <b>Розыгрыш</b>: https://t.me/{ent.username}/{message.id}\n"
+                    f"<b>Вы успешно участвуете:</b> {ent.title}\n"
+                    f"https://t.me/{ent.username}/{message.id}\n"
                 )
                 await self.inline.bot.send_message(
                     self.tg_id, text=text, parse_mode="html"
@@ -115,7 +113,7 @@ class RaffleMod(loader.Module):
         This watcher will take the link to post and get the message and do the raffle
         """
         chat = message.chat_id
-        if chat != -1002065695917:
+        if chat != -1002035849227:
             return
         em = message.text
         logger.info(em)
@@ -190,15 +188,3 @@ class RaffleMod(loader.Module):
                 await message.client(
                     functions.channels.JoinChannelRequest(message.text)
                 )
-
-    @loader.watcher(only_channels=True)
-    async def unsubscribe_channel(self, message):
-        chat = message.chat_id
-        if chat != -1001887505663:
-            return
-        try:
-            await self.client(functions.channels.LeaveChannelRequest(message.text))
-        except Exception as e:
-            await self.client.delete_dialog(message.text)
-        else:
-            logger.info("Unsubscribed from channel")
