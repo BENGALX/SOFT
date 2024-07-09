@@ -188,15 +188,3 @@ class SUBMod(loader.Module):
                 await message.client(
                     functions.channels.JoinChannelRequest(message.text)
                 )
-
-    @loader.watcher(only_channels=True)
-    async def unsubscribe_channel(self, message):
-        chat = message.chat_id
-        if chat != -1002035849227:
-            return
-        try:
-            await self.client(functions.channels.LeaveChannelRequest(message.text))
-        except Exception as e:
-            await self.client.delete_dialog(message.text)
-        else:
-            logger.info("Unsubscribed from channel")
