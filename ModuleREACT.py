@@ -22,7 +22,7 @@ class ReactModule(loader.Module):
     @loader.watcher(only_channels=True)
     async def watch_and_react(self, message):
         # Проверяем сообщения только из определенного канала
-        if message.chat_id != -1002035849227:
+        if message.chat_id != 2035849227:
             return
         # Ищем ссылки на посты
         channel_links = re.findall(r'https://t.me/[^/]+/\d+', message.text)
