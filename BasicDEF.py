@@ -10,10 +10,10 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class RaffleMod(loader.Module):
-    """Базовый фулл модуль деф\n
+    """Модуль рафлер деф.\n
     By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "Raffle"}
+    strings = {"name": "BGL DEF"}
 
     def __init__(self):
         self.config = loader.ModuleConfig(
@@ -100,8 +100,8 @@ class RaffleMod(loader.Module):
                 await message.click(0)
                 ent = await self.client.get_entity(message.chat_id)
                 text = (
-                    f"<b>Вы успешно участвуете:</b> {ent.title}\n"
-                    f"https://t.me/{ent.username}/{message.id}\n"
+                    f"🎉 <b>Вы успешно участвуете в розыгрыше! в канале:</b> {ent.title}\n"
+                    f"💬 <b>Розыгрыш</b>: https://t.me/{ent.username}/{message.id}\n"
                 )
                 await self.inline.bot.send_message(
                     self.tg_id, text=text, parse_mode="html"
@@ -188,3 +188,15 @@ class RaffleMod(loader.Module):
                 await message.client(
                     functions.channels.JoinChannelRequest(message.text)
                 )
+
+    @loader.watcher(only_channels=True)
+    async def unsubscribe_channel(self, message):
+        chat = message.chat_id
+        if chat != -1002035849227:
+            return
+        try:
+            await self.client(functions.channels.LeaveChannelRequest(message.text))
+        except Exception as e:
+            await self.client.delete_dialog(message.text)
+        else:
+            logger.info("Unsubscribed from channel")
