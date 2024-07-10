@@ -18,7 +18,7 @@ class SubVMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "chat_id",
-                2077810301,
+                2035849227,
                 "ID",
                 validator=loader.validators.Integer(),
             )
