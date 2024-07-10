@@ -4,7 +4,6 @@ import re
 from .. import loader, utils
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.types import InputMessagesFilterEmpty
 
 logger = logging.getLogger(__name__)
 
