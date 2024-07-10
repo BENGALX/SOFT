@@ -12,10 +12,6 @@ class SUBMod(loader.Module):
     By BENGAL & @pavlyxa_rezon"""
 
     strings = {"name": "BGL_SUBSCR"}
-
-    async def send_subscribe_message(self, chat_id):
-        text = f"<b>Вы успешно подписались</b>"
-        await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
     
     @loader.watcher()
     async def watcher(self, message):
@@ -27,10 +23,8 @@ class SUBMod(loader.Module):
                     for link in links:
                         try:
                             await self.client(JoinChannelRequest(channel=link))
-                            await self.send_subscribe_message(chat_id)
                         except:
                             await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
-                            await self.send_subscribe_message(chat_id)
         except:
             pass
         try:
@@ -40,9 +34,7 @@ class SUBMod(loader.Module):
                     for link in links:
                         try:
                             await self.client(JoinChannelRequest(channel=link))
-                            await self.send_subscribe_message(chat_id)
                         except:
                             await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
-                            await self.send_subscribe_message(chat_id)
         except:
             pass
