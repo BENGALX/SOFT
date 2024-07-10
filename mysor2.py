@@ -24,33 +24,46 @@ class SUBMod(loader.Module):
 
     async def send_subscribe_message(self, chat_id, channel_name):
         text = f"<b>Вы успешно подписались на {channel_name}</b>"
+        logger.info(f"Отправка сообщения: {text} в чат {chat_id}")
         await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
 
     @loader.watcher()
     async def watcher(self, message):
+        logger.info(f"Получено сообщение: {message.message} от {message.peer_id}")
         try:
-            if message.peer_id.channel_id == self.config["chat_id"]:
+            if hasattr(message.peer_id, 'channel_id') and message.peer_id.channel_id == self.config["chat_id"]:
+                logger.info(f"Сообщение из канала с ID: {self.config['chat_id']}")
                 if "t.me/" in message.message:
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
+                        logger.info(f"Найдена ссылка: {link}")
                         try:
                             await self._client(JoinChannelRequest(channel=link))
                             await self.send_subscribe_message(self.config["chat_id"], link)
-                        except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                        except Exception as e:
+                            invite_code = link.split("t.me/+")[-1]
+                            logger.info(f"Попытка подписки через ImportChatInviteRequest: {invite_code}")
+                            await self._client(ImportChatInviteRequest(invite_code))
                             await self.send_subscribe_message(self.config["chat_id"], link)
-        except:
-            pass
+                            logger.error(f"Ошибка при подписке через JoinChannelRequest: {e}")
+        except Exception as e:
+            logger.error(f"Ошибка при обработке сообщения из канала: {e}")
+
         try:
-            if message.peer_id.chat_id == self.config["chat_id"]:
+            if hasattr(message.peer_id, 'chat_id') and message.peer_id.chat_id == self.config["chat_id"]:
+                logger.info(f"Сообщение из чата с ID: {self.config['chat_id']}")
                 if "t.me/" in message.message:
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
+                        logger.info(f"Найдена ссылка: {link}")
                         try:
                             await self._client(JoinChannelRequest(channel=link))
                             await self.send_subscribe_message(self.config["chat_id"], link)
-                        except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                        except Exception as e:
+                            invite_code = link.split("t.me/+")[-1]
+                            logger.info(f"Попытка подписки через ImportChatInviteRequest: {invite_code}")
+                            await self._client(ImportChatInviteRequest(invite_code))
                             await self.send_subscribe_message(self.config["chat_id"], link)
-        except:
-            pass
+                            logger.error(f"Ошибка при подписке через JoinChannelRequest: {e}")
+        except Exception as e:
+            logger.error(f"Ошибка при обработке сообщения из чата: {e}")
