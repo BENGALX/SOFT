@@ -1,3 +1,5 @@
+# meta developer: @SNEGIREKgg
+
 import asyncio
 import logging
 import re
@@ -9,8 +11,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class SubVMod(loader.Module):
-    """Модуль подписок на каналы.\n
-    By BENGAL & @pavlyxa_rezon"""
+    """Модуль для упрощения подписывания на каналы"""
 
     strings = {"name": "SubV"}
 
@@ -18,8 +19,8 @@ class SubVMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "chat_id",
-                2035849227,
-                "ID",
+                2035849227, # ССЮДА ВВОДИШЬ АЙДИ ЧАТА ЕСЛИ НАДО
+                "ID чата в который ты будешь кидать ссылки",
                 validator=loader.validators.Integer(),
             )
         )
