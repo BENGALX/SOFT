@@ -1,5 +1,3 @@
-# meta developer: @SNEGIREKgg
-
 import asyncio
 import logging
 import re
@@ -10,17 +8,16 @@ from telethon.tl.functions.messages import ImportChatInviteRequest
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class SubVMod(loader.Module):
-    """Модуль для упрощения подписывания на каналы"""
+class SUBMod(loader.Module):
+    """Модуль подписок на каналы.\n
+    By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "SubV"}
+    strings = {"name": "BGL_SUBSCR"}
 
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_id",
-                2035849227, # ССЮДА ВВОДИШЬ АЙДИ ЧАТА ЕСЛИ НАДО
-                "ID чата в который ты будешь кидать ссылки",
+                "chat_id", 2035849227, "ID",
                 validator=loader.validators.Integer(),
             )
         )
