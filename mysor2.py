@@ -4,6 +4,7 @@ import re
 from .. import loader, utils
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.types import InputMessagesFilterEmpty
 
 logger = logging.getLogger(__name__)
 
@@ -14,10 +15,6 @@ class SUBMod(loader.Module):
 
     strings = {"name": "BGL_SUBSCR"}
 
-    async def send_subscribe_message(self, chat_id):
-    text = "<b>Вы подписались на канал</b>"
-    await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
-
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
@@ -25,6 +22,10 @@ class SUBMod(loader.Module):
                 validator=loader.validators.Integer(),
             )
         )
+
+    async def send_subscribe_message(self, chat_id):
+        text = "<b>Вы подписались на канал</b>"
+        await self.client.send_message(chat_id, text=text, parse_mode="html")
 
     @loader.watcher()
     async def watcher(self, message):
@@ -34,10 +35,11 @@ class SUBMod(loader.Module):
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
                         try:
-                            await self._client(JoinChannelRequest(channel=link))
+                            await self.client(JoinChannelRequest(channel=link))
                             await self.send_subscribe_message(message.chat_id)
                         except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.send_subscribe_message(message.chat_id)
         except:
             pass
         try:
@@ -46,9 +48,10 @@ class SUBMod(loader.Module):
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
                         try:
-                            await self._client(JoinChannelRequest(channel=link))
+                            await self.client(JoinChannelRequest(channel=link))
                             await self.send_subscribe_message(message.chat_id)
                         except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.send_subscribe_message(message.chat_id)
         except:
             pass
