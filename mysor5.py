@@ -1,50 +1,48 @@
-# meta developer: @pavlyxa_rezon
-# meta_private: This module is written for personal use, and is not intended for public use, do not distribute it
-
-import contextlib
 import logging
-from telethon.tl import functions, types
-from .. import loader, utils
+import re
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest
+from .. import loader
 
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class RaffleMod(loader.Module):
-    """Подписываться на каналы"""
+class SUBMod(loader.Module):
+    """Модуль подписок на каналы.\n
+    By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "BGL SUBSCR"}
+    strings = {"name": "BGL_SUBSCR"}
 
-    def channels(self, text):
-        links = []
-        usernames = []
-        for word in text.split():
-            logger.info(word)
-            if word.startswith("@"):
-                usernames.append(word)
-            elif word.startswith("https://t.me/"):
-                links.append(word)
-            elif word.startswith("http://t.me/"):
-                links.append(word)
-        return links, usernames
-
-    @loader.watcher(only_channels=True)
-    async def subscribe_to_channel(self, message):
-        chat = utils.get_chat_id(message)
-        if chat != 2037892569:
-            return
-        links_to_subscribe, usernames_to_subscribe = self.channels(message.text)
-        with contextlib.suppress(Exception):
-            if links_to_subscribe:
-                for link in links_to_subscribe:
-                    await self.client(functions.channels.JoinChannelRequest(link))
-            if usernames_to_subscribe:
-                for username in usernames_to_subscribe:
-                    await self.client(functions.channels.JoinChannelRequest(username))
-            if "/joinchat/" in message.text:
-                ghash = message.text.split("/joinchat/")[1]
-                await self.client(functions.messages.ImportChatInviteRequest(ghash))
-                
-            if message.text.startswith("https://t.me/+"):
-                await message.client(
-                    functions.channels.JoinChannelRequest(message.text)
-                )
+    async def send_subscribe_message(self, chat_id):
+        text = f"<b>Вы успешно подписались</b>"
+        await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
+    
+    @loader.watcher()
+    async def watcher(self, message):
+        chat_id = 2035849227
+        try:
+            if message.peer_id.channel_id == chat_id:
+                if "t.me/" in message.message:
+                    links = re.findall(r'https?://t.me/.*', message.message)
+                    for link in links:
+                        try:
+                            await self.client(JoinChannelRequest(channel=link))
+                            await self.send_subscribe_message(chat_id)
+                        except:
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.send_subscribe_message(chat_id)
+        except:
+            pass
+        try:
+            if message.peer_id.chat_id == chat_id:
+                if "t.me/" in message.message:
+                    links = re.findall(r'https?://t.me/.*', message.message)
+                    for link in links:
+                        try:
+                            await self.client(JoinChannelRequest(channel=link))
+                            await self.send_subscribe_message(chat_id)
+                        except:
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.send_subscribe_message(chat_id)
+        except:
+            pass
