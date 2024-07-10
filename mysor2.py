@@ -22,10 +22,6 @@ class SUBMod(loader.Module):
             )
         )
 
-    async def send_subscribe_message(self, chat_id):
-        text = "<b>Вы подписались на канал</b>"
-        await self.client.send_message(chat_id, text=text, parse_mode="html")
-
     @loader.watcher()
     async def watcher(self, message):
         try:
@@ -35,10 +31,8 @@ class SUBMod(loader.Module):
                     for link in links:
                         try:
                             await self.client(JoinChannelRequest(channel=link))
-                            await self.send_subscribe_message(message.chat_id)
                         except:
                             await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
-                            await self.send_subscribe_message(message.chat_id)
         except:
             pass
         try:
@@ -48,9 +42,7 @@ class SUBMod(loader.Module):
                     for link in links:
                         try:
                             await self.client(JoinChannelRequest(channel=link))
-                            await self.send_subscribe_message(message.chat_id)
                         except:
                             await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
-                            await self.send_subscribe_message(message.chat_id)
         except:
             pass
