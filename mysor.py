@@ -1,9 +1,8 @@
-import asyncio
 import logging
 import re
-from .. import loader, utils
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from .. import loader
 
 logger = logging.getLogger(__name__)
 
@@ -14,35 +13,28 @@ class SUBMod(loader.Module):
 
     strings = {"name": "BGL_SUBSCR"}
 
-    def __init__(self):
-        self.config = loader.ModuleConfig(
-            loader.ConfigValue(
-                "chat_id", 2035849227, "ID",
-                validator=loader.validators.Integer(),
-            )
-        )
-
     @loader.watcher()
     async def watcher(self, message):
+        chat_id = 2035849227
         try:
-            if message.peer_id.channel_id == self.config["chat_id"]:
+            if message.peer_id.channel_id == chat_id:
                 if "t.me/" in message.message:
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
                         try:
-                            await self._client(JoinChannelRequest(channel=link))
+                            await self.client(JoinChannelRequest(channel=link))
                         except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
         except:
             pass
         try:
-            if message.peer_id.chat_id == self.config["chat_id"]:
+            if message.peer_id.chat_id == chat_id:
                 if "t.me/" in message.message:
                     links = re.findall(r'https?://t.me/.*', message.message)
                     for link in links:
                         try:
-                            await self._client(JoinChannelRequest(channel=link))
+                            await self.client(JoinChannelRequest(channel=link))
                         except:
-                            await self._client(ImportChatInviteRequest(link.split("t.me/+")[1]))
+                            await self.client(ImportChatInviteRequest(link.split("t.me/+")[1]))
         except:
             pass
