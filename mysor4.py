@@ -1,32 +1,70 @@
+# meta developer: @SNEGIREKgg
+
+import asyncio
 import logging
-from telethon.tl import functions
-from .. import loader
+import re
+from .. import loader, utils
+from telethon.tl.types import PeerChannel
 
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class UNSUBMod(loader.Module):
-    """Модуль отписок от каналов.\n
-    By BENGAL & @pavlyxa_rezon"""
+class RunButtonMod(loader.Module):
+    """Модуль для упрощения участия в розыгрышах"""
 
-    strings = {"name": "BGL_UNSUBSCR"}
+    strings = {"name": "RunButton"}
 
-    async def send_unsubscribe_message(self, chat_id, channel_name):
-        text = f"Вы успешно отписались от {channel_name}"
-        await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "chat_id",
+                2035849227, #  fhd
+                "ID чата в который ты будешь кидать ссылки на розыгрыш",
+                validator=loader.validators.Integer(),
+            )
+        )
 
-    @loader.watcher(only_channels=True)
-    async def unsubscribe_channel(self, message):
-        chat = message.chat_id
-        if chat != -1002035849227:
-            return
-        if not message.text.startswith("@"):
-            return
+    @loader.watcher()
+    async def watcher(self, message):
         try:
-            await self.client(functions.channels.LeaveChannelRequest(message.text))
-            await self.send_unsubscribe_message(self.tg_id, message.text)
-        except Exception as e:
-            await self.client.delete_dialog(message.text)
-            logger.error(f"Failed to unsubscribe from channel: {e}")
-        else:
-            logger.info("Unsubscribed from channel")
+            if message.peer_id.channel_id == self.config["chat_id"]:
+                if "t.me/" in message.message:
+                    links = re.findall(r'https?://t.me/c/.*/.*', message.message)
+                    links1 = re.findall(r'https?://t.me/.*/.*', message.message)
+                    answer = ""
+                    for link in links:
+                        link = link.split("//t.me/c/")[1]
+                        link = link.split("/")
+                        b_msg = await self._client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+                        click = await b_msg.click(data=b_msg.reply_markup.rows[0].buttons[0].data)
+                        answer = answer + click.message + "\n"
+                    for link in links1:
+                        link = link.split("//t.me/")[1]
+                        link = link.split("/")
+                        b_msg = await self._client.get_messages(link[0], ids=int(link[1]))
+                        click = await b_msg.click(data=b_msg.reply_markup.rows[0].buttons[0].data)
+                        answer = answer + click.message + "\n"
+                    await utils.answer(message, answer)
+        except:
+            pass
+        try:
+            if message.peer_id.chat_id == self.config["chat_id"]:
+                if "t.me/" in message.message:
+                    links = re.findall(r'https?://t.me/c/.*/.*', message.message)
+                    links1 = re.findall(r'https?://t.me/.*/.*', message.message)
+                    answer = ""
+                    for link in links:
+                        link = link.split("//t.me/c/")[1]
+                        link = link.split("/")
+                        b_msg = await self._client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+                        click = await b_msg.click(data=b_msg.reply_markup.rows[0].buttons[0].data)
+                        answer = answer + click.message + "\n"
+                    for link in links1:
+                        link = link.split("//t.me/")[1]
+                        link = link.split("/")
+                        b_msg = await self._client.get_messages(link[0], ids=int(link[1]))
+                        click = await b_msg.click(data=b_msg.reply_markup.rows[0].buttons[0].data)
+                        answer = answer + click.message + "\n"
+                    await utils.answer(message, answer)
+        except:
+            pass
