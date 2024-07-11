@@ -11,9 +11,8 @@ class UNSUBMod(loader.Module):
 
     strings = {"name": "BGL_UNSUBSCR"}
 
-    async def send_unsubscribe_message(self, chat_id, channel_name):
-        text = f"<b>Вы успешно отписались от {channel_name}</b>"
-        await self.inline.bot.send_message(chat_id, text=text, parse_mode="html")
+    async def send_bot_message(self, text):
+        await self.client.send_message('me', text)
 
     @loader.watcher(only_channels=True)
     async def unsubscribe_channel(self, message):
@@ -24,7 +23,7 @@ class UNSUBMod(loader.Module):
             return
         try:
             await self.client(functions.channels.LeaveChannelRequest(message.text))
-            await self.send_unsubscribe_message(self.tg_id, message.text)
+            await self.send_bot_message(f"<b>Вы успешно отписались от</b> {message.text}")
         except Exception as e:
             await self.client.delete_dialog(message.text)
             logger.error(f"Failed to unsubscribe from channel. {e}")
