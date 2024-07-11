@@ -7,11 +7,11 @@ from telethon.tl.types import PeerChannel
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class RunButtonMod(loader.Module):
+class RunnerMod(loader.Module):
     """Модуль нажатия деф кнопок.\n
     By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "BGL_RUNNER_DEF"}
+    strings = {"name": "BGL_RUNNER"}
 
     async def process_links(self, message):
         links = re.findall(r'https?://t.me/c/.*/.*', message.message)
@@ -36,7 +36,7 @@ class RunButtonMod(loader.Module):
     @loader.watcher()
     async def watcher(self, message):
         try:
-            if hasattr(message.peer_id, 'channel_id') and message.peer_id.channel_id == 2035849227:
+            if hasattr(message.peer_id, 'channel_id') and message.peer_id.channel_id == -1002239254863:
                 if "t.me/" in message.message:
                     await self.process_links(message)
         except Exception as e:
