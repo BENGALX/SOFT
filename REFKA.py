@@ -1,22 +1,17 @@
-# meta developer: @pavlyxa_rezon
-# meta_private: This module is written for personal use, and is not intended for public use, do not distribute it
-
 import logging
 import re
-
 from telethon.tl.types import Message
 from telethon.tl.functions.messages import StartBotRequest
-
 from .. import loader
 
 logger = logging.getLogger(__name__)
 
-
 @loader.tds
-class FastBot(loader.Module):
-    """This module for start the bot by referal link and subscribe if there are channels to subs"""
+class RefkaMod(loader.Module):
+    """Модуль участия в рефках.\n
+    By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "FastBot"}
+    strings = {"name": "BGL_REFKA"}
 
     async def attempt_to_start(self, text):
         if match := re.search(r"\?start=(\w+)", text):
@@ -53,7 +48,7 @@ class FastBot(loader.Module):
 
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
-        if message.chat_id != -1002060401207:
+        if message.chat_id != -1002219293691:
             return
 
         await self.attempt_to_start(message.text)
