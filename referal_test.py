@@ -40,7 +40,6 @@ class RefkaMod(loader.Module):
                         bot="TheFastes_Bot", peer="TheFastes_Bot", start_ref=key
                     )
                 )
-                return
 
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
