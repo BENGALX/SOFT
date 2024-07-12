@@ -36,7 +36,7 @@ class RunnerMod(loader.Module):
     @loader.watcher()
     async def watcher(self, message):
         try:
-            if hasattr(message.peer_id, 'channel_id') and message.peer_id.channel_id == -1002239254863:
+            if hasattr(message.peer_id, 'channel_id') and message.peer_id.channel_id == 2239254863:
                 if "t.me/" in message.message:
                     await self.process_links(message)
         except Exception as e:
