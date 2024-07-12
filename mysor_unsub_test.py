@@ -17,13 +17,13 @@ class UNSUBMod(loader.Module):
     @loader.watcher(only_channels=True)
     async def unsubscribe_channel(self, message):
         chat = message.chat_id
+        success_message = f"<b>Вы успешно отписались от</b> {message.text}"
         if chat != -1002035849227:
             return
         if not message.text.startswith("@"):
             return
         try:
             await self.client(functions.channels.LeaveChannelRequest(message.text))
-            success_message = f"<b>Вы успешно отписались от</b> {message.text}"
             await self.send_bot_message(success_message)
         except Exception as e:
             await self.client.delete_dialog(message.text)
