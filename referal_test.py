@@ -34,13 +34,14 @@ class RefkaMod(loader.Module):
                 )
                 return
 
-             if "TheFastes_Bot" in text:
+            if "TheFastes_Bot" in text:
                 await self._client(
                     StartBotRequest(
                         bot="TheFastes_Bot", peer="TheFastes_Bot", start_ref=key
                     )
                 )
-
+                return
+    
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
         if message.chat_id != -1002219293691:
