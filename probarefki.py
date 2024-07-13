@@ -34,17 +34,24 @@ class RefkaMod(loader.Module):
             )
         )
 
+    async def send_bot_message(self, text):
+        await self.client.send_message('me', text, link_preview=False)
+
     async def attempt_to_start(self, text):
         if match := re.search(r"\?start=(\w+)", text):
             ref_key = match[1]
             logging.info(f"Bot started ref: {ref_key}")
+            success_message = f"<b>Вы участвуете в реф</b>: {text}"
 
             if "TheFastesRuBot" in text:
                 await self.start_fastesru_bot(ref_key)
+                await self.send_bot_message(success_message)
             if "BestRandom_bot" in text:
                 await self.start_bestrandom_bot(ref_key)
+                await self.send_bot_message(success_message)
             if "TheFastes_Bot" in text:
                 await self.start_fastes_bot(ref_key)
+                await self.send_bot_message(success_message)
 
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
