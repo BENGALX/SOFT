@@ -26,25 +26,20 @@ class RefkaMod(loader.Module):
                         bot="TheFastesRuBot", peer="TheFastesRuBot", start_param=param
                     )
                 )
-                logging.info(f"Bot started ref: {param}")
-                return
 
-            elif "BestRandom_bot" in text:
+            if "BestRandom_bot" in text:
                 await self._client(
                     StartBotRequest(
                         bot="BestRandom_bot", peer="BestRandom_bot", start_param=param
                     )
                 )
-                logging.info(f"Bot started ref: {param}")
-                return
 
-            await self._client(
-                StartBotRequest(
-                    bot="TheFastes_Bot", peer="TheFastes_Bot", start_param=param
+            if "TheFastes_Bot" in text:
+                await self._client(
+                    StartBotRequest(
+                        bot="TheFastes_Bot", peer="TheFastes_Bot", start_param=param
+                    )
                 )
-            )
-
-            logging.info(f"Bot started ref: {param}")
 
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
