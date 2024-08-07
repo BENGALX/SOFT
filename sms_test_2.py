@@ -21,12 +21,17 @@ class MessageSenderMod(loader.Module):
 
     @loader.watcher()
     async def watcher(self, message):
-        chat_id = -1002035849227  # Айди чата, куда нужно отправлять сообщения
+        chat_id = -1002205010643
         if message.chat_id == chat_id and message.text.startswith("/sms"):
             args = message.text.split(" ", 2)
             if len(args) < 3:
                 await message.respond("Usage: /sms <chat_username> <message_text>")
                 return
             chat_username, message_text = args[1], args[2]
+            
+            if not chat_username.startswith("@") or not chat_username.endswith(" "):
+                await message.respond("Invalid recipient tag.")
+                return
+            
             await self.send_message(chat_username, message_text)
             await message.respond(f"Message sent to {chat_username}: {message_text}")
