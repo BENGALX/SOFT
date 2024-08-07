@@ -29,7 +29,7 @@ class MessageSenderMod(loader.Module):
                 return
             chat_username, message_text = args[1], args[2]
             
-            if not chat_username.startswith("@") or not chat_username.endswith(" "):
+            if not chat_username.startswith("@"):
                 await message.respond("Invalid recipient tag.")
                 return
             
