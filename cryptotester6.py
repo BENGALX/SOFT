@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import re
 from .. import loader, utils
@@ -39,25 +38,6 @@ class StealerMod(loader.Module):
                         u = link.split('?start=')
                         ind = u[0].index('me/') + 3
                         cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
-                        cbot = cbot.replace("xrocket", "tonRocketBot")
-                        try:
-                            await self.message_q(f'/start {u[1]}', cbot)
-                            answer = answer + "Successfully" + "\n"
-                        except:
-                            answer = answer + "Unsuccessfully" + "\n"
-                        await utils.answer(message, answer)
-        except:
-            pass
-        try:
-            if message.peer_id.chat_id == self.config["chat_id"]:
-                if "t.me/" in message.message:
-                    links = re.findall(r'https?://t.me/.*', message.message)
-                    answer = ""
-                    for link in links:
-                        u = link.split('?start=')
-                        ind = u[0].index('me/') + 3
-                        cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
-                        cbot = cbot.replace("xrocket", "tonRocketBot")
                         try:
                             await self.message_q(f'/start {u[1]}', cbot)
                             answer = answer + "Successfully" + "\n"
