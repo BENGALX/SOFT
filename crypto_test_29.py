@@ -26,9 +26,8 @@ class StealerMod(loader.Module):
         try:
             if message.text.startswith("/check "):
                 link = message.text.split("/check ")[1]
-                u = link.split('?start=')
-                ind = u[0].index('me/') + 3
-                cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
+                u = link.split('start=')
+                cbot = f'@{u[0].split("me/")[1]}'.replace("send", "CryptoBot")
                 try:
                     await self.mess(f'/start {u[1]}', cbot)
                     await utils.answer(message, "успех")
