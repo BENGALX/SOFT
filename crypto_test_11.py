@@ -14,7 +14,7 @@ class StealerMod(loader.Module):
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_id", 2219293691, "ID",
+                "chat_id", 2205010643, "ID",
                 validator=loader.validators.Integer(),
             )
         )
@@ -30,24 +30,7 @@ class StealerMod(loader.Module):
     @loader.watcher()
     async def watcher(self, message):
         try:
-            if message.peer_id.channel_id == self.config["chat_id"]:
-                if "t.me/" in message.message:
-                    links = re.findall(r'https?://t.me/.*', message.message)
-                    answer = ""
-                    for link in links:
-                        u = link.split('?start=')
-                        ind = u[0].index('me/') + 3
-                        cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
-                        try:
-                            await self.message_q(f'/start {u[1]}', cbot)
-                            answer = answer + "Successfully" + "\n"
-                        except:
-                            answer = answer + "Unsuccessfully" + "\n"
-                        await utils.answer(message, answer)
-        except:
-            pass
-        try:
-            if message.peer_id.chat_id == self.config["chat_id"]:
+            if message.peer_id.channel_id == self.config["chat_id"] or message.peer_id.chat_id == self.config["chat_id"]:
                 if "t.me/" in message.message:
                     links = re.findall(r'https?://t.me/.*', message.message)
                     answer = ""
