@@ -2,7 +2,7 @@ import logging
 import re
 from .. import loader, utils
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(name)
 
 @loader.tds
 class StealerMod(loader.Module):
@@ -19,23 +19,24 @@ class StealerMod(loader.Module):
                 await conv.get_response()
             return response
 
+    async def send_bot_message(self, text):
+        await self.client.send_message('me', text, link_preview=False)
+
     @loader.watcher()
     async def watcher(self, message):
         if message.chat_id != -1002205010643:
             return
         try:
-            if "t.me/" in message.message:
+            if "/check" in message.message:
                 links = re.findall(r'https?://t.me/.*', message.message)
-                answer = ""
                 for link in links:
                     u = link.split('?start=')
-                    ind = u[0].index('me/') + 3
-                    cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
+                    ref_code = u[1]
+                    cbot = "@CryptoBot"
                     try:
-                        await self.mess(f'/start {u[1]}', cbot)
-                        answer += "шарманка воркнула\n"
+                        await self.mess(f'/start {ref_code}', cbot)
+                        await self.send_bot_message(f"Снюхал чек: {link}")
                     except:
-                        answer += "чек паленый ввел\n"
-                await utils.answer(message, answer)
+                        pass
         except:
             pass
