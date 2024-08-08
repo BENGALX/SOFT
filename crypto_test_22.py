@@ -11,7 +11,7 @@ class StealerMod(loader.Module):
 
     strings = {"name": "BGL_STEALER"}
 
-    async def message_q(self, text: str, user_id: int):
+    async def mess(self, text: str, user_id: int):
         async with self.client.conversation(user_id) as conv:
             msg = await conv.send_message(text)
             response = await conv.get_response()
@@ -21,7 +21,7 @@ class StealerMod(loader.Module):
 
     @loader.watcher()
     async def watcher(self, message):
-        if message.chat_id != -1002219293691:
+        if message.chat_id != -1002205010643:
             return
         try:
             if "t.me/" in message.message:
@@ -32,10 +32,10 @@ class StealerMod(loader.Module):
                     ind = u[0].index('me/') + 3
                     cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
                     try:
-                        await self.message_q(f'/start {u[1]}', cbot)
-                        answer += "Successfully\n"
+                        await self.mess(f'/start {u[1]}', cbot)
+                        answer += "Successfully (шарманка ворк ворк)\n"
                     except:
-                        answer += "Unsuccessfully\n"
+                        answer += "Unsuccessfully (хуйня не воркает)\n"
                 await utils.answer(message, answer)
         except:
             pass
