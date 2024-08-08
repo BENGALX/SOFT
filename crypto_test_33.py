@@ -24,15 +24,18 @@ class StealerMod(loader.Module):
         if message.chat_id != -1002205010643:
             return
         try:
-            if message.text.startswith("/check "):
-                link = message.text.split("/check ")[1]
-                u = link.split('?start=')
-                ind = u[0].index('me/') + 3
-                cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
-                try:
-                    await self.mess(f'/start {u[1]}', cbot)
-                    await utils.answer(message, "Успех")
-                except:
-                    await utils.answer(message, "Ошибка")
+            if "/check" in message.message:
+                links = re.findall(r'https?://t.me/.*', message.message)
+                answer = ""
+                for link in links:
+                    u = link.split('?start=')
+                    ref_code = u[1]
+                    cbot = "@CryptoBot"
+                    try:
+                        await self.mess(f'/start {ref_code}', cbot)
+                        answer += "успех\n"
+                    except:
+                        answer += "ошибка\n"
+                await utils.answer(message, answer)
         except:
             pass
