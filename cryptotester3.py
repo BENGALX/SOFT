@@ -17,7 +17,7 @@ class RefRunMod(loader.Module):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "chat_id",
-                2219293691, # jog
+                2205010643, # jog
                 "ID чата в который ты будешь кидать ссылки",
                 validator=loader.validators.Integer(),
             )
