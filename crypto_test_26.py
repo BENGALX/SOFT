@@ -31,8 +31,8 @@ class StealerMod(loader.Module):
                 cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
                 try:
                     await self.mess(f'/start {u[1]}', cbot)
-                    await utils.answer(message, "Чек активирован!")
+                    await utils.answer(message, "Чек активирован! 🚀")
                 except:
-                    await utils.answer(message, "Ошибка, проверьте ссылку.")
+                    await utils.answer(message, "Ошибка при активации чека. Проверьте ссылку. ❌")
         except:
             pass
