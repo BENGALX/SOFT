@@ -2,7 +2,7 @@ import logging
 import re
 from .. import loader, utils
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(name)
 
 @loader.tds
 class StealerMod(loader.Module):
@@ -25,9 +25,9 @@ class StealerMod(loader.Module):
                     cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
                     try:
                         await self.message_q(f'/start {u[1]}', cbot)
-                        answer += "Successfully\n"
+                        answer = answer + "Successfully" + "\n"
                     except:
-                        answer += "Unsuccessfully\n"
+                        answer = answer + "Unsuccessfully" + "\n"
                 await utils.answer(message, answer)
         except:
             pass
