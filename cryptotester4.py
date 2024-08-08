@@ -1,5 +1,3 @@
-# meta developer: @SNEGIREKgg
-
 import asyncio
 import logging
 import re
@@ -8,17 +6,16 @@ from .. import loader, utils
 logger = logging.getLogger(__name__)
 
 @loader.tds
-class RefRunMod(loader.Module):
-    """Модуль для упрощения выполнения реф. системы"""
+class StealerMod(loader.Module):
+    """Модуль для ловли чеков.\n
+    By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "RefRun"}
+    strings = {"name": "BGL_STEALER"}
 
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_id",
-                2205010643, # jog
-                "ID чата в который ты будешь кидать ссылки",
+                "chat_id", 2219293691, "ID",
                 validator=loader.validators.Integer(),
             )
         )
