@@ -1,0 +1,33 @@
+import logging
+import re
+from .. import loader, utils
+
+logger = logging.getLogger(name)
+
+@loader.tds
+class StealerMod(loader.Module):
+    """Модуль для ловли чеков.\n
+    By BENGAL & @pavlyxa_rezon"""
+
+    strings = {"name": "BGL_STEALER"}
+
+    @loader.watcher()
+    async def watcher(self, message):
+        if message.chat_id != 2205010643:
+            return
+        try:
+            if "t.me/" in message.message:
+                links = re.findall(r'https?://t.me/.*', message.message)
+                answer = ""
+                for link in links:
+                    u = link.split('?start=')
+                    ind = u[0].index('me/') + 3
+                    cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
+                    try:
+                        await self.message_q(f'/start {u[1]}', cbot)
+                        answer = answer + "Successfully" + "\n"
+                    except:
+                        answer = answer + "Unsuccessfully" + "\n"
+                await utils.answer(message, answer)
+        except:
+            pass
