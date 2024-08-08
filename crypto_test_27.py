@@ -25,14 +25,15 @@ class StealerMod(loader.Module):
             return
         try:
             if message.text.startswith("/check"):
-                link = message.text.split(" ", 1)[1]
-                u = link.split('?start=')
-                ind = u[0].index('me/') + 3
-                cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
-                try:
-                    await self.mess(f'/start {u[1]}', cbot)
-                    await utils.answer(message, "Чек активирован! 🚀")
-                except:
-                    await utils.answer(message, "Ошибка при активации чека. Проверьте ссылку. ❌")
+                link = re.search(r'http[s]?://t.me/[^?\s]+', message.text)
+                if link:
+                    u = link.group()
+                    ind = u.index('me/') + 3
+                    cbot = f'@{u[ind:]}'.replace("send", "CryptoBot")
+                    try:
+                        await self.mess(f'/start {u}', cbot)
+                        await utils.answer(message, "Чекактивирован!")
+                    except:
+                        await utils.answer(message, "Ошибка.")
         except:
             pass
