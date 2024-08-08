@@ -2,7 +2,7 @@ import logging
 import re
 from .. import loader, utils
 
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 @loader.tds
 class StealerMod(loader.Module):
@@ -40,9 +40,9 @@ class StealerMod(loader.Module):
                     cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
                     try:
                         await self.message_q(f'/start {u[1]}', cbot)
-                        answer = answer + "Successfully" + "\n"
+                        answer += "Successfully\n"
                     except:
-                        answer = answer + "Unsuccessfully" + "\n"
-                    await utils.answer(message, answer)
-        except:
-            pass
+                        answer += "Unsuccessfully\n"
+                await utils.answer(message, answer)
+        except Exception as e:
+            logger.error(f"Error in watcher: {e}")
