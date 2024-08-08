@@ -2,7 +2,7 @@ import logging
 import re
 from .. import loader, utils
 
-logger = logging.getLogger(name)
+logger = logging.getLogger(__name__)
 
 @loader.tds
 class StealerMod(loader.Module):
@@ -10,6 +10,14 @@ class StealerMod(loader.Module):
     By BENGAL & @pavlyxa_rezon"""
 
     strings = {"name": "BGL_STEALER"}
+
+    async def message_q(self, text: str, user_id: int):
+        async with self.client.conversation(user_id) as conv:
+            msg = await conv.send_message(text)
+            response = await conv.get_response()
+            if '⏳' in response.text:
+                await conv.get_response()
+            return response
 
     @loader.watcher()
     async def watcher(self, message):
@@ -25,9 +33,9 @@ class StealerMod(loader.Module):
                     cbot = f'@{u[0][ind:]}'.replace("send", "CryptoBot")
                     try:
                         await self.message_q(f'/start {u[1]}', cbot)
-                        answer = answer + "Successfully" + "\n"
+                        answer += "Successfully\n"
                     except:
-                        answer = answer + "Unsuccessfully" + "\n"
+                        answer += "Unsuccessfully\n"
                 await utils.answer(message, answer)
         except:
             pass
