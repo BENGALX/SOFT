@@ -35,7 +35,7 @@ class StealerMod(loader.Module):
                     cbot = "@CryptoBot"
                     try:
                         await self.mess(f'/start {ref_code}', cbot)
-                        await self.send_bot_message(f"Снюхал чек: {link}")
+                        await self.send_bot_message(f"Чек активирован: {link}")
                     except:
                         pass
         except:
