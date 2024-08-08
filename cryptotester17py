@@ -13,7 +13,7 @@ class StealerMod(loader.Module):
 
     @loader.watcher()
     async def watcher(self, message):
-        if message.chat_id != 2219293691:
+        if message.chat_id != -1002205010643:
             return
         try:
             if "t.me/" in message.message:
