@@ -31,6 +31,7 @@ class StealerMod(loader.Module):
                 links = re.findall(r'https?://t.me/.*', message.message)
                 done_message = f"<b>Вы успешно спиздили чек</b> \n {links}"
                 fail_message = f"<b>Этого чека не существует</b> \n {links}"
+                already_activated_message = f"<b>Этот чек уже активирован</b> \n {links}"
                 
                 for link in links:
                     u = link.split('?start=')
@@ -40,9 +41,8 @@ class StealerMod(loader.Module):
                         await self.mess(f'/start {ref_code}', cbot)
                         await self.send_bot_message(done_message)
                     except:
-                        if "Этот чек уже активирован" in response.text:
-                            await self.send_bot_message("Этот чек уже активирован.")
-                        else:
-                            await self.send_bot_message(fail_message)
+                        await self.send_bot_message(fail_message)
+                        if "Этот чек уже активирован." in response.text:
+                            await self.send_bot_message(already_activated_message)
         except:
             pass
