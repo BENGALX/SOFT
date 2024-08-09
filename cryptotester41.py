@@ -2,7 +2,7 @@ import logging
 import re
 from .. import loader, utils
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(name)
 
 @loader.tds
 class StealerMod(loader.Module):
@@ -29,18 +29,20 @@ class StealerMod(loader.Module):
         try:
             if "/check" in message.message:
                 links = re.findall(r'https?://t.me/.*', message.message)
-                answer = ""
                 done_message = f"<b>Вы успешно спиздили чек</b> \n {links}"
+                fail_message = f"<b>Этого чека не существует</b> \n {links}"
+                
                 for link in links:
                     u = link.split('?start=')
                     ref_code = u[1]
                     cbot = "@CryptoBot"
                     try:
                         await self.mess(f'/start {ref_code}', cbot)
-                        answer += "успех\n"
                         await self.send_bot_message(done_message)
                     except:
-                        answer += "ошибка\n"
-                await utils.answer(message, answer)
+                        if "Этот чек уже активирован." in response.text:
+                            await self.send_bot_message("Этот чек уже активирован.")
+                        else:
+                            await self.send_bot_message(fail_message)
         except:
             pass
