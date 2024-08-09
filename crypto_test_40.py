@@ -19,6 +19,9 @@ class StealerMod(loader.Module):
                 await conv.get_response()
             return response
 
+    async def send_bot_message(self, text):
+        await self.client.send_message('me', text, link_preview=False)
+    
     @loader.watcher()
     async def watcher(self, message):
         if message.chat_id != -1002205010643:
@@ -26,16 +29,17 @@ class StealerMod(loader.Module):
         try:
             if "/check" in message.message:
                 links = re.findall(r'https?://t.me/.*', message.message)
-                answer = ""
+                done_message = f"<b>Вы успешно спиздили чек</b> \n {links}"
+                fail_message = f"<b>Этого чека не существует</b> \n {links}"
+                
                 for link in links:
                     u = link.split('?start=')
                     ref_code = u[1]
                     cbot = "@CryptoBot"
                     try:
                         await self.mess(f'/start {ref_code}', cbot)
-                        answer += "успех\n"
+                        await self.send_bot_message(done_message)
                     except:
-                        answer += "ошибка\n"
-                await utils.answer(message, answer)
+                        await self.send_bot_message(fail_message)
         except:
             pass
