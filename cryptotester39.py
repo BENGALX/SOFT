@@ -19,7 +19,7 @@ class StealerMod(loader.Module):
                 await conv.get_response()
             return response
 
-     async def send_bot_message(self, text):
+    async def send_bot_message(self, text):
         await self.client.send_message('me', text, link_preview=False)
     
     @loader.watcher()
