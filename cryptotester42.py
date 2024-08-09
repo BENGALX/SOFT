@@ -40,7 +40,7 @@ class StealerMod(loader.Module):
                         await self.mess(f'/start {ref_code}', cbot)
                         await self.send_bot_message(done_message)
                     except:
-                        if "Этот чек уже активирован." in response.text:
+                        if "Этот чек уже активирован" in response.text:
                             await self.send_bot_message("Этот чек уже активирован.")
                         else:
                             await self.send_bot_message(fail_message)
