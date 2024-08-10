@@ -4,7 +4,7 @@ from telethon.tl.functions.messages import ImportChatInviteRequest
 from .. import loader
 
 @loader.tds
-class SUBMod(loader.Module):,
+class SUBMod(loader.Module):
     """Модуль подписок на каналы.\n
     By BENGAL & @pavlyxa_rezon"""
 
