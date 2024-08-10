@@ -5,9 +5,9 @@ from .. import loader
 
 @loader.tds
 class SUBMod(loader.Module):
-    """Модуль подписок на каналы.\n
-    ⚙️ Command: /sub.
-    <b>By BENGAL & @pavlyxa_rezon</b>\n"""
+    """Модуль подписок на каналы.
+    ⚙️ Commands: /sub.\n
+    📞 By BENGAL & @pavlyxa_rezon\n"""
 
     strings = {"name": "BGL-SUBSCRIBE"}
     
