@@ -1,8 +1,5 @@
-import logging
 import re
 from .. import loader, utils
-
-logger = logging.getLogger(__name__)
 
 @loader.tds
 class StealerMod(loader.Module):
