@@ -3,7 +3,8 @@ from .. import loader, utils
 
 @loader.tds
 class StealerMod(loader.Module):
-    """Модуль для ловли чеков.\n
+    """Модуль для ловли чеков.
+           Commands: /check, /pass.\n
     By BENGAL & @pavlyxa_rezon"""
 
     strings = {"name": "BGL-CRYPTOSTEALER"}
@@ -24,7 +25,7 @@ class StealerMod(loader.Module):
         if message.chat_id != -1002205010643:
             return
         try:
-            if "/check" in message.message:
+            if message.message.startswith("/check"):
                 links = re.findall(r'https?://t.me/.*', message.message)
                 done_message = f"<b>Вы успешно снюхали чек.</b> \n {links}"
                 fail_message = f"<b>Не удалось активировать чек.</b> \n {links}"
@@ -38,7 +39,7 @@ class StealerMod(loader.Module):
                     except:
                         await self.send_me_message(fail_message)
             
-            if "/pass" in message.message:
+            if message.message.startswith("/pass"):
                 ref_code = message.message.split("/pass", 1)[-1].strip()
                 done_message = f"<b>Успешно введен пароль:</b> {ref_code}"
                 fail_message = f"<b>Не удалось ввести пароль:</b> {ref_code}"
