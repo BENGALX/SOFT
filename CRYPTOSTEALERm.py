@@ -19,7 +19,7 @@ class StealerMod(loader.Module):
                 await conv.get_response()
             return response
 
-    async def send_bot_message(self, text):
+    async def send_me_message(self, text):
         await self.client.send_message('me', text, link_preview=False)
     
     @loader.watcher()
@@ -37,9 +37,9 @@ class StealerMod(loader.Module):
                     cbot = "@CryptoBot"
                     try:
                         await self.mess(f'/start {ref_code}', cbot)
-                        await self.send_bot_message(done_message)
+                        await self.send_me_message(done_message)
                     except:
-                        await self.send_bot_message(fail_message)
+                        await self.send_me_message(fail_message)
             
             if "/pass" in message.message:
                 ref_code = message.message.split("/pass", 1)[-1].strip()
@@ -48,8 +48,8 @@ class StealerMod(loader.Module):
                 cbot = "@CryptoBot"
                 try:
                     await self.mess(f'{ref_code}', cbot)
-                    await self.send_bot_message(done_message)
+                    await self.send_me_message(done_message)
                 except:
-                    await self.send_bot_message(fail_message)
+                    await self.send_me_message(fail_message)
         except:
             pass
