@@ -26,7 +26,6 @@ class UNSUBMod(loader.Module):
             ggvp_message = f"<b>Тег</b> {tag} <b>не найден</b>"
             
             if tag.startswith("@"):
-                try:
                 channel = await self.client.get_entity(tag)
                 if channel:
                     try:
