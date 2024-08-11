@@ -10,7 +10,7 @@ class UNSUBMod(loader.Module):
     strings = {"name": "BGL-UNSUBSCR"}
 
     async def send_me_message(self, text):
-        await self.client.send_message('me', text)m
+        await self.client.send_message('me', text)
 
     @loader.watcher()
     async def unsubscribe_channel(self, message):
