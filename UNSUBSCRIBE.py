@@ -1,32 +1,32 @@
-import logging
 from telethon.tl import functions
 from .. import loader
 
-logger = logging.getLogger(__name__)
-
 @loader.tds
 class UNSUBMod(loader.Module):
-    """Модуль отписок от каналов.\n
-    By BENGAL & @pavlyxa_rezon"""
+    """Модуль отписок от каналов.
+           Commands: /uns.\n
+    ⚙️ By BENGAL & @pavlyxa_rezon"""
 
-    strings = {"name": "BGL_UNSUBSCR"}
+    strings = {"name": "BGL-UNSUBSCR"}
 
-    async def send_bot_message(self, text):
+    async def send_me_message(self, text):
         await self.client.send_message('me', text)
 
-    @loader.watcher(only_channels=True)
+    @loader.watcher()
     async def unsubscribe_channel(self, message):
-        chat = message.chat_id
-        success_message = f"<b>Вы успешно отписались от:</b> {message.text}"
-        if chat != -1002191684904:
+
+        if message.chat_id != -1002205010643:
             return
-        if not message.text.startswith("@"):
-            return
-        try:
-            await self.client(functions.channels.LeaveChannelRequest(message.text))
-            await self.send_bot_message(success_message)
-        except Exception as e:
-            await self.client.delete_dialog(message.text)
-            logger.error(f"Failed to unsubscribe. {e}")
-        else:
-            logger.info("Unsubscribed from channel.")
+            
+        if message.text.startswith("/uns"):
+            tag = message.text.split("/uns", 1)[1].strip()
+            done_message = f"<b>Вы успешно отписались от</b> {tag}"
+            else_message = f"<b>Вы успешно удалили чат с</b> {tag}"
+            
+            if tag.startswith("@"):
+                try:
+                    await self.client(functions.channels.LeaveChannelRequest(tag))
+                    await self.send_me_message(done_message)
+                except:
+                    await self.client.delete_dialog(tag)
+                    await self.send_me_message(else_message)
