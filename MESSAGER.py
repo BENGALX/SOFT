@@ -11,7 +11,7 @@ class MessagerMod(loader.Module):
 
     async def send_message(self, chat_username, message_text):
         done_message = f"<b>В чат {chat_username} успешно отправлена рассылка:</b>\n {message_text}"
-        fail_message = f"<b>Не удалось отправить в {chat_username} сообщение:</b>\n {message_text}"
+        fail_message = f"<b>Не удалось отправить в {chat_username} рассылку:</b>\n {message_text}"
         
         try:
             chat_entity = await self._client.get_entity(chat_username)
