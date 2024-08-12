@@ -14,28 +14,32 @@ class ReferalMod(loader.Module):
     async def start_bestrandom_bot(self, text):
         if match := re.search(r"\?start=(\w+)", text):
             ref_key = match[1]
-            success_message = f"<b>Вы участвуете в рефке:</b> \n {text}"
+            linka = text.split("/best", 1)[1].strip()
+            success_message = f"<b>Вы успешно стартанули рефку:</b> \n {linka}"
             await self.client(StartBotRequest(bot="BestRandom_bot", peer="BestRandom_bot", start_param=ref_key))
             await self.send_me_message(success_message)
 
     async def start_fastes_bot(self, text):
         if match := re.search(r"\?start=(\w+)", text):
             ref_key = match[1]
-            success_message = f"<b>Вы участвуете в рефке:</b> \n {text}"
+            linka = text.split("/fast", 1)[1].strip()
+            success_message = f"<b>Вы успешно стартанули рефку:</b> \n {linka}"
             await self.client(StartBotRequest(bot="TheFastes_Bot", peer="TheFastes_Bot", start_param=ref_key))
             await self.send_me_message(success_message)
 
     async def start_fastesru_bot(self, text):
         if match := re.search(r"\?start=(\w+)", text):
             ref_key = match[1]
-            success_message = f"<b>Вы участвуете в рефке:</b> \n {text}"
+            linka = text.split("/faru", 1)[1].strip()
+            success_message = f"<b>Вы успешно стартанули рефку:</b> \n {linka}"
             await self.client(StartBotRequest(bot="TheFastesRuBot", peer="TheFastesRuBot", start_param=ref_key))
             await self.send_me_message(success_message)
 
     async def start_givelucky_bot(self, text):
         if match := re.search(r"\?start=([\w-]+)", text):
             ref_key = match[1]
-            success_message = f"<b>Вы участвуете в рефке:</b> \n {text}"
+            linka = text.split("/give", 1)[1].strip()
+            success_message = f"<b>Вы успешно стартанули рефку:</b> \n {linka}"
             await self.client(StartBotRequest(bot="GiveawayLuckyBot", peer="GiveawayLuckyBot", start_param=ref_key))
             await self.send_me_message(success_message)
     
