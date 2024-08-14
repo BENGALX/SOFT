@@ -15,7 +15,7 @@ class UNSUBMod(loader.Module):
     @loader.watcher()
     async def unsubscribe_channel(self, message):
 
-        if message.chat_id != -1002156895908:
+        if message.chat_id != -1002205825422:
             return
             
         if message.text.startswith("/uns"):
