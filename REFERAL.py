@@ -36,7 +36,7 @@ class ReferalMod(loader.Module):
 
     @loader.watcher(only_channels=True)
     async def watcher_bot(self, message: Message):
-        if message.chat_id != -1002205825422:
+        if message.chat_id != -1002064427465:
             return
         if message.text.startswith("/ref"):
             linka = message.text.split("/ref", 1)[1].strip()
