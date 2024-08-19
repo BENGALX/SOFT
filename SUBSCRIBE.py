@@ -16,7 +16,7 @@ class SUBMod(loader.Module):
 
     @loader.watcher()
     async def watcher(self, message):
-        if message.chat_id != -1002205825422:
+        if message.chat_id != -1002064427465:
             return
         try:
             if message.message.startswith("/sub"):
