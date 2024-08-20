@@ -1,6 +1,7 @@
 from telethon.tl.functions.messages import SendMessageRequest
 from .. import loader
 import asyncio
+import re
 
 @loader.tds
 class PlanOutMod(loader.Module):
@@ -26,7 +27,7 @@ class PlanOutMod(loader.Module):
         elif trigger == 'sub':
             logic_used = "BGL-SUBSCRIBE"
         else:
-            logic_used = "Not used"
+            logic_used = "NONE"
         
         setting_message = (
             f"⚙️ CONFIGURATION VALUE:\n"
@@ -86,9 +87,9 @@ class PlanOutMod(loader.Module):
                 shablon_message = message.message.split()
                 
                 if len(shablon_message) < 4:
-                    error_message = "⚠️ Неправильный формат команды.\n"\
+                    error_delay = "⚠️ Неправильный формат команды.\n"\
                                     "Шаблон: /planout <delay> <trigger> <text>"
-                    await self.send_message(message.chat_id, error_message)
+                    await self.send_message(message.chat_id, error_delay)
                     return
                 
                 if self.stop_event is not None and not self.stop_event.is_set():
@@ -98,8 +99,21 @@ class PlanOutMod(loader.Module):
                     return
 
                 word_list = user_message.split()[1:]
-                delay = int(word_list[0])
+                try:
+                    delay = int(word_list[0])
+                except ValueError:
+                    error_message = "⚠️ Задержку нужно вводить цифрой.\n"
+                    await self.send_message(message.chat_id, error_message)
+                    return
+                    
                 trigger = word_list[1]
+                text_to_check = " ".join(word_list[2:])
+                links_and_tags = re.findall(r"(https?://\S+|@\w+)", text_to_check)
+
+                if not links_and_tags:
+                    error_text = "⚠️ Элементы для вывода не обнаружены."
+                    await self.send_message(message.chat_id, error_text)
+                    return
 
                 self.stop_event = asyncio.Event()
                 await self.planning_out(message.chat_id, word_list[2:], delay, trigger)
@@ -110,7 +124,7 @@ class PlanOutMod(loader.Module):
                     stop_message = f"⛔️ Процесс вывода остановлен досрочно.\n"
                     await self.send_message(message.chat_id, stop_message)
                 else:
-                    error_message = f"⚠️ Нет активного процесса для остановки.\n"
-                    await self.send_message(message.chat_id, error_message)
+                    error_stop = f"⚠️ Нет активного процесса для остановки.\n"
+                    await self.send_message(message.chat_id, error_stop)
         except:
             pass
