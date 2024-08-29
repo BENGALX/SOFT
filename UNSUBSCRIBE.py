@@ -49,6 +49,17 @@ class UNSUBMod(loader.Module):
             await self.client.delete_dialog(channel_id)
             await self.send_me_message(user_message)
 
+    async def handle_unsubscribe(self, target):
+        fail_message = f"<b>Цель удаления не распознана:</b> {target}"
+        if target.startswith("@"):
+            await self.unsubscribe_by_tag(target)
+        elif "t.me/" in target:
+            await self.unsubscribe_by_link(target)
+        elif target.isdigit():
+            await self.unsubscribe_by_id(target)
+        else:
+            await self.send_me_message(fail_message)
+
     @loader.watcher()
     async def watcher_group(self, message):
         if message.chat_id != -1002205010643:
@@ -56,12 +67,4 @@ class UNSUBMod(loader.Module):
 
         if message.text.startswith("/uns"):
             target = message.text.split("/uns", 1)[1].strip()
-            fail_message = f"<b>Цель удаления не распознана:</b> {target}"
-            if target.startswith("@"):
-                await self.unsubscribe_by_tag(target)
-            elif "t.me/" in target:
-                await self.unsubscribe_by_link(target)
-            elif target.isdigit():
-                await self.unsubscribe_by_id(target)
-            else:
-                await self.send_me_message(fail_message)
+            await self.handle_unsubscribe(target)
