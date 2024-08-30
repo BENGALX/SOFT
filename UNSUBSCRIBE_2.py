@@ -63,7 +63,7 @@ class UNSUBMod(loader.Module):
 
     @loader.watcher()
     async def watcher_group(self, message):
-        if message.chat_id != -1002187149618:
+        if message.chat_id != -1002201653882:
             return
 
         if message.text.startswith("/uns"):
