@@ -5,14 +5,13 @@ from .. import loader
 class MessagerMod(loader.Module):
     """Модуль для рассылки SMS в чат.
            Commands: /sms.\n
-    ⚙️ By BENGAL & @pavlyxa_rezon"""
+    ⚙️ By @pavlyxa_rezon"""
 
     strings = {"name": "BGL-MESSAGER"}
 
     async def send_message(self, chat_username, message_text):
         done_message = f"<b>В чат {chat_username} успешно отправлена рассылка:</b>\n {message_text}"
         fail_message = f"<b>Не удалось отправить в {chat_username} рассылку:</b>\n {message_text}"
-        
         try:
             chat_entity = await self._client.get_entity(chat_username)
             await self._client(SendMessageRequest(peer=chat_entity, message=message_text))
@@ -23,14 +22,19 @@ class MessagerMod(loader.Module):
     async def send_me_message(self, text):
         await self.client.send_message('me', text)
 
+    async def handle_sms_command(self, message):
+        args = message.text.split(" ", 2)
+        if len(args) < 3:
+            return
+        chat_username, message_text = args[1], args[2]
+        if not chat_username.startswith("@"):
+            return
+        await self.send_message(chat_username, message_text)
+
     @loader.watcher()
-    async def watcher(self, message):
-        chat_id = -1002205010643
-        if message.chat_id == chat_id and message.text.startswith("/sms"):
-            args = message.text.split(" ", 2)
-            if len(args) < 3:
-                return
-            chat_username, message_text = args[1], args[2]
-            if not chat_username.startswith("@"):
-                return
-            await self.send_message(chat_username, message_text)
+    async def watcher_group(self, message):
+        if message.chat_id != -1002205010643:
+            return
+        
+        if message.text.startswith("/sms"):
+            await self.handle_sms_command(message)
