@@ -43,6 +43,9 @@ class MessagerMod(loader.Module):
     async def watcher_group(self, message):
         if message.chat_id != self.config["custom_uid"]:
             return
-        
-        if message.text.startswith("/sms"):
-            await self.handle_sms_command(message)
+
+        try:
+            if message.text.startswith("/sms"):
+                await self.handle_sms_command(message)
+        except:
+            pass
