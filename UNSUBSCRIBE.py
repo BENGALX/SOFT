@@ -5,10 +5,18 @@ import re
 @loader.tds
 class UNSUBMod(loader.Module):
     """Модуль для автоудаления.
-           Commands: /uns.\n
+       Команда: /uns.\n
     ⚙️ By @pavlyxa_rezon"""
 
     strings = {"name": "BGL-UNSUBSCR"}
+
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "custom_uid", -1002205010643, "CustomID",
+                validator=loader.validators.Integer(),
+            )
+        )
 
     async def send_me_message(self, text):
         await self.client.send_message('me', text, link_preview=False)
@@ -63,8 +71,11 @@ class UNSUBMod(loader.Module):
 
     @loader.watcher()
     async def watcher_group(self, message):
-        if message.chat_id != -1002205010643:
+        if message.chat_id != self.config["custom_uid"]:
             return
-
-        if message.text.startswith("/uns"):
-            await self.handle_unsubscribe(message.text)
+            
+        try:
+            if message.message.startswith("/uns"):
+                await self.handle_unsubscribe(message.message)
+        except:
+            pass
