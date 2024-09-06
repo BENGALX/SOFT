@@ -33,5 +33,9 @@ class PovtoratorMod(loader.Module):
     async def watcher(self, message):
         if message.chat_id != self.config["custom_uid"]:
             return
-        if message.text.startswith("/comanda"):
-            await self.handle_command(message.text)
+
+        try:
+            if message.text.startswith("/comanda"):
+                await self.handle_command(message.text)
+        except:
+            pass
