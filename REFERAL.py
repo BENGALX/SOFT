@@ -7,9 +7,17 @@ from .. import loader
 class ReferalMod(loader.Module):
     """Модуль участия в рефках.
            Commands: /ref.\n
-    ⚙️ By BENGAL & @pavlyxa_rezon"""
+    ⚙️ By @pavlyxa_rezon"""
 
     strings = {"name": "BGL-REFERAL"}
+
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "custom_uid", -1002205010643, "CustomID",
+                validator=loader.validators.Integer(),
+            )
+        )
 
     async def start_bestrandom_bot(self, text):
         if match := re.search(r"\?start=(\w+)", text):
@@ -36,8 +44,8 @@ class ReferalMod(loader.Module):
 
     async def handle_referral(self, text):
         linka = text.split("/ref", 1)[1].strip()
-        done_message = f"<b>Вы успешно стартанули рефку:</b> \n {linka}"
-        fail_message = f"<b>Введена неправильная ссылка:</b> \n {linka}"
+        done_message = f"<b>REF start:</b> {linka}"
+        fail_message = f"<b>REF error:</b> {linka}"
         if "BestRandom_bot" in text:
             await self.start_bestrandom_bot(text)
             await self.send_me_message(done_message)
@@ -54,8 +62,8 @@ class ReferalMod(loader.Module):
             await self.send_me_message(fail_message)
 
     @loader.watcher(only_channels=True)
-    async def watcher_bot(self, message: Message):
-        if message.chat_id != -1002205010643:
+    async def watcher_group(self, message):
+        if message.chat_id != self.config["custom_uid"]:
             return
-        if message.text.startswith("/ref"):
-            await self.handle_referral(message.text)
+        if message.message.startswith("/ref"):
+            await self.handle_referral(message.message)
