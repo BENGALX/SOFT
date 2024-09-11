@@ -49,8 +49,8 @@ class ReferalMod(loader.Module):
 
     async def handle_referral(self, text):
         linka = text.split("/ref", 1)[1].strip()
-        done_message = f"<b>REF start:</b> {linka}"
-        fail_message = f"<b>REF error:</b> {linka}"
+        done_message = f"<b>✅ REF start:</b> {linka}"
+        fail_message = f"<b>🚫 REF error:</b> {linka}"
         if "BestRandom_bot" in text:
             await self.start_bestrandom_bot(text)
             await self.send_me_message(done_message)
