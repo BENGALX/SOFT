@@ -23,8 +23,8 @@ class SUBMod(loader.Module):
         await self.client.send_message('me', text, link_preview=False)
 
     async def subscribe_by_link(self, target):
-        done_message = f"<b>Вы успешно подписались на:</b>\n {target}"
-        fail_message = f"<b>Не удалось подписаться на:</b>\n {target}"
+        done_message = f"<b>✅ SUBSCRIBE:</b>\n {target}"
+        fail_message = f"<b>🚫 SUB error:</b>\n {target}"
         try:
             await self.client(JoinChannelRequest(channel=target))
             await self.send_me_message(done_message)
