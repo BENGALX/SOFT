@@ -38,6 +38,11 @@ class ReferalMod(loader.Module):
         if match := re.search(r"\?start=([\w-]+)", text):
             ref_key = match[1]
             await self.client(StartBotRequest(bot="GiveawayLuckyBot", peer="GiveawayLuckyBot", start_param=ref_key))
+
+    async def start_best_contests_bot(self, text):
+        if match := re.search(r"\?start=([\w-]+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="best_contests_bot", peer="best_contests_bot", start_param=ref_key))
     
     async def send_me_message(self, text):
         await self.client.send_message('me', text, link_preview=False)
@@ -57,6 +62,9 @@ class ReferalMod(loader.Module):
             await self.send_me_message(done_message)
         elif "GiveawayLuckyBot" in text:
             await self.start_givelucky_bot(text)
+            await self.send_me_message(done_message)
+        elif "best_contests_bot" in text:
+            await self.start_best_contests_bot(text)
             await self.send_me_message(done_message)
         else:
             await self.send_me_message(fail_message)
