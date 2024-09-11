@@ -22,8 +22,8 @@ class UNSUBMod(loader.Module):
         await self.client.send_message('me', text, link_preview=False)
 
     async def unsubscribe_by_tag(self, target):
-        done_message = f"<b>Вы успешно отписались от</b> {target}"
-        user_message = f"<b>Вы успешно удалили чат с</b> {target}"
+        done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
+        user_message = f"<b>✅ DELETE:</b> {target}"
         try:
             await self.client(functions.channels.LeaveChannelRequest(target))
             await self.send_me_message(done_message)
@@ -33,8 +33,8 @@ class UNSUBMod(loader.Module):
 
     async def unsubscribe_by_link(self, target):
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-        done_message = f"<b>Вы успешно отписались от</b>\n{target}"
-        user_message = f"<b>Вы успешно удалили чат с</b>\n{target}"
+        done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
+        user_message = f"<b>✅ DELETE:</b>\n{target}"
         if match:
             username = match.group(1)
             try:
@@ -44,11 +44,11 @@ class UNSUBMod(loader.Module):
                 await self.client.delete_dialog(username)
                 await self.send_me_message(user_message)
         else:
-            await self.send_me_message("Не удалось извлечь имя пользователя.")
+            await self.send_me_message("🚫 UNSUBSCRIBE error: ссылка")
 
     async def unsubscribe_by_id(self, target):
-        done_message = f"<b>Вы успешно отписались от ID:</b>{target}"
-        user_message = f"<b>Вы успешно удалили чат с ID:</b> {target}"
+        done_message = f"<b>✅ UNSUBSCRIBE ID:</b> {target}"
+        user_message = f"<b>✅ DELETE ID:</b> {target}"
         try:
             channel_id = int(target)
             await self.client(functions.channels.LeaveChannelRequest(channel_id))
@@ -59,7 +59,7 @@ class UNSUBMod(loader.Module):
 
     async def handle_unsubscribe(self, text):
         target = text.split("/uns", 1)[1].strip()
-        fail_message = f"<b>Цель удаления не распознана:</b> {target}"
+        fail_message = f"<b>🚫 UNSUBSCRIBE error: target not found:</b> {target}"
         if target.startswith("@"):
             await self.unsubscribe_by_tag(target)
         elif "t.me/" in target:
