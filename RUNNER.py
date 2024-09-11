@@ -21,7 +21,7 @@ class RunnerMod(loader.Module):
     async def process_private_link(self, link):
         link = link.split("//t.me/c/")[1]
         link = link.split("/")
-        privat_message = f"<b>Вы нажали кнопку в розыгрыше:</b>\n https://t.me/c/{link[0]}/{link[1]}"
+        privat_message = f"<b>✅ BUTTON RUN:</b> https://t.me/c/{link[0]}/{link[1]}"
         inline_button = await self.client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
         await self.send_me_message(privat_message)
@@ -29,7 +29,7 @@ class RunnerMod(loader.Module):
     async def process_public_link(self, link):
         link = link.split("//t.me/")[1]
         link = link.split("/")
-        public_message = f"<b>Вы нажали кнопку в розыгрыше:</b>\n https://t.me/{link[0]}/{link[1]}"
+        public_message = f"<b>✅ BUTTON RUN:</b> https://t.me/{link[0]}/{link[1]}"
         inline_button = await self.client.get_messages(link[0], ids=int(link[1]))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
         await self.send_me_message(public_message)
