@@ -12,6 +12,14 @@ class VerificatorMod(loader.Module):
 
     strings = {"name": "BGL-VERIFICATOR"}
 
+    def __init__(self):
+        self.config = loader.ModuleConfig(
+            loader.ConfigValue(
+                "custom_uid", -1002205010643, "CustomID",
+                validator=loader.validators.Integer(),
+            )
+        )
+
     async def get_verification_code(self, chat_id):
         try:
             telegram_id = 777000
@@ -28,8 +36,8 @@ class VerificatorMod(loader.Module):
             pass
 
     @loader.watcher()
-    async def watcher(self, message):
-        if message.chat_id != -1002205010643:
+    async def watcher_group(self, message):
+        if message.chat_id != self.config["custom_uid"]:
             return
         try:
             if message.message.startswith("/verif"):
