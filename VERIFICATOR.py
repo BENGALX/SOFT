@@ -15,7 +15,7 @@ class VerificatorMod(loader.Module):
     def __init__(self):
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "custom_uid", -1002231264660, "CustomID",
+                "custom_uid", -1002217728765, "CustomID",
                 validator=loader.validators.Integer(),
             )
         )
