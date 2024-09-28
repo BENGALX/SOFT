@@ -23,7 +23,7 @@ class SUBMod(loader.Module):
                 validator=loader.validators.Integer(),
             ),
             loader.ConfigValue(
-                "chat_logs_id", -1002205010643, "Группа с выводом всех логов.",
+                "chat_logs_id", -1002156895908, "Группа с выводом всех логов.",
                 validator=loader.validators.Integer(),
             ),
             loader.ConfigValue(
