@@ -5,7 +5,7 @@ import asyncio
 from .. import loader
 
 @loader.tds
-class SUBMod(loader.Module):го
+class SUBMod(loader.Module):
     """Модуль подписок на каналы.
            Commands: /helpsub @\n
     ⚙️ By @pavlyxa_rezon\n"""
