@@ -2,7 +2,7 @@ import re
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
 import asyncio
-from .. import loader
+from .. import loader,,,,
 
 @loader.tds
 class SUBMod(loader.Module):
