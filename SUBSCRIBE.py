@@ -19,11 +19,11 @@ class SUBMod(loader.Module):
         
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_owner_id", -1002205010643, "Группа со вводом активаторов.",
+                "chat_owner_id", -1002187569778, "Группа со вводом активаторов.",
                 validator=loader.validators.Integer(),
             ),
             loader.ConfigValue(
-                "chat_logs_id", -1002205010643, "Группа с выводом всех логов.",
+                "chat_logs_id", -1002187569778, "Группа с выводом всех логов.",
                 validator=loader.validators.Integer(),
             ),
             loader.ConfigValue(
