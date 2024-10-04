@@ -67,7 +67,7 @@ class SUBMod(loader.Module):
     async def send_manual_message(self, text):
         """Обработка команды /manual"""
         manual = (f"<b>🔹 Команды модуля:</b>\n\n"
-                    f'<a href="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg">чзх</a>')
+                    f'<a href="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg">чзх</a>\n')
                     f"— /sub [ссылка/username] — Подписаться на канал или группу (публичные https://t.me/, t.me/ или @; частные или с запросом https://t.me/+, t.me/+).\n\n"
                     f"— /reconf [name] [argument] [account] — Сменить конфигурацию (название параметра, новое значение, один или несколько @ акков либо all для всех)\n\n"
                     f"— /manual @user — Справка по командам модуля.\n")
