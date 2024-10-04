@@ -103,15 +103,16 @@ class CHANNELSMod(loader.Module):
         except Exception as e:
             await self.send_module_message(f"{fail_message}\n{e}")
 
+    
     async def unsubscribe_by_tag(self, target):
         done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
         user_message = f"<b>✅ DELETE:</b> {target}"
         try:
             await self.client(functions.channels.LeaveChannelRequest(target))
-            await self.send_module_message(done_message)
+            await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except:
             await self.client.delete_dialog(target)
-            await self.send_module_message(user_message)
+            await self.send_module_message(user_message, delay_info=self.get_delay_host())
             
 
     async def update_user_config(self, config_name, new_value):
