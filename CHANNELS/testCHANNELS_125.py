@@ -1,16 +1,19 @@
 import re
+from telethon.tl import functions
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.channels import LeaveChannelRequest
+
 import asyncio
 from .. import loader
 
 @loader.tds
-class SUBMod(loader.Module):
+class CHANNELSMod(loader.Module):
     """Модуль подписок на каналы.
            Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
-    strings = {"name": "BGL-SUBSCRIBE"}
+    strings = {"name": "BGL-CHANNELS"}
     
     def __init__(self):
         self.owner_list = [922318957, 1868227136]
@@ -51,7 +54,7 @@ class SUBMod(loader.Module):
         if not self.config["ownerchat"]:
             return
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info else ""
+            delay_text = f", Delay: {delay_info} сек" if delay_info else ", Delay: 0."
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n\n{text}"
             await self.client.send_message(self.config["ownerchat"], logger_message, link_preview=False)
         except:
@@ -102,6 +105,46 @@ class SUBMod(loader.Module):
             await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             await self.send_module_message(f"{fail_message}\n{e}")
+
+    
+    async def unsubscribe_by_tag(self, target):
+        """Отписка по юзернейму."""
+        done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
+        user_message = f"<b>✅ DELETE:</b> {target}"
+        try:
+            await self.client(functions.channels.LeaveChannelRequest(target))
+            await self.send_module_message(done_message, delay_info=self.get_delay_host())
+        except:
+            await self.client.delete_dialog(target)
+            await self.send_module_message(user_message, delay_info=self.get_delay_host())
+
+    async def unsubscribe_by_link(self, target):
+        """Отписка по обычной ссылке."""
+        match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
+        done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
+        user_message = f"<b>✅ DELETE:</b>\n{target}"
+        if match:
+            username = match.group(1)
+            try:
+                await self.client(functions.channels.LeaveChannelRequest(username))
+                await self.send_module_message(done_message, delay_info=self.get_delay_host())
+            except:
+                await self.client.delete_dialog(username)
+                await self.send_module_message(user_message, delay_info=self.get_delay_host())
+        else:
+            await self.send_module_message("🚫 UNSUBSCRIBE error")
+
+    async def unsubscribe_by_id(self, target):
+        """Отписка по айди."""
+        done_message = f"<b>✅ UNSUBSCRIBE ID:</b> {target}"
+        user_message = f"<b>✅ DELETE ID:</b> {target}"
+        try:
+            channel_id = int(target)
+            await self.client(functions.channels.LeaveChannelRequest(channel_id))
+            await self.send_module_message(done_message, delay_info=self.get_delay_host())
+        except:
+            await self.client.delete_dialog(channel_id)
+            await self.send_module_message(user_message, delay_info=self.get_delay_host())
             
 
     async def update_user_config(self, config_name, new_value):
@@ -121,14 +164,26 @@ class SUBMod(loader.Module):
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
         target = text.split("/sub", 1)[1].strip()
+        await self.delay_host()
         if 't.me/+' in target:
-            await self.delay_host()
             await self.subscribe_private(target)
         elif "t.me/" in target or "@" in target:
-            await self.delay_host()
             await self.subscribe_public(target)
         else:
             await self.send_module_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
+
+    async def handle_unsubscribe(self, text):
+        """Центральная обработка /uns"""
+        target = text.split("/uns", 1)[1].strip()
+        await self.delay_host()
+        if target.startswith("@"):
+            await self.unsubscribe_by_tag(target)
+        elif "t.me/" in target:
+            await self.unsubscribe_by_link(target)
+        elif target.isdigit():
+            await self.unsubscribe_by_id(target)
+        else:
+            await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
 
     async def handle_user_config(self, text):
         """USER configuration of module"""
@@ -157,6 +212,9 @@ class SUBMod(loader.Module):
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
+            elif message.message.startswith("/uns"):
+                await self.handle_unsubscribe(message.message)
+            
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
