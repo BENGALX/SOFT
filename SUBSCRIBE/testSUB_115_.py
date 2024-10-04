@@ -18,7 +18,7 @@ class SUBMod(loader.Module):
         
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "chat_owner_id", -1002205010643, "Chat OWNER.",
+                "ownerchat", -1002205010643, "Chat OWNER.",
                 validator=loader.validators.Integer(),
             ),
             loader.ConfigValue(
@@ -48,34 +48,35 @@ class SUBMod(loader.Module):
         """Логи действий модуля"""
         if not self.config["logger"]:
             return
-        if not self.config["chat_owner_id"]:
+        if not self.config["ownerchat"]:
             return
         try:
             delay_text = f", Delay: {delay_info} сек" if delay_info else ""
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n\n{text}"
-            await self.client.send_message(self.config["chat_owner_id"], logger_message, link_preview=False)
+            await self.client.send_message(self.config["ownerchat"], logger_message, link_preview=False)
         except:
             pass
 
     async def send_config_message(self, text):
         """Логи изменений конфигураторов"""
-        if not self.config["chat_owner_id"]:
+        if not self.config["ownerchat"]:
             return
         logger_message = f"💻 <b>Server: {self.config['group']}: </b>{text}"
-        await self.client.send_message(self.config["chat_owner_id"], logger_message)
-
+        await self.client.send_message(self.config["ownerchat"], logger_message)
+        
     async def send_manual_message(self, text):
         """Обработка команды /manual"""
         manual = (f"<b>🔹 Команды модуля:</b>\n\n"
-                    f"— /sub [ссылка/username] — Подписаться на канал или группу (публичные по ссылкам https://t.me/, t.me/ или тегу @; частные или с запросом по ссылкам https://t.me/+ или t.me/+).\n\n"
-                    f"— /reconf [name] [argument] [@us1 @us2 or all] (где name это название нужного параметра, argument это новое значение, а дальше один или несколько @username аккаунтов, на которых вы хотите сменить конфигурацию, либо all для всех аккаунтов)\n\n"
-                    f"— /manual @user — Справка по командам модуля, вызванная от имени выбранного аккаунта\n")
+                    f'<a href="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg">чзх</a>')
+                    f"— /sub [ссылка/username] — Подписаться на канал или группу (публичные https://t.me/, t.me/ или @; частные или с запросом https://t.me/+, t.me/+).\n\n"
+                    f"— /reconf [name] [argument] [account] — Сменить конфигурацию (название параметра, новое значение, один или несколько @ акков либо all для всех)\n\n"
+                    f"— /manual @user — Справка по командам модуля.\n")
         parts = text.split()
         if len(parts) < 2:
             return
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
-            await self.client.send_message(self.config["chat_owner_id"], manual)
+            await self.client.send_message(self.config["ownerchat"], manual)
         
     
     async def subscribe_public(self, target):
@@ -145,7 +146,7 @@ class SUBMod(loader.Module):
     @loader.watcher()
     async def watcher_group(self, message):
         """Handle commands calling"""
-        if message.chat_id != self.config["chat_owner_id"]:
+        if message.chat_id != self.config["ownerchat"]:
             return
         if message.sender_id not in self.owner_list:
             return
