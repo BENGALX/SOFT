@@ -98,24 +98,21 @@ class SUBMod(loader.Module):
             await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             await self.send_module_message(f"{fail_message}\n{e}")
+            
 
     async def update_user_config(self, config_name, new_value):
         """Обновление конфиг параметров."""
-        if config_name in self.config:
-            try:
-                if isinstance(self.config[config_name], bool):
-                    new_value = new_value.lower() in ['true', '1', 'yes']
-                elif isinstance(self.config[config_name], int):
-                    new_value = int(new_value)
-                self.config[config_name] = new_value
-                done_message = f"<b>✅ CONFIG:\nПараметр {config_name} изменен на {new_value}.</b>"
-                await self.send_config_message(done_message)
-            except Exception as e:
-                fail_message = f"<b>🚫 CONFIG ERROR:</b>\n{e}"
-                await self.send_config_message(fail_message)
+        if config_name not in self.config:
+            return
         else:
-            fail_message = f"<b>🚫 CONFIG ERROR:\n</b>Параметр {config_name} не найден."
-            await self.send_config_message(fail_message)
+            if isinstance(self.config[config_name], bool):
+                new_value = new_value.lower() in ['true', '1', 'yes']
+            elif isinstance(self.config[config_name], int):
+                new_value = int(new_value)
+            self.config[config_name] = new_value
+            done_message = f"<b>✅ CONFIG:\nПараметр {config_name} изменен на {new_value}.</b>"
+            await self.send_config_message(done_message)
+            
 
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
@@ -154,8 +151,6 @@ class SUBMod(loader.Module):
             return
             
         try:
-            if not self.module_enabled:
-                return
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/reconf"):
