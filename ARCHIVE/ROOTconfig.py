@@ -20,3 +20,5 @@
 
     if message.message.startswith("root"):
         await self.handle_root_config(message.message, message.sender_id)
+    if not self.module_enabled:
+        return
