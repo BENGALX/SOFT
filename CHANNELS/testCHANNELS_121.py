@@ -5,12 +5,12 @@ import asyncio
 from .. import loader
 
 @loader.tds
-class SUBMod(loader.Module):
+class CHANNELSMod(loader.Module):
     """Модуль подписок на каналы.
            Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
-    strings = {"name": "BGL-SUBSCRIBE"}
+    strings = {"name": "BGL-CHANNELS"}
     
     def __init__(self):
         self.owner_list = [922318957, 1868227136]
@@ -102,6 +102,16 @@ class SUBMod(loader.Module):
             await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             await self.send_module_message(f"{fail_message}\n{e}")
+
+    async def unsubscribe_by_tag(self, target):
+        done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
+        user_message = f"<b>✅ DELETE:</b> {target}"
+        try:
+            await self.client(functions.channels.LeaveChannelRequest(target))
+            await self.send_module_message(done_message)
+        except:
+            await self.client.delete_dialog(target)
+            await self.send_module_message(user_message)
             
 
     async def update_user_config(self, config_name, new_value):
@@ -130,6 +140,18 @@ class SUBMod(loader.Module):
         else:
             await self.send_module_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
 
+    async def handle_unsubscribe(self, text):
+        """Центральная обработка /uns"""
+        target = text.split("/uns", 1)[1].strip()
+        if target.startswith("@"):
+            await self.unsubscribe_by_tag(target)
+        elif "t.me/" in target:
+            await self.unsubscribe_by_link(target)
+        elif target.isdigit():
+            await self.unsubscribe_by_id(target)
+        else:
+            await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+
     async def handle_user_config(self, text):
         """USER configuration of module"""
         parts = text.split()
@@ -157,6 +179,9 @@ class SUBMod(loader.Module):
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
+            elif message.message.startswith("/uns"):
+                await self.handle_unsubscribe(message.message)
+            
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
