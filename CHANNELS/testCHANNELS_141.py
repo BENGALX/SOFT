@@ -77,17 +77,13 @@ class CHANNELSMod(loader.Module):
         )
 
         buttons = [
-            [Button.inline("Базовая настройка", data="setup_manual")],
-            [Button.inline("Конфигурация", data="config_manual")],
+            [Button.inline("Базис", data="setup_manual")],
+            [Button.inline("Конфиг", data="config_manual")],
             [Button.inline("Подписки", data="subscribe_manual")],
             [Button.inline("Отписки", data="unsubscribe_manual")]
         ]
 
-        manual_part1 = (
-            f"<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
-        )
-
-        manual_part2 = (            
+        setup_manual = (            
             f"<b>🔗 Базовая настройка.</b>\n"
             f"После установки модуля вам нужно выполнить несколько простых действий для раскрытия полного функционаа модуля. "
             f"Без настройки он тоже будет работат если что.\n\n"
@@ -98,7 +94,7 @@ class CHANNELSMod(loader.Module):
             f"Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n"
         )
 
-        manual_part3 = (
+        config_manual = (
             f"<b>🔗 Конфигурация:</b>\n"
             f"CMD: /reconf [name] [value] [acc]\n\n"
             f"<b>Параметры и их аргументы\n</b>"
@@ -107,13 +103,13 @@ class CHANNELSMod(loader.Module):
             f"—acc — один или несколько юзеров, где нужно перезаписать конфиг (all для всех).\n"
         )
 
-        manual_part4 = (
+        subscribe_manual = (
             f"<b>🔗 Подписки: /sub [target]</b>\n"
             f"PUBLIC: https://t.me/, t.me/ или @\n"
             f"PRIVATE: https://t.me/+, t.me/+\n"
         )
 
-        manual_part5 = (
+        unsubscribe_manual = (
             f"<b>\n🔗 Отписки: /uns [target]</b>\n"
             f"PUBLIC: https://t.me/, //t.me/ или @\n"
             f"PRIVATE: ID в формате 100... (без минуса).\n"
