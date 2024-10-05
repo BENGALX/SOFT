@@ -92,6 +92,7 @@ class CHANNELSMod(loader.Module):
             
         try:
             if message.message.startswith("/manual"):
+                print(f"Полученные части: {message.message.split()}")
                 await self.send_manual_message(message, mode="main")
         except Exception as e:
             print(f"Ошибка: {str(e)}")
