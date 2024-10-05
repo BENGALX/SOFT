@@ -92,7 +92,7 @@ class CHANNELSMod(loader.Module):
             
         try:
             if message.message.startswith("/manual"):
-                await self.send_manual_message(message.message)
+                await self.send_manual_message(message, mode="main")
         except Exception as e:
             print(f"Ошибка: {str(e)}")
 
