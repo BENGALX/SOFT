@@ -15,7 +15,7 @@ class CHANNELSMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
-    async def send_manual_message(self, text):
+    async def send_manual_message(self, text, mode="main"):
         """Обработка команды /manual"""
         parts = text.split()
         if len(parts) < 2:
@@ -57,11 +57,29 @@ class CHANNELSMod(loader.Module):
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
-            await self.client.send_file(self.owner_chat, image_url, caption=manual_part1)
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part2)
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part3)
+            if mode == "main":
+                text = manual_part1
+                buttons = [
+                    [{"text": "⚙️ Конфигурация", "callback": self.inline__show_config}],
+                    [{"text": "📜 Функции", "callback": self.inline__show_functions}],
+                ]
+            elif mode == "config":
+                text = manual_part2
+                buttons = [
+                    [{"text": "🔙 Назад", "callback": self.inline__show_main}],
+                ]
+            elif mode == "functions":
+                text = manual_part3
+                buttons = [
+                    [{"text": "🔙 Назад", "callback": self.inline__show_main}],
+                ]
+            await self.inline.form(
+                message=message,
+                text=text,
+                reply_markup=buttons,
+                disable_web_page_preview=True,
+                file=image_url if mode == "main" else None
+            )
             
     @loader.watcher()
     async def watcher_group(self, message):
@@ -76,3 +94,15 @@ class CHANNELSMod(loader.Module):
                 await self.send_manual_message(message.message)
         except:
             pass
+
+    async def inline__show_main(self, call):
+        """Показать основное сообщение"""
+        await self.send_manual_message(call, mode="main")
+
+    async def inline__show_config(self, call):
+        """Показать информацию о конфигурации"""
+        await self.send_manual_message(call, mode="config")
+
+    async def inline__show_functions(self, call):
+        """Показать информацию о функциях"""
+        await self.send_manual_message(call, mode="functions")
