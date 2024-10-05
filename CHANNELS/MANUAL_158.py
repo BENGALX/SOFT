@@ -15,9 +15,9 @@ class CHANNELSMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
-    async def send_manual_message(self, text, mode="main"):
+    async def send_manual_message(self, message, mode="main"):
         """Обработка команды /manual"""
-        parts = text.split()
+        parts = message.message.split()
         if len(parts) < 2:
             return
         
@@ -73,6 +73,7 @@ class CHANNELSMod(loader.Module):
                 buttons = [
                     [{"text": "🔙 Назад", "callback": self.inline__show_main}],
                 ]
+                
             await self.inline.form(
                 message=message,
                 text=text,
@@ -92,8 +93,8 @@ class CHANNELSMod(loader.Module):
         try:
             if message.message.startswith("/manual"):
                 await self.send_manual_message(message.message)
-        except:
-            pass
+        except Exception as e:
+            print(f"Ошибка: {str(e)}")
 
     async def inline__show_main(self, call):
         """Показать основное сообщение"""
