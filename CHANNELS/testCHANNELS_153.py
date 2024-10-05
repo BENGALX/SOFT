@@ -1,5 +1,5 @@
 import asyncio
-from .. import loader
+from .. import loader, utils
 
 @loader.tds
 class CHANNELSManualMod(loader.Module):
