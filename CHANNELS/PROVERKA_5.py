@@ -1,13 +1,10 @@
-import logging
 from telethon.tl.types import Message
 from .. import loader, utils
 
-logger = logging.getLogger(__name__)
-
 @loader.tds
-class InlineVizitkaMod(loader.Module):
+class InlineProverkaMod(loader.Module):
     strings = {
-        "name": "InlineVizitka",
+        "name": "InlineKnopka",
         "main_text": "<b>Выберите вариант:</b>",
         "choice_1": "<b>Вы выбрали 1</b>",
         "choice_2": "<b>Вы выбрали 2</b>",
@@ -15,8 +12,7 @@ class InlineVizitkaMod(loader.Module):
     }
 
     @loader.unrestricted
-    async def visitkacmd(self, message: Message):
-        """Отображает визитку с выбором"""
+    async def proverkacmd(self, message: Message):
         await self.inline.form(
             message=message,
             text=self.strings("main_text"),
