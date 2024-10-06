@@ -50,7 +50,7 @@ class MANUALMod(loader.Module):
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def send_manual_message(self, text):
+    async def send_manual_messagecmd(self, text):
         """Обработка команды /manual"""
         await self.inline.form(
             self.owner_chat,
@@ -120,16 +120,3 @@ class MANUALMod(loader.Module):
                     ],
                 ],
         )
-    
-    @loader.watcher()
-    async def watcher_group(self, message):
-        """Handle commands calling"""
-        if message.chat_id != self.owner_chat:
-            return
-        if message.sender_id not in self.owner_list:
-            return
-        try:
-            if message.message.startswith("/manual"):
-                await self.send_manual_message(message.message)
-        except:
-            pass
