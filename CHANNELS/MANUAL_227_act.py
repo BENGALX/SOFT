@@ -56,7 +56,6 @@ class MANUALMod(loader.Module):
         await self.inline.form(
             self.owner_chat,
             text=self.strings["manual_main"],
-            message=None,
             image=image_url,
             reply_markup=
             [
@@ -100,7 +99,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
-    @loader.inline_callback("manual_subscr")
+    @loader.inline_callback("manual_unsubs")
     async def inline__manual_unsubs(self, call):
         await call.edit(
             text=self.strings["manual_unsubs"],
