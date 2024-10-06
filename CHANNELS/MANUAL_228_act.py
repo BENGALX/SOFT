@@ -49,7 +49,6 @@ class MANUALMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
-    @loader.unrestricted
     async def send_manual_message(self):
         """Обработка команды /manual"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
