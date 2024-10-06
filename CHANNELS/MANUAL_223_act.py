@@ -128,6 +128,9 @@ class MANUALMod(loader.Module):
                     ],
                 ],
         )
+
+    async def handle_manual(self, text)
+    
     
     @loader.watcher()
     async def watcher_group(self, message):
