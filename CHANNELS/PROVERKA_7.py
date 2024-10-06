@@ -1,3 +1,4 @@
+
 from telethon.tl.types import Message
 from .. import loader, utils
 
@@ -17,8 +18,7 @@ class InlineProverkaMod(loader.Module):
             message=message,
             text=self.strings("main_text"),
             reply_markup=[
-                [{"text": "1", "callback": self.inline__choice_1}],
-                [{"text": "2", "callback": self.inline__choice_2}],
+                [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
             ],
         )
 
@@ -38,7 +38,6 @@ class InlineProverkaMod(loader.Module):
         await call.edit(
             text=self.strings("main_text"),
             reply_markup=[
-                [{"text": "1", "callback": self.inline__choice_1}],
-                [{"text": "2", "callback": self.inline__choice_2}],
+                [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
             ],
         )
