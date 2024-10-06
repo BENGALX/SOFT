@@ -1,11 +1,8 @@
 import re
+from telethon.tl.types import Message
+from .. import loader, utils
 from telethon.tl import functions
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.channels import LeaveChannelRequest
-
 import asyncio
-from .. import loader
 
 @loader.tds
 class MANUALMod(loader.Module):
@@ -63,9 +60,6 @@ class MANUALMod(loader.Module):
         if parts[1] == f"@{user.username}":
             await self.client.send_file(self.owner_chat, image_url, caption=manual_part1)
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part2)
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part3)
     
     @loader.watcher()
     async def watcher_group(self, message):
