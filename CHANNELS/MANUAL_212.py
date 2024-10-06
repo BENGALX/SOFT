@@ -60,11 +60,19 @@ class MANUALMod(loader.Module):
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
             await self.inline.form(
-                self.owner_chat, image_url,
-                message=message,
+                self.owner_chat,
                 text=self.strings("manual_main"),
+                message=None,
+                image=image_url,
                 reply_markup=[
-                    [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
+                    [
+                        {"text": "Readme", "callback": self.inline__manual_basic},
+                        {"text": "Config", "callback": self.inline__manual_config}
+                    ],
+                    [
+                        {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                        {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                    ],
                 ],
             )
             
