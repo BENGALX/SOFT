@@ -50,32 +50,26 @@ class MANUALMod(loader.Module):
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def send_manual_message(self, text):
+    async def send_manual_message(self):
         """Обработка команды /manual"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        user = await self.client.get_me()
-        if parts[1] == f"@{user.username}":
-            await self.inline.form(
-                self.owner_chat,
-                text=self.strings["manual_main"],
-                message=None,
-                image=image_url,
-                reply_markup=
+        await self.inline.form(
+            self.owner_chat,
+            text=self.strings["manual_main"],
+            message=None,
+            image=image_url,
+            reply_markup=
+            [
                 [
-                    [
-                        {"label": "Readme", "callback": self.inline__manual_basic},
-                        {"label": "Config", "callback": self.inline__manual_config}
-                    ],
-                    [
-                        {"label": "Subscribe", "callback": self.inline__manual_subscr},
-                        {"label": "UnSubscr", "callback": self.inline__manual_unsubs}
-                    ],
+                    {"text": "Readme", "callback": self.inline__manual_basic},
+                    {"text": "Config", "callback": self.inline__manual_config}
                 ],
-            )
+                [
+                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                ],
+            ],
+        )
             
     async def inline__manual_basic(self, call):
         await call.edit(
@@ -119,18 +113,27 @@ class MANUALMod(loader.Module):
             reply_markup=
             [
                     [
-                        {"label": "Readme", "callback": self.inline__manual_basic},
-                        {"label": "Config", "callback": self.inline__manual_config}
+                        {"text": "Readme", "callback": self.inline__manual_basic},
+                        {"text": "Config", "callback": self.inline__manual_config}
                     ],
                     [
-                        {"label": "Subscribe", "callback": self.inline__manual_subscr},
-                        {"label": "UnSubscr", "callback": self.inline__manual_unsubs}
+                        {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                        {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
                     ],
                 ],
         )
 
     async def handle_manual(self, text)
-    
+        """Обработка команды /manual"""
+        parts = text.split()
+        if len(parts) < 2:
+            return
+
+        user = await self.client.get_me()
+        if parts[1] == f"@{user.username}":
+            await self.send_manual_message()
+        else:
+            return
     
     @loader.watcher()
     async def watcher_group(self, message):
