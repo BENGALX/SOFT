@@ -52,13 +52,13 @@ class MANUALMod(loader.Module):
     @loader.unrestricted
     async def send_manual_message(self, text):
         """Обработка команды /manual"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
+        #parts = text.split()
+        #if len(parts) < 2:
+            #return
         
         #image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        user = await self.client.get_me()
-        if parts[1] == f"@{user.username}":
+        #user = await self.client.get_me()
+        #if parts[1] == f"@{user.username}":
             await self.inline.form(
                 self.owner_chat,
                 text=self.strings("manual_main"),
