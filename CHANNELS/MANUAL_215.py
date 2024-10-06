@@ -137,7 +137,7 @@ class MANUALMod(loader.Module):
         if message.sender_id not in self.owner_list:
             return
         try:
-            elif message.message.startswith("/manual"):
+            if message.message.startswith("/manual"):
                 await self.send_manual_message(message.message)
         except:
             pass
