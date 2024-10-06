@@ -123,7 +123,7 @@ class MANUALMod(loader.Module):
                 ],
         )
 
-    async def handle_manual(self, text)
+    async def handle_manual(self, text):
         """Обработка команды /manual"""
         parts = text.split()
         if len(parts) < 2:
@@ -144,6 +144,6 @@ class MANUALMod(loader.Module):
             return
         try:
             if message.message.startswith("/manual"):
-                await self.send_manual_message(message.message)
+                await self.handle_manual(message.message)
         except:
             pass
