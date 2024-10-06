@@ -50,7 +50,7 @@ class MANUALMod(loader.Module):
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def send_manual_messagecmd(self, message: Message):
+    async def send_manual_message(self, message: Message):
         """Вывод мануала с инлайном"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
