@@ -44,28 +44,24 @@ class MANUALMod(loader.Module):
         ),
         "back": "Назад"
     }
-    
+
     def __init__(self):
-        self.owner_list = [922318957]
-        self.owner_chat = -1002205010643
+        self.owner_list = [922318957]  # Твій список власників
+        self.owner_chat = -1002205010643  # ID каналу
 
     @loader.unrestricted
     async def send_manual_messagecmd(self, message: Message):
         """Обработка команды /manual"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.inline.form(
-            self.owner_chat,
+            message.chat_id,
             text=self.strings["manual_main"],
             image=image_url,
             reply_markup=[
-                [
-                    {"text": "Readme", "data": "manual_basic"},
-                    {"text": "Config", "data": "manual_config"}
-                ],
-                [
-                    {"text": "Subscribe", "data": "manual_subscr"},
-                    {"text": "UnSubscr", "data": "manual_unsubs"}
-                ],
+                [{"text": "Readme", "callback": self.inline__manual_basic}],
+                [{"text": "Config", "callback": self.inline__manual_config}],
+                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
+                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
             ],
         )
 
@@ -73,34 +69,28 @@ class MANUALMod(loader.Module):
     async def inline__manual_basic(self, call):
         await call.edit(
             text=self.strings["manual_basic"],
-            reply_markup=[[{"text": self.strings["back"], "data": "manual_main"}]],
+            reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
-        
+
     @loader.inline_callback("manual_config")
     async def inline__manual_config(self, call):
         await call.edit(
             text=self.strings["manual_config"],
-            reply_markup=[[
-                {"text": self.strings["back"], "data": "manual_main"}
-            ]],
+            reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
 
     @loader.inline_callback("manual_subscr")
     async def inline__manual_subscr(self, call):
         await call.edit(
             text=self.strings["manual_subscr"],
-            reply_markup=[[
-                {"text": self.strings["back"], "data": "manual_main"}
-            ]],
+            reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
 
     @loader.inline_callback("manual_unsubs")
     async def inline__manual_unsubs(self, call):
         await call.edit(
             text=self.strings["manual_unsubs"],
-            reply_markup=[[
-                {"text": self.strings["back"], "data": "manual_main"}
-            ]],
+            reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
 
     @loader.inline_callback("manual_main")
@@ -108,13 +98,9 @@ class MANUALMod(loader.Module):
         await call.edit(
             text=self.strings["manual_main"],
             reply_markup=[
-                [
-                    {"text": "Readme", "data": "manual_basic"},
-                    {"text": "Config", "data": "manual_config"}
-                ],
-                [
-                    {"text": "Subscribe", "data": "manual_subscr"},
-                    {"text": "UnSubscr", "data": "manual_unsubs"}
-                ],
+                [{"text": "Readme", "callback": self.inline__manual_basic}],
+                [{"text": "Config", "callback": self.inline__manual_config}],
+                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
+                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
             ],
         )
