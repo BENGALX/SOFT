@@ -58,10 +58,14 @@ class MANUALMod(loader.Module):
             message=message,  # Використовуємо повідомлення, щоб відповісти в той самий чат
             text=self.strings["manual_main"],
             reply_markup=[
-                [{"text": "Readme", "callback": self.inline__manual_basic}],
-                [{"text": "Config", "callback": self.inline__manual_config}],
-                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
-                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
+                [
+                    {"text": "Readme", "callback": self.inline__manual_basic},
+                    {"text": "Config", "callback": self.inline__manual_config}
+                ],
+                [
+                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                ],
             ],
         )
 
@@ -93,9 +97,13 @@ class MANUALMod(loader.Module):
         await call.edit(
             text=self.strings["manual_main"],
             reply_markup=[
-                [{"text": "Readme", "callback": self.inline__manual_basic}],
-                [{"text": "Config", "callback": self.inline__manual_config}],
-                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
-                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
+                [
+                    {"text": "Readme", "callback": self.inline__manual_basic},
+                    {"text": "Config", "callback": self.inline__manual_config}
+                ],
+                [
+                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                ],
             ],
         )
