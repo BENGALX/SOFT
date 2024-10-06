@@ -46,33 +46,33 @@ class MANUALMod(loader.Module):
     }
     
     def __init__(self):
-        self.owner_list = [922318957, 1868227136]
+        self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
     async def send_manual_message(self, text):
         """Обработка команды /manual"""
-        #parts = text.split()
-        #if len(parts) < 2:
+        parts = text.split()
+        if len(parts) < 2:
             #return
         
-        #image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        #user = await self.client.get_me()
-        #if parts[1] == f"@{user.username}":
+        image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
+        user = await self.client.get_me()
+        if parts[1] == f"@{user.username}":
             await self.inline.form(
                 self.owner_chat,
                 text=self.strings("manual_main"),
                 message=None,
-                #image=image_url,
+                image=image_url,
                 reply_markup=
                 [
                     [
-                        {"text": "Readme", "callback": self.inline__manual_basic},
-                        {"text": "Config", "callback": self.inline__manual_config}
+                        {"label": "Readme", "callback": self.inline__manual_basic},
+                        {"label": "Config", "callback": self.inline__manual_config}
                     ],
                     [
-                        {"text": "Subscribe", "callback": self.inline__manual_subscr},
-                        {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                        {"label": "Subscribe", "callback": self.inline__manual_subscr},
+                        {"label": "UnSubscr", "callback": self.inline__manual_unsubs}
                     ],
                 ],
             )
@@ -119,12 +119,12 @@ class MANUALMod(loader.Module):
             reply_markup=
             [
                     [
-                        {"text": "Readme", "callback": self.inline__manual_basic},
-                        {"text": "Config", "callback": self.inline__manual_config}
+                        {"label": "Readme", "callback": self.inline__manual_basic},
+                        {"label": "Config", "callback": self.inline__manual_config}
                     ],
                     [
                         {"text": "Subscribe", "callback": self.inline__manual_subscr},
-                        {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                        {"label": "UnSubscr", "callback": self.inline__manual_unsubs}
                     ],
                 ],
         )
