@@ -61,7 +61,7 @@ class MANUALMod(loader.Module):
         if parts[1] == f"@{user.username}":
             await self.inline.form(
                 self.owner_chat,
-                text=self.strings("manual_main"),
+                text=self.strings["manual_main"],
                 message=None,
                 image=image_url,
                 reply_markup=
