@@ -70,13 +70,15 @@ class MANUALMod(loader.Module):
                 ],
             ],
         )
-            
+
+    @loader.inline_callback("manual_basic")
     async def inline__manual_basic(self, call):
         await call.edit(
             text=self.strings["manual_basic"],
             reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
-
+        
+    @loader.inline_callback("manual_config")
     async def inline__manual_config(self, call):
         await call.edit(
             text=self.strings["manual_config"],
@@ -87,6 +89,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
+    @loader.inline_callback("manual_subscr")
     async def inline__manual_subscr(self, call):
         await call.edit(
             text=self.strings["manual_subscr"],
@@ -97,6 +100,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
+    @loader.inline_callback("manual_subscr")
     async def inline__manual_unsubs(self, call):
         await call.edit(
             text=self.strings["manual_unsubs"],
@@ -107,6 +111,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
+    @loader.inline_callback("manual_main")
     async def inline__back(self, call):
         await call.edit(
             text=self.strings["manual_main"],
