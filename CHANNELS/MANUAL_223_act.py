@@ -42,6 +42,7 @@ class MANUALMod(loader.Module):
             "PUBLIC: https://t.me/, //t.me/ или @\n"
             "PRIVATE: ID в формате 100... (без минуса).\n"
         ),
+        "back": "Назад"
     }
     
     def __init__(self):
@@ -79,7 +80,7 @@ class MANUALMod(loader.Module):
     async def inline__manual_basic(self, call):
         await call.edit(
             text=self.strings["manual_basic"],
-            reply_markup=[[{"text": Назад, "callback": self.inline__back}]],
+            reply_markup=[[{"text": self.strings["back"], "callback": self.inline__back}]],
         )
 
     async def inline__manual_config(self, call):
@@ -87,7 +88,7 @@ class MANUALMod(loader.Module):
             text=self.strings["manual_config"],
             reply_markup=[
                 [
-                    {"text": Назад, "callback": self.inline__back}
+                    {"text": self.strings["back"], "callback": self.inline__back}
                 ]
             ],
         )
@@ -97,7 +98,7 @@ class MANUALMod(loader.Module):
             text=self.strings["manual_subscr"],
             reply_markup=[
                 [
-                    {"text": Назад, "callback": self.inline__back}
+                    {"text": self.strings["back"], "callback": self.inline__back}
                 ]
             ],
         )
@@ -107,7 +108,7 @@ class MANUALMod(loader.Module):
             text=self.strings["manual_unsubs"],
             reply_markup=[
                 [
-                    {"text": Назад, "callback": self.inline__back}
+                    {"text": self.strings["back"], "callback": self.inline__back}
                 ]
             ],
         )
