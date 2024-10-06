@@ -15,7 +15,8 @@ class MANUALMod(loader.Module):
     def __init__(self):
         self.owner_list = [922318957, 1868227136]
         self.owner_chat = -1002205010643
-        
+
+    @loader.unrestricted
     async def send_manual_message(self, text):
         """Обработка команды /manual"""
         parts = text.split()
@@ -24,7 +25,6 @@ class MANUALMod(loader.Module):
         
         manual_main = (
             f"<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
-            f"<b>🔗 Справка:</b> /manual @user\n\n"
             f"После установки модуля вам нужно выполнить несколько простых действий для раскрытия полного функционаа модуля. "
             f"Без настройки он тоже будет работат если что.\n\n"
         )
@@ -61,8 +61,46 @@ class MANUALMod(loader.Module):
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
-            await self.client.send_file(self.owner_chat, image_url, caption=manual_main)
-            await asyncio.sleep(2)
+            await self.inline.form(
+                self.owner_chat, image_url,
+                message=message,
+                text=self.strings("manual_main"),
+                reply_markup=[
+                    [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
+                ],
+            )
+            
+    async def inline__manual_basic(self, call):
+        await call.edit(
+            text=self.strings("manual_basic"),
+            reply_markup=[[{"text": self.strings("back"), "callback": self.inline__back}]],
+        )
+
+    async def inline__manual_config(self, call):
+        await call.edit(
+            text=self.strings("manual_config"),
+            reply_markup=[[{"text": self.strings("back"), "callback": self.inline__back}]],
+        )
+
+    async def inline__manual_subscr(self, call):
+        await call.edit(
+            text=self.strings("manual_subscr"),
+            reply_markup=[[{"text": self.strings("back"), "callback": self.inline__back}]],
+        )
+
+    async def inline__manual_unsubs(self, call):
+        await call.edit(
+            text=self.strings("manual_unsubs"),
+            reply_markup=[[{"text": self.strings("back"), "callback": self.inline__back}]],
+        )
+
+    async def inline__back(self, call):
+        await call.edit(
+            text=self.strings("manual_main"),
+            reply_markup=[
+                [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
+            ],
+        )
     
     @loader.watcher()
     async def watcher_group(self, message):
