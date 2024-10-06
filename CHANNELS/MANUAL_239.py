@@ -45,11 +45,18 @@ class MANUALMod(loader.Module):
     @loader.unrestricted
     async def manualcmd(self, message: Message):
         """Обработка команды /manual"""
+        # Спочатку відправляємо зображення з підписом
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
+        await self.client.send_file(
+            message.chat_id,
+            file=image_url,
+            caption="⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon"
+        )
+
+        # Потім відправляємо текстовий блок з інлайн-кнопками
         await self.inline.form(
-            message=message,  # Використовуємо повідомлення, а не константу чату
+            message=message,  # Використовуємо повідомлення, щоб відповісти в той самий чат
             text=self.strings["manual_main"],
-            image=image_url,
             reply_markup=[
                 [{"text": "Readme", "callback": self.inline__manual_basic}],
                 [{"text": "Config", "callback": self.inline__manual_config}],
