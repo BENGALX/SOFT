@@ -7,11 +7,11 @@ import asyncio
 @loader.tds
 class MANUALMod(loader.Module):
     """Модуль управления каналами.
-       Commands: /manual @\n
+           Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
-        "name": "BGL-MANUAL",
+        "name": "BGL-MANUAL"
         "manual_main": (
             "<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
             "После установки модуля вам нужно выполнить несколько простых действий для раскрытия полного функционала модуля. "
@@ -59,22 +59,13 @@ class MANUALMod(loader.Module):
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
-            # Отправляем изображение и текст с кнопками
             await self.inline.form(
-                self.owner_chat,
+                self.owner_chat, image_url,
+                message=message,
                 text=self.strings("manual_main"),
-                message=None,  # Используем None, чтобы новое сообщение создалось
-                image=image_url,
                 reply_markup=[
-                    [
-                        {"text": "Basic Config", "callback": self.inline__manual_basic},
-                        {"text": "Subscribe", "callback": self.inline__manual_subscr}
-                    ],
-                    [
-                        {"text": "Unsubscribe", "callback": self.inline__manual_unsubs},
-                        {"text": "Back", "callback": self.inline__back}
-                    ],
-                ]
+                    [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
+                ],
             )
             
     async def inline__manual_basic(self, call):
@@ -105,14 +96,7 @@ class MANUALMod(loader.Module):
         await call.edit(
             text=self.strings("manual_main"),
             reply_markup=[
-                [
-                    {"text": "Basic Config", "callback": self.inline__manual_basic},
-                    {"text": "Subscribe", "callback": self.inline__manual_subscr}
-                ],
-                [
-                    {"text": "Unsubscribe", "callback": self.inline__manual_unsubs},
-                    {"text": "Back", "callback": self.inline__back}
-                ],
+                [{"text": "1", "callback": self.inline__choice_1}, {"text": "2", "callback": self.inline__choice_2}],
             ],
         )
     
@@ -124,7 +108,7 @@ class MANUALMod(loader.Module):
         if message.sender_id not in self.owner_list:
             return
         try:
-            if message.message.startswith("/manual"):
+            elif message.message.startswith("/manual"):
                 await self.send_manual_message(message.message)
-        except Exception as e:
+        except:
             pass
