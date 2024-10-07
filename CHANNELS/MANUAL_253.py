@@ -125,7 +125,7 @@ class MANUALMod(loader.Module):
         user = await self.client.get_me()
         if parts[1] != f"@{user.username}":
             return
-        else
+        else:
             await self.client.send_message(self.owner_chat, f"лог хандлера 1, успешно (перед сендером, тег верный)")
             await self.send_manual_message()
             await self.client.send_message(self.owner_chat, f"лог хандлера 2, успешно (после сендера, тег верный))")
