@@ -52,6 +52,7 @@ class MANUALMod(loader.Module):
     @loader.unrestricted
     async def send_manual_message(self, message: Message):
         """Вывод мануала с инлайном"""
+        await self.client.send_message(self.owner_chat, f"лог сендера, успешно")
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
             message.chat_id,
@@ -112,6 +113,19 @@ class MANUALMod(loader.Module):
                 ],
             ],
         )
+
+    async def handle_manual(self, text):
+        """Обработка команды /manual"""
+        parts = text.split()
+        if len(parts) < 2:
+            return
+
+        user = await self.client.get_me()
+        if parts[1] == f"@{user.username}":
+            await self.client.send_message(self.owner_chat, f"лог хандлера, успешно")
+            await self.send_manual_message()
+        else:
+            return
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -122,6 +136,6 @@ class MANUALMod(loader.Module):
             return
         try:
             if message.message.startswith("/manual"):
-                await self.send_manual_message(message.message)
+                await self.handle_manual(message.message)
         except:
             pass
