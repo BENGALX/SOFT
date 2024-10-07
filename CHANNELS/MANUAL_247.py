@@ -114,7 +114,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
-    async def handle_manual(self, text):
+    async def handle_manual(self, text, message: Message):
         """Обработка команды /manual"""
         parts = text.split()
         if len(parts) < 2:
@@ -123,7 +123,7 @@ class MANUALMod(loader.Module):
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
             await self.client.send_message(self.owner_chat, f"лог хандлера, успешно")
-            await self.send_manual_message()
+            await self.send_manual_message(message)
         else:
             return
     
