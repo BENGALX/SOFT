@@ -114,7 +114,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
-    async def handle_manual(self, text, message: Message):
+    async def handle_manual(self, text):
         """Обработка команды /manual"""
         parts = text.split()
         if len(parts) < 2:
