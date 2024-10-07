@@ -61,20 +61,24 @@ class MANUALMod(loader.Module):
         )
 
         await self.client.send_message(self.owner_chat, f"лог сендера 5, успешно (сендер после графики)")
-        await self.inline.form(
-            self.owner_chat,
-            text=self.strings["manual_main"],
-            reply_markup=[
-                [
-                    {"text": "Readme", "callback": self.inline__manual_basic},
-                    {"text": "Config", "callback": self.inline__manual_config}
+        try:
+            await self.inline.form(
+                self.owner_chat,
+                text=self.strings["manual_main"],
+                reply_markup=[
+                    [
+                        {"text": "Readme", "callback": self.inline__manual_basic},
+                        {"text": "Config", "callback": self.inline__manual_config}
+                    ],
+                    [
+                        {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                        {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                    ],
                 ],
-                [
-                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
-                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
-                ],
-            ],
-        )
+            )
+            await self.client.send_message(self.owner_chat, f"лог сендера 7, успешно (сендер после инлайна)")
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"Ошибка в инлайне: {str(e)}")
         await self.client.send_message(self.owner_chat, f"лог сендера 7, успешно (сендер после инлайна)")
 
     async def inline__manual_basic(self, call):
