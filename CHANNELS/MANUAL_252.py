@@ -52,7 +52,7 @@ class MANUALMod(loader.Module):
     @loader.unrestricted
     async def send_manual_message(self):
         """Вывод мануала с инлайном"""
-        await self.client.send_message(self.owner_chat, f"лог сендера 3, успешно")
+        await self.client.send_message(self.owner_chat, f"лог сендера 3, успешно (сендер перед всем)")
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
             self.owner_chat,
@@ -60,6 +60,7 @@ class MANUALMod(loader.Module):
             caption="⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon"
         )
 
+        await self.client.send_message(self.owner_chat, f"лог сендера 5, успешно (сендер после графики)")
         await self.inline.form(
             self.owner_chat,
             text=self.strings["manual_main"],
@@ -74,6 +75,7 @@ class MANUALMod(loader.Module):
                 ],
             ],
         )
+        await self.client.send_message(self.owner_chat, f"лог сендера 7, успешно (сендер после инлайна)")
 
     async def inline__manual_basic(self, call):
         await call.edit(
@@ -121,14 +123,13 @@ class MANUALMod(loader.Module):
             return
 
         user = await self.client.get_me()
-        if parts[1] == f"@{user.username}":
-            await self.client.send_message(self.owner_chat, f"лог хандлера 1, успешно")
+        if parts[1] != f"@{user.username}":
+            return
+        else
+            await self.client.send_message(self.owner_chat, f"лог хандлера 1, успешно (перед сендером, тег верный)")
             await self.send_manual_message()
-            await self.client.send_message(self.owner_chat, f"лог хандлера 2, успешно")
-        else:
-            await self.client.send_message(self.owner_chat, f"лог хандлера 4, успешно")
-            await self.send_manual_message()
-            await self.client.send_message(self.owner_chat, f"лог хандлера 5 успешно")
+            await self.client.send_message(self.owner_chat, f"лог хандлера 2, успешно (после сендера, тег верный))")
+            
     
     @loader.watcher()
     async def watcher_group(self, message):
