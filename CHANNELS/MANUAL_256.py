@@ -63,8 +63,8 @@ class MANUALMod(loader.Module):
         await self.client.send_message(self.owner_chat, f"лог сендера 5, успешно (сендер после графики)")
         try:
             await self.inline.form(
-                chat_id=self.owner_chat,
-                message=self.strings["manual_main"],
+                self.owner_chat,  # Это чат, куда будет отправлено сообщение
+                text=self.strings["manual_main"],  # Текст, который будет отображаться
                 reply_markup=[
                     [
                         {"text": "Readme", "callback": self.inline__manual_basic},
