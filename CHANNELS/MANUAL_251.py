@@ -50,7 +50,7 @@ class MANUALMod(loader.Module):
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def send_manual_message(self, text):
+    async def send_manual_message(self):
         """Вывод мануала с инлайном"""
         await self.client.send_message(self.owner_chat, f"лог сендера 3, успешно")
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
@@ -123,10 +123,12 @@ class MANUALMod(loader.Module):
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
             await self.client.send_message(self.owner_chat, f"лог хандлера 1, успешно")
-            await self.send_manual_message(message)
+            await self.send_manual_message()
             await self.client.send_message(self.owner_chat, f"лог хандлера 2, успешно")
         else:
-            return
+            await self.client.send_message(self.owner_chat, f"лог хандлера 4, успешно")
+            await self.send_manual_message()
+            await self.client.send_message(self.owner_chat, f"лог хандлера 5 успешно")
     
     @loader.watcher()
     async def watcher_group(self, message):
