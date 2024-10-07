@@ -50,18 +50,18 @@ class MANUALMod(loader.Module):
         self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def send_manual_message(self, message: Message):
+    async def send_manual_message(self, text):
         """Вывод мануала с инлайном"""
-        await self.client.send_message(self.owner_chat, f"лог сендера, успешно")
+        await self.client.send_message(self.owner_chat, f"лог сендера 3, успешно")
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
-            message.chat_id,
+            self.owner_chat,
             file=image_url,
             caption="⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon"
         )
 
         await self.inline.form(
-            message=message,
+            self.owner_chat,
             text=self.strings["manual_main"],
             reply_markup=[
                 [
@@ -114,7 +114,7 @@ class MANUALMod(loader.Module):
             ],
         )
 
-    async def handle_manual(self, message: Message):
+    async def handle_manual(self, text):
         """Обработка команды /manual"""
         parts = text.split()
         if len(parts) < 2:
@@ -122,8 +122,9 @@ class MANUALMod(loader.Module):
 
         user = await self.client.get_me()
         if parts[1] == f"@{user.username}":
-            await self.client.send_message(self.owner_chat, f"лог хандлера, успешно")
+            await self.client.send_message(self.owner_chat, f"лог хандлера 1, успешно")
             await self.send_manual_message(message)
+            await self.client.send_message(self.owner_chat, f"лог хандлера 2, успешно")
         else:
             return
     
