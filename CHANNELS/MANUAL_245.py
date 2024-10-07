@@ -1,5 +1,8 @@
+import re
 from telethon.tl.types import Message
 from .. import loader, utils
+from telethon.tl import functions
+import asyncio
 
 @loader.tds
 class MANUALMod(loader.Module):
@@ -41,11 +44,14 @@ class MANUALMod(loader.Module):
         ),
         "back": "Назад"
     }
+    
+    def __init__(self):
+        self.owner_list = [922318957]
+        self.owner_chat = -1002205010643
 
     @loader.unrestricted
-    async def manualcmd(self, message: Message):
-        """Обработка команды /manual"""
-        # Спочатку відправляємо зображення з підписом
+    async def send_manual_message(self, message: Message):
+        """Вывод мануала с инлайном"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
             message.chat_id,
@@ -53,15 +59,18 @@ class MANUALMod(loader.Module):
             caption="⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon"
         )
 
-        # Потім відправляємо текстовий блок з інлайн-кнопками
         await self.inline.form(
-            message=message,  # Використовуємо повідомлення, щоб відповісти в той самий чат
+            message=message,
             text=self.strings["manual_main"],
             reply_markup=[
-                [{"text": "Readme", "callback": self.inline__manual_basic}],
-                [{"text": "Config", "callback": self.inline__manual_config}],
-                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
-                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
+                [
+                    {"text": "Readme", "callback": self.inline__manual_basic},
+                    {"text": "Config", "callback": self.inline__manual_config}
+                ],
+                [
+                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                ],
             ],
         )
 
@@ -93,9 +102,26 @@ class MANUALMod(loader.Module):
         await call.edit(
             text=self.strings["manual_main"],
             reply_markup=[
-                [{"text": "Readme", "callback": self.inline__manual_basic}],
-                [{"text": "Config", "callback": self.inline__manual_config}],
-                [{"text": "Subscribe", "callback": self.inline__manual_subscr}],
-                [{"text": "UnSubscr", "callback": self.inline__manual_unsubs}],
+                [
+                    {"text": "Readme", "callback": self.inline__manual_basic},
+                    {"text": "Config", "callback": self.inline__manual_config}
+                ],
+                [
+                    {"text": "Subscribe", "callback": self.inline__manual_subscr},
+                    {"text": "UnSubscr", "callback": self.inline__manual_unsubs}
+                ],
             ],
         )
+    
+    @loader.watcher()
+    async def watcher_group(self, message):
+        """Handle commands calling"""
+        if message.chat_id != self.owner_chat:
+            return
+        if message.sender_id not in self.owner_list:
+            return
+        try:
+            if message.message.startswith("/manual"):
+                await self.send_manual_message(message.message)
+        except:
+            pass
