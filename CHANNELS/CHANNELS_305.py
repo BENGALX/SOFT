@@ -13,23 +13,49 @@ class CHANNELSMod(loader.Module):
            Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
-    strings = {"name": "BGL-CHANNELS"}
+    strings = {
+        "name": "BGL-CHANNELS",
+        "manual_main": (
+            "<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
+            "После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала. "
+        ),
+        "manual_basic": (
+            "<b>🔗 Базовая настройка:</b>\n"
+            "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
+            "Для упрощения ставим как на сервере (по 15-20 аккаунтов). "
+            "Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
+            "▪️Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+            "Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n\n"
+            "<b>🔗 Конфиг: /reconf [name] [value] [acc]</b>\n"
+            "▪️logger — булевый статус (True/False, 1/0, yes/no).\n"
+            "▪️group — номер сервера или группы аккаунтов.\n"
+            "▪️acc — один или несколько юзеров, где нужно перезаписать конфиг (all для всех).\n"
+        ),
+        "manual_channels": (
+            "<b>Текущий функционал модуля:</b>\n\n"
+            "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
+            "▪️PUBLIC: https://t.me/, t.me/, @\n"
+            "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
+            "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
+            "▪️PUBLIC: https://t.me/, //t.me/, @\n"
+            "▪️PRIVATE: (ID без '-') 100...\n\n"
+            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
+        )
+    }
     
     def __init__(self):
-        self.owner_list = [922318957, 1868227136]
-        self.moder = 922318957
+        self.owner_list = [922318957]
         self.owner_chat = -1002205010643
-        
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "logger", False, "Статус работы логгера (0/1).",
+                "logger", False, "Включить логгер (0/1).",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
-                "group", 1, "Номер хоста или группы.",
+                "group", 1, "Номер группы.",
                 validator=loader.validators.Integer(),
             )
-    )
+        )
 
     
     def get_delay_host(self):
@@ -64,53 +90,14 @@ class CHANNELSMod(loader.Module):
         logger_message = f"💻 <b>Server: {self.config['group']}: </b>{text}"
         await self.client.send_message(self.owner_chat, logger_message)
         
-    async def send_manual_message(self, text):
-        """Обработка команды /manual"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        
-        manual_part1 = (
-            f"<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
-            f"<b>🔗 Справка:</b> /manual @user\n\n"
-            f"<b>🔗 Базовая настройка.</b>\n"
-            f"После установки модуля вам нужно выполнить несколько простых действий для раскрытия полного функционаа модуля. "
-            f"Без настройки он тоже будет работат если что.\n\n"
-            f"Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
-            f"Для упрощения ставим как на сервере (по 15-20 аккаунтов). "
-            f"Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
-            f"Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
-            f"Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n"
-        )
-
-        manual_part2 = (
-            f"<b>🔗 Конфигурация:</b>\n"
-            f"CMD: /reconf [name] [value] [acc]\n\n"
-            f"<b>Параметры и их аргументы\n</b>"
-            f"—logger — булевый статус (True/False, 1/0, yes/no).\n"
-            f"—group — номер сервера или группы аккаунтов.\n"
-            f"—acc — один или несколько юзеров, где нужно перезаписать конфиг (all для всех).\n"
-        )
-
-        manual_part3 = (    
-            f"Текущий функционал модуля:\n\n"
-            f"<b>🔗 1. Подписки: /sub [target]</b>\n"
-            f"PUBLIC: https://t.me/, t.me/ или @\n"
-            f"PRIVATE: https://t.me/+, t.me/+\n"
-    
-            f"<b>\n🔗 2. Отписки: /uns [target]</b>\n"
-            f"PUBLIC: https://t.me/, //t.me/ или @\n"
-            f"PRIVATE: ID в формате 100... (без минуса).\n"
-        )
-
+    async def send_manual_message(self):
+        """Вывод мануала по модулю"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        user = await self.client.get_me()
-        if parts[1] == f"@{user.username}":
-            await self.client.send_file(self.owner_chat, image_url, caption=manual_part1)
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part2)
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, manual_part3)
+        await self.client.send_file(self.owner_chat, image_url, caption=self.strings["manual_main"])
+        await asyncio.sleep(2)
+        await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
+        await asyncio.sleep(2)
+        await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
             
     
     async def subscribe_public(self, target):
@@ -147,7 +134,7 @@ class CHANNELSMod(loader.Module):
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
     async def unsubscribe_by_link(self, target):
-        """Отписка по обычной ссылке."""
+        """Отписка по ссылке."""
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
         done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
         user_message = f"<b>✅ DELETE:</b>\n{target}"
@@ -189,6 +176,17 @@ class CHANNELSMod(loader.Module):
             await self.send_config_message(done_message)
             
 
+    async def handle_manual(self, text):
+        """Обработка команды /manual"""
+        parts = text.split()
+        if len(parts) < 2:
+            return
+        user = await self.client.get_me()
+        if parts[1] != f"@{user.username}":
+            return
+        else:
+            await self.send_manual_message()
+    
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
         target = text.split("/sub", 1)[1].strip()
@@ -236,7 +234,7 @@ class CHANNELSMod(loader.Module):
             return
         if message.sender_id not in self.owner_list:
             return
-            
+        
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
