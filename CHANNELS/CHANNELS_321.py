@@ -31,16 +31,6 @@ class CHANNELSMod(loader.Module):
             "▪️group — номер сервера или группы аккаунтов.\n"
             "▪️acc — один или несколько юзеров, где нужно перезаписать конфиг (all для всех).\n"
         ),
-        "manual_config": (
-            "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
-            "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
-            "<b>Редактируемые параметры:</b>\n" +
-            ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()]) +
-            "\nПримеры изменения конфигурации:\n"
-            "/reconf logger True @user1 @user2\n/reconf group 2 all"
-        ),
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
             "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
@@ -67,18 +57,32 @@ class CHANNELSMod(loader.Module):
             )
         )
 
+    async def delay_host(self):
+        """Задержка выполняется"""
+        delay_seconds = self.get_delay_host()
+        await asyncio.sleep(delay_seconds)
+        return delay_seconds
     
     def get_delay_host(self):
         """Значение задержки"""
         delay_seconds = self.config["group"] * 20
         return delay_seconds
         
-    async def delay_host(self):
-        """Задержка выполняется"""
-        delay_seconds = self.get_delay_host()
-        await asyncio.sleep(delay_seconds)
-        return delay_seconds
-        
+    def get_manual_config(self):
+        """Значение manual_config."""
+        config_string = ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()])
+        manual_config = (
+            "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
+            "<b>Неизменяемые параметры:</b>\n"
+            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
+            "<b>Редактируемые параметры:</b>\n" +
+            config_string +
+            "\nПримеры изменения конфигурации:\n"
+            "/reconf logger True @user1 @user2\n/reconf group 2 all"
+        )
+        return (manual_config)
+    
 
     async def send_module_message(self, text, delay_info=None):
         """Логи действий модуля"""
@@ -105,7 +109,7 @@ class CHANNELSMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.strings["manual_config"])
+            await self.client.send_message(self.owner_chat, self.get_manual_config(manual_config))
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
         except Exception as e:
