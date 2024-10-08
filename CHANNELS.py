@@ -37,7 +37,7 @@ class CHANNELSMod(loader.Module):
             "▪️PUBLIC: https://t.me/, t.me/, @\n"
             "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, //t.me/, @\n"
+            "▪️PUBLIC: https://t.me/, t.me/, @\n"
             "▪️PRIVATE: (ID без '-') 100...\n\n"
             "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
         )
