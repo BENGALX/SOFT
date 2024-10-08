@@ -109,7 +109,7 @@ class CHANNELSMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.get_manual_config(manual_config))
+            await self.client.send_message(self.owner_chat, self.get_manual_config())
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
         except Exception as e:
