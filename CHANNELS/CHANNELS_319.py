@@ -33,15 +33,13 @@ class CHANNELSMod(loader.Module):
         ),
         "manual_config": (
             "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
-            "<b>Неизменные параметры:</b>\n"
-            f"▪️ <b>owner_list</b> — {self.owner_list}.\n"
-            f"▪️ <b>owner_chat</b> — {self.owner_chat}.\n\n"
-            "<b>Редактируемые параметры:</b>\n"
-            f"▪️ <b>logger</b> — {self.config['logger']}.\n"
-            f"▪️ <b>group</b> — {self.config['group']}.\n\n"
-            "Примеры изменения конфигурации:\n"
-            "/reconf logger True @user1 @user2\n"
-            "/reconf group 2 all\n\n"
+            "<b>Неизменяемые параметры:</b>\n"
+            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
+            "<b>Редактируемые параметры:</b>\n" +
+            ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()]) +
+            "\nПримеры изменения конфигурации:\n"
+            "/reconf logger True @user1 @user2\n/reconf group 2 all"
         )
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
@@ -107,11 +105,12 @@ class CHANNELSMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
             await asyncio.sleep(2)
+            await self.client.send_message(self.owner_chat, self.strings["manual_config"])
+            await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
-            
     
     async def subscribe_public(self, target):
         """Подписывается на публичные."""
