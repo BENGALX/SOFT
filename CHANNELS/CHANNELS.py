@@ -86,7 +86,6 @@ class CHANNELSMod(loader.Module):
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
         try:
-            await self.client.send_message(self.owner_chat, f"log 1 do sendman")
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             await self.client.send_file(
                 self.owner_chat,
@@ -162,8 +161,8 @@ class CHANNELSMod(loader.Module):
         except:
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
-            
 
+    
     async def update_user_config(self, config_name, new_value):
         """Обновление конфиг параметров."""
         if config_name not in self.config:
@@ -183,15 +182,11 @@ class CHANNELSMod(loader.Module):
         try:
             parts = text.split()
             if len(parts) < 2:
-                await self.client.send_message(self.owner_chat, "🚫 ERROR: Неверный формат команды.")
                 return
             user = await self.client.get_me()
             if parts[1] != f"@{user.username}":
-                await self.client.send_message(self.owner_chat, "🚫 ERROR: Неверный пользователь.")
                 return
-            await self.client.send_message(self.owner_chat, f"log 0 handle")
             await self.send_manual_message()
-            await self.client.send_message(self.owner_chat, f"log 2 after handle")
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
@@ -251,8 +246,6 @@ class CHANNELSMod(loader.Module):
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
-                await self.client.send_message(self.owner_chat, f"log 5 before watcher")
                 await self.handle_manual(message.message)
-                await self.client.send_message(self.owner_chat, f"log 6 after watcher")
         except:
             pass
