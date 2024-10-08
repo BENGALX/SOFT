@@ -48,11 +48,11 @@ class CHANNELSMod(loader.Module):
         self.owner_chat = -1002205010643
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "logger", False, "Включить логгер (0/1).",
+                "logger", False, "Состояние работы логгера.",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
-                "group", 1, "Номер группы.",
+                "group", 1, "Номер группы акков.",
                 validator=loader.validators.Integer(),
             )
         )
@@ -82,15 +82,10 @@ class CHANNELSMod(loader.Module):
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
             pass
-
-    async def send_config_message(self, text):
-        """Логи изменений конфигураторов"""
-        if not self.owner_chat:
-            return
-        await self.client.send_message(self.owner_chat, text)
         
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
+        await self.client.send_message(self.owner_chat, f"log 1 do sendman")
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
         await self.client.send_file(
             self.owner_chat,
@@ -175,8 +170,8 @@ class CHANNELSMod(loader.Module):
             elif isinstance(self.config[config_name], int):
                 new_value = int(new_value)
             self.config[config_name] = new_value
-            done_message = f"<b>✅ CONFIG:\nПараметр {config_name} изменен на {new_value}.</b>"
-            await self.send_config_message(done_message)
+            done_message = f"<b>✅ CONFIG: {config_name} изменен на {new_value}.</b>"
+            await self.client.send_message(self.owner_chat, done_message)
             
 
     async def handle_manual(self, text):
@@ -188,7 +183,9 @@ class CHANNELSMod(loader.Module):
         if parts[1] != f"@{user.username}":
             return
         else:
+            await self.client.send_message(self.owner_chat, f"log 0 handle")
             await self.send_manual_message()
+            await self.client.send_message(self.owner_chat, f"log 2 after handle")
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
