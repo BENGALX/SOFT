@@ -40,7 +40,7 @@ class CHANNELSMod(loader.Module):
             ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()]) +
             "\nПримеры изменения конфигурации:\n"
             "/reconf logger True @user1 @user2\n/reconf group 2 all"
-        )
+        ),
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
             "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
