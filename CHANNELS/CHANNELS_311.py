@@ -84,18 +84,22 @@ class CHANNELSMod(loader.Module):
             pass
         
     async def send_manual_message(self):
-        """Вывод мануала по модулю"""
-        await self.client.send_message(self.owner_chat, f"log 1 do sendman")
-        image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        await self.client.send_file(
-            self.owner_chat,
-            file=image_url,
-            caption=self.strings["manual_main"]
-        )
-        await asyncio.sleep(2)
-        await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
-        await asyncio.sleep(2)
-        await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
+    """Вывод мануала по модулю"""
+        try:
+            await self.client.send_message(self.owner_chat, f"log 1 do sendman")
+            image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
+            await self.client.send_file(
+                self.owner_chat,
+                file=image_url,
+                caption=self.strings["manual_main"]
+            )
+            await asyncio.sleep(2)
+            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
+            await asyncio.sleep(2)
+            await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
             
     
     async def subscribe_public(self, target):
