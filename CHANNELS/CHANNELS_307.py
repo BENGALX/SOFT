@@ -95,7 +95,7 @@ class CHANNELSMod(loader.Module):
         await self.client.send_file(
             self.owner_chat,
             file=image_url,
-            caption=self.strings["manual_main"]"
+            caption=self.strings["manual_main"]
         )
         await asyncio.sleep(2)
         await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
