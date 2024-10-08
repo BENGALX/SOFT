@@ -244,6 +244,8 @@ class CHANNELSMod(loader.Module):
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
+                await self.client.send_message(self.owner_chat, f"log 5 before watcher")
                 await self.handle_user_config(message.message)
+                await self.client.send_message(self.owner_chat, f"log 6 after watcher")
         except:
             pass
