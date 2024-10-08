@@ -84,7 +84,7 @@ class CHANNELSMod(loader.Module):
             pass
         
     async def send_manual_message(self):
-    """Вывод мануала по модулю"""
+        """Вывод мануала по модулю"""
         try:
             await self.client.send_message(self.owner_chat, f"log 1 do sendman")
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
@@ -179,7 +179,7 @@ class CHANNELSMod(loader.Module):
             
 
     async def handle_manual(self, text):
-    """Обработка команды /manual"""
+        """Обработка команды /manual"""
         try:
             parts = text.split()
             if len(parts) < 2:
