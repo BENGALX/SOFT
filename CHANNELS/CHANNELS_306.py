@@ -16,7 +16,7 @@ class CHANNELSMod(loader.Module):
     strings = {
         "name": "BGL-CHANNELS",
         "manual_main": (
-            "<b>💻 Модуль: BGL-CHANNELS</b>\n\n"
+            "<b>⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon\n\n"
             "После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала. "
         ),
         "manual_basic": (
@@ -87,13 +87,16 @@ class CHANNELSMod(loader.Module):
         """Логи изменений конфигураторов"""
         if not self.owner_chat:
             return
-        logger_message = f"💻 <b>Server: {self.config['group']}: </b>{text}"
-        await self.client.send_message(self.owner_chat, logger_message)
+        await self.client.send_message(self.owner_chat, text)
         
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
         image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-        await self.client.send_file(self.owner_chat, image_url, caption=self.strings["manual_main"])
+        await self.client.send_file(
+            self.owner_chat,
+            file=image_url,
+            caption=self.strings["manual_main"]"
+        )
         await asyncio.sleep(2)
         await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
         await asyncio.sleep(2)
@@ -244,6 +247,6 @@ class CHANNELSMod(loader.Module):
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
-                await self.send_manual_message(message.message)
+                await self.handle_user_config(message.message)
         except:
             pass
