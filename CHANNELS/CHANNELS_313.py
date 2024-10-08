@@ -248,12 +248,11 @@ class CHANNELSMod(loader.Module):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/uns"):
                 await self.handle_unsubscribe(message.message)
-            
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
                 await self.client.send_message(self.owner_chat, f"log 5 before watcher")
-                await self.handle_user_config(message.message)
+                await self.handle_manual(message.message)
                 await self.client.send_message(self.owner_chat, f"log 6 after watcher")
         except:
             pass
