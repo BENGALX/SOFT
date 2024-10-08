@@ -175,17 +175,21 @@ class CHANNELSMod(loader.Module):
             
 
     async def handle_manual(self, text):
-        """Обработка команды /manual"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        user = await self.client.get_me()
-        if parts[1] != f"@{user.username}":
-            return
-        else:
+    """Обработка команды /manual"""
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                await self.client.send_message(self.owner_chat, "🚫 ERROR: Неверный формат команды.")
+                return
+            user = await self.client.get_me()
+            if parts[1] != f"@{user.username}":
+                await self.client.send_message(self.owner_chat, "🚫 ERROR: Неверный пользователь.")
+                return
             await self.client.send_message(self.owner_chat, f"log 0 handle")
             await self.send_manual_message()
             await self.client.send_message(self.owner_chat, f"log 2 after handle")
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
