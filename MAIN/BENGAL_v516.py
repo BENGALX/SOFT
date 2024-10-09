@@ -1,9 +1,10 @@
 import re
 import asyncio
-from .. import loader
+from .. import loader, utils
 
 from telethon.tl import functions
 from telethon.tl.types import Message
+from telethon.tl.types import PeerChannel
 
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.channels import LeaveChannelRequest
@@ -184,6 +185,22 @@ class BENGALSOFTMod(loader.Module):
         except:
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
+
+    async def button_private(self, link):
+        link = link.split("//t.me/c/")[1]
+        link = link.split("/")
+        privat_message = f"<b>✅ BUTTON RUN:</b> https://t.me/c/{link[0]}/{link[1]}"
+        inline_button = await self.client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+        await self.send_module_message(privat_message)
+
+    async def button_publiс(self, link):
+        link = link.split("//t.me/")[1]
+        link = link.split("/")
+        public_message = f"<b>✅ BUTTON RUN:</b> https://t.me/{link[0]}/{link[1]}"
+        inline_button = await self.client.get_messages(link[0], ids=int(link[1]))
+        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+        await self.send_module_message(public_message)
             
 
     async def start_ref_bot(self, bot_name, ref_key):
@@ -251,6 +268,14 @@ class BENGALSOFTMod(loader.Module):
             await self.unsubscribe_by_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+
+    async def handle_runner(self, text):
+        private_links = re.findall(r'https?://t.me/c/.*/.*', text)
+        public_links = re.findall(r'https?://t.me/.*/.*', text)
+        for link in private_links:
+            await self.button_private(link)
+        for link in public_links:
+            await self.button_publiс(link)
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
@@ -302,12 +327,13 @@ class BENGALSOFTMod(loader.Module):
             return
         if message.sender_id not in self.owner_list:
             return
-        
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/uns"):
                 await self.handle_unsubscribe(message.message)
+            elif message.message.startswith("/run"):
+                await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
             elif message.message.startswith("/reconf"):
