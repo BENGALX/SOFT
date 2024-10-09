@@ -94,7 +94,7 @@ class BENGALSOFTMod(loader.Module):
             return
         try:
             delay_text = f", Delay: {delay_info} сек" if delay_info else ", Delay: 0."
-            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n\n{text}"
+            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
             pass
@@ -111,7 +111,7 @@ class BENGALSOFTMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.get_manual_config(manual_config))
+            await self.client.send_message(self.owner_chat, self.get_manual_config())
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
         except Exception as e:
@@ -290,6 +290,7 @@ class BENGALSOFTMod(loader.Module):
             for tag in taglist:
                 if tag == f"@{user.username}":
                     await self.update_user_config(config_name, new_value)
+
     
     @loader.watcher()
     async def watcher_group(self, message):
