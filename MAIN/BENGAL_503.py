@@ -1,8 +1,10 @@
 import re
 from telethon.tl import functions
+from telethon.tl.types import Message
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.tl.functions.channels import LeaveChannelRequest
+from telethon.tl.functions.messages import StartBotRequest
 
 import asyncio
 from .. import loader
