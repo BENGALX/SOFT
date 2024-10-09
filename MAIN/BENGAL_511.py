@@ -44,8 +44,8 @@ class BENGALSOFTMod(loader.Module):
             "▪️PUBLIC: https://t.me/, t.me/, @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
-            "▪️ONLY: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY], [BOT]?start=[KEY]\n\n"
-            "SUPPORTING BOT: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
+            "▪️ONLY: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY], [BOT]?start=[KEY]\n"
+            "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
             "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
         )
     }
