@@ -8,7 +8,7 @@ import asyncio
 from .. import loader
 
 @loader.tds
-class CHANNELSMod(loader.Module):
+class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
            Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
@@ -176,6 +176,32 @@ class CHANNELSMod(loader.Module):
         except:
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
+            
+
+    async def start_bestrandom_bot(self, text):
+        if match := re.search(r"\?start=(\w+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="BestRandom_bot", peer="BestRandom_bot", start_param=ref_key))
+
+    async def start_fastes_bot(self, text):
+        if match := re.search(r"\?start=(\w+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="TheFastes_Bot", peer="TheFastes_Bot", start_param=ref_key))
+
+    async def start_fastesru_bot(self, text):
+        if match := re.search(r"\?start=(\w+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="TheFastesRuBot", peer="TheFastesRuBot", start_param=ref_key))
+
+    async def start_givelucky_bot(self, text):
+        if match := re.search(r"\?start=([\w-]+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="GiveawayLuckyBot", peer="GiveawayLuckyBot", start_param=ref_key))
+
+    async def start_best_contests_bot(self, text):
+        if match := re.search(r"\?start=([\w-]+)", text):
+            ref_key = match[1]
+            await self.client(StartBotRequest(bot="best_contests_bot", peer="best_contests_bot", start_param=ref_key))
 
     
     async def update_user_config(self, config_name, new_value):
@@ -190,7 +216,8 @@ class CHANNELSMod(loader.Module):
             self.config[config_name] = new_value
             done_message = f"<b>✅ CONFIG: {config_name} изменен на {new_value}.</b>"
             await self.client.send_message(self.owner_chat, done_message)
-            
+
+    
 
     async def handle_manual(self, text):
         """Обработка команды /manual"""
@@ -228,6 +255,22 @@ class CHANNELSMod(loader.Module):
             await self.unsubscribe_by_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+            
+    async def handle_referal(self, text):
+        """Центральная обработка /ref"""
+        linka = text.split("/ref", 1)[1].strip()
+        if "BestRandom_bot" in text:
+            await self.start_bestrandom_bot(text)
+        elif "TheFastes_Bot" in text:
+            await self.start_fastes_bot(text)
+        elif "TheFastesRuBot" in text:
+            await self.start_fastesru_bot(text)
+        elif "GiveawayLuckyBot" in text:
+            await self.start_givelucky_bot(text)
+        elif "best_contests_bot" in text:
+            await self.start_best_contests_bot(text)
+        else:
+            await self.send_module_message("<b>🚫 REFERAL ERROR:</b> Неверный формат.")
 
     async def handle_user_config(self, text):
         """USER configuration of module"""
@@ -252,12 +295,16 @@ class CHANNELSMod(loader.Module):
             return
         if message.sender_id not in self.owner_list:
             return
+        if message.message.startswith("/"):
+            return
         
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/uns"):
                 await self.handle_unsubscribe(message.message)
+            elif message.message.startswith("/ref"):
+                await self.handle_referal(message.message)
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
