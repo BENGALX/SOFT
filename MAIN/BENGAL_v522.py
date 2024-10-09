@@ -269,18 +269,18 @@ class BENGALSOFTMod(loader.Module):
 
     async def handle_runner(self, text):
         """Центральная обработка /run"""
-        private_links = re.findall(r'https?://t.me/c/.*/.*', text)
-        public_links = re.findall(r'https?://t.me/.*/.*', text)
-
-        target = text.split("/run", 1)[1].strip()
-        if 't.me/c/' in target:
-            await self.delay_host()
-            await self.button_private(target)
-        elif 't.me/' in target:
-            await self.delay_host()
-            await self.button_publiс(target)
-        else:
-            await self.send_module_message(f"<b>🚫 RUN ERROR:</b> {target}")
+        try:
+            target = text.split("/run", 1)[1].strip()
+            if 't.me/c/' in target:
+                await self.delay_host()
+                await self.button_private(target)
+            elif 't.me/' in target:
+                await self.delay_host()
+                await self.button_public(target)
+            else:
+                await self.send_module_message(f"<b>🚫 RUN ERROR:</b> {target}")
+        except Exception as e:
+            await self.send_module_message(f"🚫 ERROR in handle_runner: {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
