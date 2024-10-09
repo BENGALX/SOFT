@@ -1,22 +1,27 @@
 import re
+import asyncio
+from .. import loader, utils
+
 from telethon.tl import functions
+from telethon.tl.types import Message
+from telethon.tl.types import PeerChannel
+
 from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.tl.functions.channels import LeaveChannelRequest
 
-import asyncio
-from .. import loader
+from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.messages import StartBotRequest
 
 @loader.tds
-class CHANNELSMod(loader.Module):
+class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
            Commands: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
-        "name": "BGL-CHANNELS",
+        "name": "BENGALSOFT",
         "manual_main": (
-            "<b>⚙️ BGL-CHANNELS for RUBIKON\n💻 By @pavlyxa_rezon\n\n"
+            "<b>⚙️ BENGALSOFT for RUBIKON\n💻 By @pavlyxa_rezon\n\n"
             "<b>После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала.</b>"
         ),
         "manual_basic": (
@@ -34,12 +39,19 @@ class CHANNELSMod(loader.Module):
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
             "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
-            "▪️PRIVATE: ID без минуса с 100.\n\n"
-            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
+            "▪️PRIVATE: ID без минуса.\n\n"
+            "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
+            "▪️PUBLIC: https://t.me/channel/postid\n"
+            "▪️PRIVATE: https://t.me/c/channelid/postid\n\n"
+            "<b>🔗 REFERAL START: /ref [link]</b>\n"
+            "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
+            "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
+            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп, а также участвовать в розыгрышах в обычных и реферальых ботах.</b>\n"
+            "<b>Это стартовый модуль начинающего софтера.</b>"
         )
     }
     
@@ -70,12 +82,12 @@ class CHANNELSMod(loader.Module):
         
     def get_manual_config(self):
         """Значение manual_config."""
-        config_string = ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()])
+        config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
         manual_config = (
-            "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
+            "<b>⚙️ BENGALSOFT CONFIG</b>\n\n"
             "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
+            f"▪️<b>owner_list</b> {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
             "<b>Редактируемые параметры:</b>\n" +
             config_string +
             "\nПримеры изменения конфигурации:\n"
@@ -91,8 +103,8 @@ class CHANNELSMod(loader.Module):
         if not self.owner_chat:
             return
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info else ", Delay: 0."
-            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n\n{text}"
+            delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
+            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
             pass
@@ -109,7 +121,7 @@ class CHANNELSMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.get_manual_config(manual_config))
+            await self.client.send_message(self.owner_chat, self.get_manual_config())
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
         except Exception as e:
@@ -138,7 +150,7 @@ class CHANNELSMod(loader.Module):
             await self.send_module_message(f"{fail_message}\n{e}")
 
     
-    async def unsubscribe_by_tag(self, target):
+    async def unsubscribe_tag(self, target):
         """Отписка по юзернейму."""
         done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
         user_message = f"<b>✅ DELETE:</b> {target}"
@@ -149,7 +161,7 @@ class CHANNELSMod(loader.Module):
             await self.client.delete_dialog(target)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
-    async def unsubscribe_by_link(self, target):
+    async def unsubscribe_link(self, target):
         """Отписка по ссылке."""
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
         done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
@@ -165,7 +177,7 @@ class CHANNELSMod(loader.Module):
         else:
             await self.send_module_message("🚫 UNSUBSCRIBE error")
 
-    async def unsubscribe_by_id(self, target):
+    async def unsubscribe_id(self, target):
         """Отписка по айди."""
         done_message = f"<b>✅ UNSUBSCRIBE ID:</b> {target}"
         user_message = f"<b>✅ DELETE ID:</b> {target}"
@@ -176,6 +188,41 @@ class CHANNELSMod(loader.Module):
         except:
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
+
+    async def button_private(self, target):
+        """Нажатие кнопки в приватных."""
+        try:
+            chan, post = target.split("//t.me/c/")[1].split("/")
+            inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
+
+    async def button_public(self, target):
+        """Нажатие кнопки в публичных."""
+        try:
+            chan, post = target.split("//t.me/")[1].split("/")
+            inline_button = await self.client.get_messages(chan, ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
+            
+
+    async def start_ref_bot(self, bot_name, ref_key):
+      """Запуск ботов по реферальному ключу."""
+      try:
+          await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
+          done_message = f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}"
+          await self.send_module_message(done_message, delay_info=self.get_delay_host())
+      except Exception as e:
+          error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
+          await self.send_module_message(error_message)
 
     
     async def update_user_config(self, config_name, new_value):
@@ -190,7 +237,8 @@ class CHANNELSMod(loader.Module):
             self.config[config_name] = new_value
             done_message = f"<b>✅ CONFIG: {config_name} изменен на {new_value}.</b>"
             await self.client.send_message(self.owner_chat, done_message)
-            
+
+    
 
     async def handle_manual(self, text):
         """Обработка команды /manual"""
@@ -208,10 +256,11 @@ class CHANNELSMod(loader.Module):
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
         target = text.split("/sub", 1)[1].strip()
-        await self.delay_host()
         if 't.me/+' in target:
+            await self.delay_host()
             await self.subscribe_private(target)
         elif "t.me/" in target or "@" in target:
+            await self.delay_host()
             await self.subscribe_public(target)
         else:
             await self.send_module_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
@@ -219,15 +268,58 @@ class CHANNELSMod(loader.Module):
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
         target = text.split("/uns", 1)[1].strip()
-        await self.delay_host()
         if target.startswith("@"):
-            await self.unsubscribe_by_tag(target)
+            await self.delay_host()
+            await self.unsubscribe_tag(target)
         elif "t.me/" in target:
-            await self.unsubscribe_by_link(target)
+            await self.delay_host()
+            await self.unsubscribe_link(target)
         elif target.isdigit():
-            await self.unsubscribe_by_id(target)
+            await self.delay_host()
+            await self.unsubscribe_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+
+    async def handle_runner(self, text):
+        """Центральная обработка /run"""
+        try:
+            target = text.split("/run", 1)[1].strip()
+            if 't.me/c/' in target:
+                await self.delay_host()
+                await self.button_private(target)
+            elif 't.me/' in target:
+                await self.delay_host()
+                await self.button_public(target)
+            else:
+                await self.send_module_message(f"<b>🚫 RUN ERROR:</b> {target}")
+        except Exception as e:
+            await self.send_module_message(f"🚫 ERROR in handle_runner: {e}")
+            
+    async def handle_referal(self, text):
+        """Центральная обработка /ref"""
+        bot_name = None
+        ref_key = None
+        if "BestRandom_bot" in text:
+            bot_name = "BestRandom_bot"
+        elif "TheFastes_Bot" in text:
+            bot_name = "TheFastes_Bot"
+        elif "TheFastesRuBot" in text:
+            bot_name = "TheFastesRuBot"
+        elif "GiveawayLuckyBot" in text:
+            bot_name = "GiveawayLuckyBot"
+        elif "best_contests_bot" in text:
+            bot_name = "best_contests_bot"
+        if bot_name:
+            match = re.search(r"\?start=([\w-]+)", text)
+            if match:
+                ref_key = match[1]
+                await self.delay_host()
+                await self.start_ref_bot(bot_name, ref_key)
+            else:
+                await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> ref_key для @{bot_name} не найден.")
+        else:
+            await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
+    
 
     async def handle_user_config(self, text):
         """USER configuration of module"""
@@ -244,6 +336,7 @@ class CHANNELSMod(loader.Module):
             for tag in taglist:
                 if tag == f"@{user.username}":
                     await self.update_user_config(config_name, new_value)
+
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -252,12 +345,15 @@ class CHANNELSMod(loader.Module):
             return
         if message.sender_id not in self.owner_list:
             return
-        
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/uns"):
                 await self.handle_unsubscribe(message.message)
+            elif message.message.startswith("/run"):
+                await self.handle_runner(message.message)
+            elif message.message.startswith("/ref"):
+                await self.handle_referal(message.message)
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
