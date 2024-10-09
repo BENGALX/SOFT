@@ -100,7 +100,7 @@ class BENGALSOFTMod(loader.Module):
         if not self.owner_chat:
             return
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info else ", Delay: 0."
+            delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
@@ -188,19 +188,17 @@ class BENGALSOFTMod(loader.Module):
 
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
-        target = target.split("//t.me/c/")[1]
-        target = target.split("/")
-        inline_button = await self.client.get_messages(PeerChannel(int(target[0])), ids=int(target[1]))
+        chan, post = link.split("//t.me/c/")[1].split("/")
+        inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{target[0]}/{target[1]}", delay_info=self.get_delay_host())
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}", delay_info=self.get_delay_host())
 
-    async def button_publiс(self, target):
+    async def button_public(self, target):
         """Нажатие кнопки в публичных."""
-        target = target.split("//t.me/")[1]
-        target = target.split("/")
-        inline_button = await self.client.get_messages(target[0], ids=int(target[1]))
+        chan, post = link.split("//t.me/")[1].split("/")
+        inline_button = await self.client.get_messages(chan, ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{target[0]}/{target[1]}", delay_info=self.get_delay_host())
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}", delay_info=self.get_delay_host())
             
 
     async def start_ref_bot(self, bot_name, ref_key):
