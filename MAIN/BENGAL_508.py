@@ -180,30 +180,15 @@ class BENGALSOFTMod(loader.Module):
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
             
 
-    async def start_bestrandom_bot(self, text):
-        if match := re.search(r"\?start=(\w+)", text):
-            ref_key = match[1]
-            await self.client(StartBotRequest(bot="BestRandom_bot", peer="BestRandom_bot", start_param=ref_key))
-
-    async def start_fastes_bot(self, text):
-        if match := re.search(r"\?start=(\w+)", text):
-            ref_key = match[1]
-            await self.client(StartBotRequest(bot="TheFastes_Bot", peer="TheFastes_Bot", start_param=ref_key))
-
-    async def start_fastesru_bot(self, text):
-        if match := re.search(r"\?start=(\w+)", text):
-            ref_key = match[1]
-            await self.client(StartBotRequest(bot="TheFastesRuBot", peer="TheFastesRuBot", start_param=ref_key))
-
-    async def start_givelucky_bot(self, text):
-        if match := re.search(r"\?start=([\w-]+)", text):
-            ref_key = match[1]
-            await self.client(StartBotRequest(bot="GiveawayLuckyBot", peer="GiveawayLuckyBot", start_param=ref_key))
-
-    async def start_best_contests_bot(self, text):
-        if match := re.search(r"\?start=([\w-]+)", text):
-            ref_key = match[1]
-            await self.client(StartBotRequest(bot="best_contests_bot", peer="best_contests_bot", start_param=ref_key))
+    async def start_ref_bot(self, bot_name, ref_key):
+      """Запуск ботов по реферальному ключу."""
+      try:
+          await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
+          done_message = f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}"
+          await self.send_module_message(done_message, delay_info=self.get_delay_host())
+      except Exception as e:
+          error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
+          await self.send_module_message(error_message)
 
     
     async def update_user_config(self, config_name, new_value):
@@ -237,10 +222,11 @@ class BENGALSOFTMod(loader.Module):
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
         target = text.split("/sub", 1)[1].strip()
-        await self.delay_host()
         if 't.me/+' in target:
+            await self.delay_host()
             await self.subscribe_private(target)
         elif "t.me/" in target or "@" in target:
+            await self.delay_host()
             await self.subscribe_public(target)
         else:
             await self.send_module_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
@@ -248,32 +234,43 @@ class BENGALSOFTMod(loader.Module):
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
         target = text.split("/uns", 1)[1].strip()
-        await self.delay_host()
         if target.startswith("@"):
+            await self.delay_host()
             await self.unsubscribe_by_tag(target)
         elif "t.me/" in target:
+            await self.delay_host()
             await self.unsubscribe_by_link(target)
         elif target.isdigit():
+            await self.delay_host()
             await self.unsubscribe_by_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
-        linka = text.split("/ref", 1)[1].strip()
-        await self.delay_host()
+        bot_name = None
+        ref_key = None
         if "BestRandom_bot" in text:
-            await self.start_bestrandom_bot(text)
+            bot_name = "BestRandom_bot"
         elif "TheFastes_Bot" in text:
-            await self.start_fastes_bot(text)
+            bot_name = "TheFastes_Bot"
         elif "TheFastesRuBot" in text:
-            await self.start_fastesru_bot(text)
+            bot_name = "TheFastesRuBot"
         elif "GiveawayLuckyBot" in text:
-            await self.start_givelucky_bot(text)
+            bot_name = "GiveawayLuckyBot"
         elif "best_contests_bot" in text:
-            await self.start_best_contests_bot(text)
+            bot_name = "best_contests_bot"
+        if bot_name:
+            match = re.search(r"\?start=([\w-]+)", text)
+            if match:
+                ref_key = match[1]
+                await self.delay_host()
+                await self.start_ref_bot(bot_name, ref_key)
+            else:
+                await self.send_module_message(f"<b>🚫 ERROR:</b> Реферальный ключ для @{bot_name} не найден.")
         else:
             await self.send_module_message("<b>🚫 REFERAL ERROR:</b> Неверный формат.")
+    
 
     async def handle_user_config(self, text):
         """USER configuration of module"""
