@@ -44,6 +44,9 @@ class BENGALSOFTMod(loader.Module):
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
             "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
+            "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
+            "▪️PUBLIC: https://t.me/ or t.me/\n"
+            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n"
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
             "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
@@ -81,7 +84,7 @@ class BENGALSOFTMod(loader.Module):
         """Значение manual_config."""
         config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
         manual_config = (
-            "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
+            "<b>⚙️ BENGALSOFT CONFIG</b>\n\n"
             "<b>Неизменяемые параметры:</b>\n"
             f"▪️<b>owner_list</b> {self.owner_list}.\n"
             f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
@@ -100,7 +103,7 @@ class BENGALSOFTMod(loader.Module):
         if not self.owner_chat:
             return
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info else ", Delay: 0."
+            delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
@@ -186,19 +189,19 @@ class BENGALSOFTMod(loader.Module):
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
-    async def button_private(self, link):
-        link = link.split("//t.me/c/")[1]
-        link = link.split("/")
-        inline_button = await self.client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+    async def button_private(self, target):
+        """Нажатие кнопки в приватных."""
+        chan, post = target.split("//t.me/c/")[1].split("/")
+        inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{link[0]}/{link[1]}")
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}", delay_info=self.get_delay_host())
 
-    async def button_publiс(self, link):
-        link = link.split("//t.me/")[1]
-        link = link.split("/")
-        inline_button = await self.client.get_messages(link[0], ids=int(link[1]))
+    async def button_public(self, target):
+        """Нажатие кнопки в публичных."""
+        chan, post = target.split("//t.me/")[1].split("/")
+        inline_button = await self.client.get_messages(chan, ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{link[0]}/{link[1]}")
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}", delay_info=self.get_delay_host())
             
 
     async def start_ref_bot(self, bot_name, ref_key):
@@ -268,14 +271,19 @@ class BENGALSOFTMod(loader.Module):
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
 
     async def handle_runner(self, text):
-        private_links = re.findall(r'https?://t.me/c/.*/.*', text)
-        public_links = re.findall(r'https?://t.me/.*/.*', text)
-        for link in private_links:
-            await self.delay_host()
-            await self.button_private(link)
-        for link in public_links:
-            await self.delay_host()
-            await self.button_publiс(link)
+        """Центральная обработка /run"""
+        try:
+            target = text.split("/run", 1)[1].strip()
+            if 't.me/c/' in target:
+                await self.delay_host()
+                await self.button_private(target)
+            elif 't.me/' in target:
+                await self.delay_host()
+                await self.button_public(target)
+            else:
+                await self.send_module_message(f"<b>🚫 RUN ERROR:</b> {target}")
+        except Exception as e:
+            await self.send_module_message(f"🚫 ERROR in handle_runner: {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
