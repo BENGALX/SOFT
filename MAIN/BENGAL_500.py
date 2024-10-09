@@ -14,9 +14,9 @@ class CHANNELSMod(loader.Module):
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
-        "name": "BGL-CHANNELS",
+        "name": "BENGALSOFT",
         "manual_main": (
-            "<b>⚙️ BGL-CHANNELS for BENGAL\n💻 By @pavlyxa_rezon\n\n"
+            "<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon\n\n"
             "<b>После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала.</b>"
         ),
         "manual_basic": (
