@@ -53,9 +53,8 @@ class MANUALMod(loader.Module):
             caption="⚙️ Модуль: BGL-MANUAL\n💻 By @pavlyxa_rezon"
         )
 
-        # Потім відправляємо текстовий блок з інлайн-кнопками
         await self.inline.form(
-            message=message,  # Використовуємо повідомлення, щоб відповісти в той самий чат
+            message=message,
             text=self.strings["manual_main"],
             reply_markup=[
                 [
