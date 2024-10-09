@@ -1,9 +1,10 @@
 import re
 import asyncio
-from .. import loader
+from .. import loader, utils
 
 from telethon.tl import functions
 from telethon.tl.types import Message
+from telethon.tl.types import PeerChannel
 
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.channels import LeaveChannelRequest
@@ -185,21 +186,21 @@ class BENGALSOFTMod(loader.Module):
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
-    async def process_private_link(self, link):
-        link = link.split("//t.me/c/")[1]
-        link = link.split("/")
-        privat_message = f"<b>✅ BUTTON RUN:</b> https://t.me/c/{link[0]}/{link[1]}"
-        inline_button = await self.client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+    async def button_private(self, target):
+        """Нажатие кнопки в приватных."""
+        target = target.split("//t.me/c/")[1]
+        target = target.split("/")
+        inline_button = await self.client.get_messages(PeerChannel(int(target[0])), ids=int(target[1]))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(privat_message)
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{target[0]}/{target[1]}", delay_info=self.get_delay_host())
 
-    async def process_public_link(self, link):
-        link = link.split("//t.me/")[1]
-        link = link.split("/")
-        public_message = f"<b>✅ BUTTON RUN:</b> https://t.me/{link[0]}/{link[1]}"
-        inline_button = await self.client.get_messages(link[0], ids=int(link[1]))
+    async def button_publiс(self, target):
+        """Нажатие кнопки в публичных."""
+        target = target.split("//t.me/")[1]
+        target = target.split("/")
+        inline_button = await self.client.get_messages(target[0], ids=int(target[1]))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(public_message)
+        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{target[0]}/{target[1]}", delay_info=self.get_delay_host())
             
 
     async def start_ref_bot(self, bot_name, ref_key):
@@ -269,12 +270,19 @@ class BENGALSOFTMod(loader.Module):
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
 
     async def handle_runner(self, text):
+        """Центральная обработка /run"""
         private_links = re.findall(r'https?://t.me/c/.*/.*', text)
         public_links = re.findall(r'https?://t.me/.*/.*', text)
-        for link in private_links:
-            await self.process_private_link(link)
-        for link in public_links:
-            await self.process_public_link(link)
+
+        target = text.split("/run", 1)[1].strip()
+        if 't.me/c/' in target:
+            await self.delay_host()
+            await self.button_private(target)
+        elif 't.me/' in target:
+            await self.delay_host()
+            await self.button_publiс(target)
+        else:
+            await self.send_module_message(f"<b>🚫 RUN ERROR:</b> {target}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
@@ -326,7 +334,6 @@ class BENGALSOFTMod(loader.Module):
             return
         if message.sender_id not in self.owner_list:
             return
-        
         try:
             if message.message.startswith("/sub"):
                 await self.handle_subscribe(message.message)
