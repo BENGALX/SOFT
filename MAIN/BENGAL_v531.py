@@ -84,7 +84,7 @@ class BENGALSOFTMod(loader.Module):
         """Значение manual_config."""
         config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
         manual_config = (
-            "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
+            "<b>⚙️ BENGALSOFT CONFIG</b>\n\n"
             "<b>Неизменяемые параметры:</b>\n"
             f"▪️<b>owner_list</b> {self.owner_list}.\n"
             f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
@@ -150,7 +150,7 @@ class BENGALSOFTMod(loader.Module):
             await self.send_module_message(f"{fail_message}\n{e}")
 
     
-    async def unsubscribe_by_tag(self, target):
+    async def unsubscribe_tag(self, target):
         """Отписка по юзернейму."""
         done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
         user_message = f"<b>✅ DELETE:</b> {target}"
@@ -161,7 +161,7 @@ class BENGALSOFTMod(loader.Module):
             await self.client.delete_dialog(target)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
-    async def unsubscribe_by_link(self, target):
+    async def unsubscribe_link(self, target):
         """Отписка по ссылке."""
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
         done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
@@ -177,7 +177,7 @@ class BENGALSOFTMod(loader.Module):
         else:
             await self.send_module_message("🚫 UNSUBSCRIBE error")
 
-    async def unsubscribe_by_id(self, target):
+    async def unsubscribe_id(self, target):
         """Отписка по айди."""
         done_message = f"<b>✅ UNSUBSCRIBE ID:</b> {target}"
         user_message = f"<b>✅ DELETE ID:</b> {target}"
@@ -191,17 +191,27 @@ class BENGALSOFTMod(loader.Module):
 
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
-        chan, post = target.split("//t.me/c/")[1].split("/")
-        inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
-        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}", delay_info=self.get_delay_host())
+        try:
+            chan, post = target.split("//t.me/c/")[1].split("/")
+            inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
 
     async def button_public(self, target):
         """Нажатие кнопки в публичных."""
-        chan, post = target.split("//t.me/")[1].split("/")
-        inline_button = await self.client.get_messages(chan, ids=int(post))
-        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}", delay_info=self.get_delay_host())
+        try:
+            chan, post = target.split("//t.me/")[1].split("/")
+            inline_button = await self.client.get_messages(chan, ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
             
 
     async def start_ref_bot(self, bot_name, ref_key):
@@ -260,13 +270,13 @@ class BENGALSOFTMod(loader.Module):
         target = text.split("/uns", 1)[1].strip()
         if target.startswith("@"):
             await self.delay_host()
-            await self.unsubscribe_by_tag(target)
+            await self.unsubscribe_tag(target)
         elif "t.me/" in target:
             await self.delay_host()
-            await self.unsubscribe_by_link(target)
+            await self.unsubscribe_link(target)
         elif target.isdigit():
             await self.delay_host()
-            await self.unsubscribe_by_id(target)
+            await self.unsubscribe_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
 
