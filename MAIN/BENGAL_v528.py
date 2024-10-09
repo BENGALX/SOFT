@@ -191,17 +191,27 @@ class BENGALSOFTMod(loader.Module):
 
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
-        chan, post = target.split("//t.me/c/")[1].split("/")
-        inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
-        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}", delay_info=self.get_delay_host())
+        try:
+            chan, post = target.split("//t.me/c/")[1].split("/")
+            inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n<b>Ответ:</b> {clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
 
     async def button_public(self, target):
         """Нажатие кнопки в публичных."""
-        chan, post = target.split("//t.me/")[1].split("/")
-        inline_button = await self.client.get_messages(chan, ids=int(post))
-        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
-        await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}", delay_info=self.get_delay_host())
+        try:
+            chan, post = target.split("//t.me/")[1].split("/")
+            inline_button = await self.client.get_messages(chan, ids=int(post))
+            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            clicked_message = click.message
+            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n<b>Ответ:</b> {clicked_message}"
+            await self.send_module_message(log_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            await self.send_module_message(f"<b>🚫 ERROR:</b> {e}")
             
 
     async def start_ref_bot(self, bot_name, ref_key):
