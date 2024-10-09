@@ -1,13 +1,15 @@
 import re
-from telethon.tl import functions
-from telethon.tl.types import Message
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.channels import LeaveChannelRequest
-from telethon.tl.functions.messages import StartBotRequest
-
 import asyncio
 from .. import loader
+
+from telethon.tl import functions
+from telethon.tl.types import Message
+
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.channels import LeaveChannelRequest
+
+from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.messages import StartBotRequest
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -184,10 +186,10 @@ class BENGALSOFTMod(loader.Module):
       """Запуск ботов по реферальному ключу."""
       try:
           await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
-          done_message = f"<b>✅ STARTED BOT:</b> {bot_name}, <b>Ref key:</b> {ref_key}"
+          done_message = f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}"
           await self.send_module_message(done_message, delay_info=self.get_delay_host())
       except Exception as e:
-          error_message = f"<b>🚫 START BOT ERROR:</b> {bot_name}\n{e}"
+          error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
           await self.send_module_message(error_message)
 
     
@@ -222,10 +224,11 @@ class BENGALSOFTMod(loader.Module):
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
         target = text.split("/sub", 1)[1].strip()
-        await self.delay_host()
         if 't.me/+' in target:
+            await self.delay_host()
             await self.subscribe_private(target)
         elif "t.me/" in target or "@" in target:
+            await self.delay_host()
             await self.subscribe_public(target)
         else:
             await self.send_module_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
@@ -233,12 +236,14 @@ class BENGALSOFTMod(loader.Module):
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
         target = text.split("/uns", 1)[1].strip()
-        await self.delay_host()
         if target.startswith("@"):
+            await self.delay_host()
             await self.unsubscribe_by_tag(target)
         elif "t.me/" in target:
+            await self.delay_host()
             await self.unsubscribe_by_link(target)
         elif target.isdigit():
+            await self.delay_host()
             await self.unsubscribe_by_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
@@ -264,9 +269,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host()
                 await self.start_ref_bot(bot_name, ref_key)
             else:
-                await self.send_module_message(f"<b>🚫 ERROR:</b> Реферальный ключ не найден для {bot_name}.")
+                await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> ref_key для @{bot_name} не найден.")
         else:
-            await self.send_module_message("<b>🚫 REFERAL ERROR:</b> Неверный формат.")
+            await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
     
 
     async def handle_user_config(self, text):
