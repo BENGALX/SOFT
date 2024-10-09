@@ -38,15 +38,16 @@ class BENGALSOFTMod(loader.Module):
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
             "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
-            "▪️ONLY: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY], [BOT]?start=[KEY]\n"
+            "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
-            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
+            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп, а также участвовать в розыгрышах в обычных и реферальых ботах.</b>\n"
+            "<b>Это стартовый модуль начинающего софтера.</b>"
         )
     }
     
@@ -77,12 +78,12 @@ class BENGALSOFTMod(loader.Module):
         
     def get_manual_config(self):
         """Значение manual_config."""
-        config_string = ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()])
+        config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
         manual_config = (
             "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
             "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
+            f"▪️<b>owner_list</b> {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
             "<b>Редактируемые параметры:</b>\n" +
             config_string +
             "\nПримеры изменения конфигурации:\n"
