@@ -261,6 +261,7 @@ class BENGALSOFTMod(loader.Module):
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
         linka = text.split("/ref", 1)[1].strip()
+        await self.delay_host()
         if "BestRandom_bot" in text:
             await self.start_bestrandom_bot(text)
         elif "TheFastes_Bot" in text:
@@ -296,8 +297,6 @@ class BENGALSOFTMod(loader.Module):
         if message.chat_id != self.owner_chat:
             return
         if message.sender_id not in self.owner_list:
-            return
-        if message.message.startswith("/"):
             return
         
         try:
