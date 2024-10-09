@@ -44,6 +44,9 @@ class BENGALSOFTMod(loader.Module):
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
             "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
+            "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
+            "▪️PUBLIC: https://t.me/ or t.me/\n"
+            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n"
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
             "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
@@ -188,14 +191,14 @@ class BENGALSOFTMod(loader.Module):
 
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
-        chan, post = link.split("//t.me/c/")[1].split("/")
+        chan, post = target.split("//t.me/c/")[1].split("/")
         inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
         await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}", delay_info=self.get_delay_host())
 
     async def button_public(self, target):
         """Нажатие кнопки в публичных."""
-        chan, post = link.split("//t.me/")[1].split("/")
+        chan, post = target.split("//t.me/")[1].split("/")
         inline_button = await self.client.get_messages(chan, ids=int(post))
         click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
         await self.send_module_message(f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}", delay_info=self.get_delay_host())
