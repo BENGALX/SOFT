@@ -1,13 +1,15 @@
 import re
-from telethon.tl import functions
-from telethon.tl.types import Message
-from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.functions.channels import LeaveChannelRequest
-from telethon.tl.functions.messages import StartBotRequest
-
 import asyncio
 from .. import loader
+
+from telethon.tl import functions
+from telethon.tl.types import Message
+
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.channels import LeaveChannelRequest
+
+from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.messages import StartBotRequest
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -36,12 +38,16 @@ class BENGALSOFTMod(loader.Module):
         "manual_channels": (
             "<b>Текущий функционал модуля:</b>\n\n"
             "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
             "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/, @\n"
-            "▪️PRIVATE: ID без минуса с 100.\n\n"
-            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп.</b>"
+            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
+            "▪️PRIVATE: ID без минуса.\n\n"
+            "<b>🔗 REFERAL START: /ref [link]</b>\n"
+            "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
+            "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
+            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп, а также участвовать в розыгрышах в обычных и реферальых ботах.</b>\n"
+            "<b>Это стартовый модуль начинающего софтера.</b>"
         )
     }
     
@@ -72,12 +78,12 @@ class BENGALSOFTMod(loader.Module):
         
     def get_manual_config(self):
         """Значение manual_config."""
-        config_string = ''.join([f"▪️<b>{key}</b> — {value}.\n" for key, value in self.config.items()])
+        config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
         manual_config = (
             "<b>⚙️ BGL-CHANNELS CONFIG</b>\n\n"
             "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> — {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> — {self.owner_chat}.\n\n"
+            f"▪️<b>owner_list</b> {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
             "<b>Редактируемые параметры:</b>\n" +
             config_string +
             "\nПримеры изменения конфигурации:\n"
@@ -178,6 +184,22 @@ class BENGALSOFTMod(loader.Module):
         except:
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
+
+    async def process_private_link(self, link):
+        link = link.split("//t.me/c/")[1]
+        link = link.split("/")
+        privat_message = f"<b>✅ BUTTON RUN:</b> https://t.me/c/{link[0]}/{link[1]}"
+        inline_button = await self.client.get_messages(PeerChannel(int(link[0])), ids=int(link[1]))
+        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+        await self.send_module_message(privat_message)
+
+    async def process_public_link(self, link):
+        link = link.split("//t.me/")[1]
+        link = link.split("/")
+        public_message = f"<b>✅ BUTTON RUN:</b> https://t.me/{link[0]}/{link[1]}"
+        inline_button = await self.client.get_messages(link[0], ids=int(link[1]))
+        click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+        await self.send_module_message(public_message)
             
 
     async def start_ref_bot(self, bot_name, ref_key):
@@ -245,6 +267,14 @@ class BENGALSOFTMod(loader.Module):
             await self.unsubscribe_by_id(target)
         else:
             await self.send_module_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+
+    async def handle_runner(self, text):
+        private_links = re.findall(r'https?://t.me/c/.*/.*', text)
+        public_links = re.findall(r'https?://t.me/.*/.*', text)
+        for link in private_links:
+            await self.process_private_link(link)
+        for link in public_links:
+            await self.process_public_link(link)
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
@@ -267,9 +297,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host()
                 await self.start_ref_bot(bot_name, ref_key)
             else:
-                await self.send_module_message(f"<b>🚫 ERROR:</b> Реферальный ключ для @{bot_name} не найден.")
+                await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> ref_key для @{bot_name} не найден.")
         else:
-            await self.send_module_message("<b>🚫 REFERAL ERROR:</b> Неверный формат.")
+            await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
     
 
     async def handle_user_config(self, text):
@@ -302,6 +332,8 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_subscribe(message.message)
             elif message.message.startswith("/uns"):
                 await self.handle_unsubscribe(message.message)
+            elif message.message.startswith("/run"):
+                await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
             elif message.message.startswith("/reconf"):
