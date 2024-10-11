@@ -1,4 +1,4 @@
-# BENGALSOFT Modules for Hikka Userbot
+<h1 align="center">BENGALSOFT Modules for Hikka Userbot</h1>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGALHIKKA.jpg" alt="BENGAL HIKKA" width="900"/>
