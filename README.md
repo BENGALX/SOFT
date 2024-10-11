@@ -1,7 +1,7 @@
 # BENGALSOFT Modules for Hikka Userbot
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGALHIKKA.jpg" alt="BENGAL HIKKA" width="300"/>
+  <img src="https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGALHIKKA.jpg" alt="BENGAL HIKKA" width="900"/>
 </p>
 
 ## 📋 Описание
