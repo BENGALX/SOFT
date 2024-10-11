@@ -14,5 +14,5 @@
 Для вопросов свяжитесь со мной через Telegram: [@pavlyxa_rezon](https://t.me/pavlyxa_rezon)
 
 <p align="center">
-  <b>⚙️ Powered by BENGAL</b>
+  <b><h2>⚙️ Powered by BENGAL</h2></b>
 </p>
