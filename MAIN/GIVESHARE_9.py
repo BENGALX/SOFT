@@ -1,6 +1,8 @@
 import re
 import asyncio
-import webbrowser
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
 from .. import loader, utils
 
 @loader.tds
@@ -16,21 +18,24 @@ class GiveShareMod(loader.Module):
         self.owner_chat = -1002205010643
 
     async def start_giveshare_app(self, ref_key):
-        """Запуск веб-приложения GiveShare."""
+        """Запуск веб-приложения GiveShare с использованием Selenium."""
         try:
             app_url = f"https://t.me/GiveShareBot/app?startapp={ref_key}"
-            webbrowser.open(app_url)
+            options = webdriver.ChromeOptions()
+            options.add_argument("--headless")  # Запустите браузер в фоновом режиме, если необходимо
+            driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+            driver.get(app_url)
+            
+            await asyncio.sleep(10)  # Ждем 10 секунд для завершения действий на странице
+            driver.quit()  # Закрываем браузер после ожидания
+            
             await self.send_module_message(f"<b>✅ Открыто веб-приложение:</b> {app_url}")
-
-            # Задержка перед закрытием приложения
-            await asyncio.sleep(10)  # Задержка на 10 секунд
-
         except Exception as e:
             error_message = f"<b>🚫 Ошибка открытия веб-приложения:</b> {e}"
             await self.send_module_message(error_message)
 
     async def handle_referral(self, text):
-        """Обработка команды /giveshare."""
+        """Обработка команды /giveshare для запуска приложения."""
         match = re.search(r"startapp=([\w-]+)", text)
         if match:
             ref_key = match.group(1)
