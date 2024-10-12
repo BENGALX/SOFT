@@ -1,11 +1,11 @@
 import re
 import asyncio
+import webbrowser
 from .. import loader, utils
 
 from telethon.tl import functions
 from telethon.tl.types import Message, PeerChannel
-from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest
+from telethon.tl.functions.messages import StartBotRequest
 
 @loader.tds
 class GiveShareMod(loader.Module):
@@ -25,27 +25,22 @@ class GiveShareMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
-    async def start_giveshare_bot(self, ref_key):
-        """Запуск GiveShare бота с реферальным ключом."""
+    async def start_giveshare_app(self, ref_key):
+        """Запуск веб-приложения GiveShare с реферальным ключом."""
         try:
-            await self.client(StartBotRequest(bot='GiveShareBot', peer='GiveShareBot', start_param=ref_key))
-            await asyncio.sleep(2)
-            messages = await self.client.get_messages('GiveShareBot', limit=1)
-            response_message = "⚠️ Ошибка, бот не ответил."
-            if messages and messages[0].sender_id == (await self.client.get_input_entity('GiveShareBot')).user_id:
-                response_message = messages[0].message
-            done_message = f"<b>✅ Запущен GiveShare бот:</b> @{ref_key}\n\n{response_message}"
-            await self.send_module_message(done_message)
+            app_url = f"https://t.me/GiveShareBot/app?startapp={ref_key}"
+            webbrowser.open(app_url)  # Открываем URL в браузере
+            await self.send_module_message(f"<b>✅ Открыто веб-приложение:</b> {app_url}")
         except Exception as e:
-            error_message = f"<b>🚫 Ошибка запуска бота:</b> {e}"
+            error_message = f"<b>🚫 Ошибка открытия веб-приложения:</b> {e}"
             await self.send_module_message(error_message)
 
     async def handle_referral(self, text):
-        """Обработка команды /giveshare для запуска бота."""
+        """Обработка команды /giveshare для запуска веб-приложения."""
         match = re.search(r"startapp=([\w-]+)", text)
         if match:
             ref_key = match.group(1)
-            await self.start_giveshare_bot(ref_key)
+            await self.start_giveshare_app(ref_key)  # Изменили вызов метода
         else:
             await self.send_module_message("<b>🚫 Ошибка реферала:</b> реферальный ключ не найден.")
 
