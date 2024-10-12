@@ -215,24 +215,23 @@ class BENGALSOFTMod(loader.Module):
             
 
     async def start_ref_bot(self, bot_name, ref_key):
-      """Запуск ботов по реферальному ключу."""
-      try:
-          await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
-          await asyncio.sleep(2)
-          messages = await self.client.get_messages(bot_name, limit=1)
-          if messages:
-              response_message = messages[0].message
-          else:
-              response_message = "⚠️ Бот не ответил или произошла ошибка."
-          
-          done_message = (
-              f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}\n\n"
-              f"<b>Ответ бота:</b>\n{response_message}"
-          )
-          await self.send_module_message(done_message, delay_info=self.get_delay_host())
-      except Exception as e:
-          error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
-          await self.send_module_message(error_message)
+        """Запуск ботов по реферальному ключу."""
+        try:
+            await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
+            await asyncio.sleep(2)
+            messages = await self.client.get_messages(bot_name, limit=1)
+            if messages:
+                response_message = messages[0].message
+            else:
+                response_message = "⚠️ Бот не ответил или произошла ошибка."
+            done_message = (
+                f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}\n\n"
+                f"<b>Ответ бота:</b>\n{response_message}"
+            )
+            await self.send_module_message(done_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
+            await self.send_module_message(error_message)
 
     
     async def update_user_config(self, config_name, new_value):
