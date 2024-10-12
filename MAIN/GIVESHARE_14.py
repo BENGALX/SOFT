@@ -1,11 +1,11 @@
 import re
-import aiohttp
 import asyncio
+import webbrowser
 from .. import loader, utils
 
 @loader.tds
 class GiveShareMod(loader.Module):
-    """Модуль для запуска GiveShare бота.
+    """Модуль для запуска GiveShare веб-приложения.
            Команды: /giveshare link\n
     ⚙️ By @pavlyxa_rezon\n"""
 
@@ -16,21 +16,18 @@ class GiveShareMod(loader.Module):
         self.owner_chat = -1002205010643
 
     async def start_giveshare_app(self, ref_key):
-        """Запуск веб-приложения GiveShare через HTTP-запрос."""
+        """Запуск веб-приложения GiveShare."""
         try:
             app_url = f"https://t.me/GiveShareBot/app?startapp={ref_key}"
-            async with aiohttp.ClientSession() as session:
-                async with session.get(app_url) as response:
-                    if response.status == 200:
-                        await self.send_module_message(f"<b>✅ Открыто веб-приложение:</b> {app_url}")
-                    else:
-                        await self.send_module_message(f"<b>🚫 Ошибка при открытии веб-приложения:</b> {response.status}")
+            webbrowser.open(app_url)
+            await asyncio.sleep(10)  # Увеличьте задержку, если нужно
+            await self.send_module_message(f"<b>✅ Открыто веб-приложение:</b> {app_url}")
         except Exception as e:
             error_message = f"<b>🚫 Ошибка открытия веб-приложения:</b> {e}"
             await self.send_module_message(error_message)
 
     async def handle_referral(self, text):
-        """Обработка команды /giveshare.""" 
+        """Обработка команды /giveshare для запуска приложения."""
         match = re.search(r"startapp=([\w-]+)", text)
         if match:
             ref_key = match.group(1)
