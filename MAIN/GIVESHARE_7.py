@@ -4,8 +4,7 @@ import webbrowser
 from .. import loader, utils
 
 from telethon.tl import functions
-from telethon.tl.types import Message, PeerChannel
-from telethon.tl.functions.messages import StartBotRequest
+from telethon.tl.types import Message
 
 @loader.tds
 class GiveShareMod(loader.Module):
@@ -13,34 +12,28 @@ class GiveShareMod(loader.Module):
            Команды: /giveshare link\n
     ⚙️ By @pavlyxa_rezon\n"""
 
-    strings = {
-        "name": "GiveShare",
-        "manual": (
-            "<b>⚙️ GiveShare Module\n💻 By @pavlyxa_rezon\n\n"
-            "<b>/giveshare [ссылка].</b>"
-        )
-    }
+    strings = {"name": "GiveShare"}
 
     def __init__(self):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
     async def start_giveshare_app(self, ref_key):
-        """Запуск веб-приложения GiveShare с реферальным ключом."""
+        """Запуск веб-приложения GiveShare."""
         try:
             app_url = f"https://t.me/GiveShareBot/app?startapp={ref_key}"
-            webbrowser.open(app_url)  # Открываем URL в браузере
+            webbrowser.open(app_url)
             await self.send_module_message(f"<b>✅ Открыто веб-приложение:</b> {app_url}")
         except Exception as e:
             error_message = f"<b>🚫 Ошибка открытия веб-приложения:</b> {e}"
             await self.send_module_message(error_message)
 
     async def handle_referral(self, text):
-        """Обработка команды /giveshare для запуска веб-приложения."""
+        """Обработка команды /giveshare."""
         match = re.search(r"startapp=([\w-]+)", text)
         if match:
             ref_key = match.group(1)
-            await self.start_giveshare_app(ref_key)  # Изменили вызов метода
+            await self.start_giveshare_app(ref_key)
         else:
             await self.send_module_message("<b>🚫 Ошибка реферала:</b> реферальный ключ не найден.")
 
