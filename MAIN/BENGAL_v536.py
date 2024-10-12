@@ -45,8 +45,8 @@ class BENGALSOFTMod(loader.Module):
             "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
             "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            "▪️PUBLIC: https://t.me/chan/post\n"
-            "▪️PRIVATE: https://t.me/c/chan/post\n\n"
+            "▪️PUBLIC: https://t.me/ or t.me/\n"
+            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n" n
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
             "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
@@ -223,7 +223,7 @@ class BENGALSOFTMod(loader.Module):
             response_message = "⚠️ Ошибка, бот не ответил."
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
-            done_message = f"<b>✅ STARTED:</b> @{bot_name}\n\n{response_message}"
+            done_message = f"<b>✅ START:</b> @{bot_name}\n\n{response_message}"
             await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
