@@ -46,7 +46,7 @@ class BENGALSOFTMod(loader.Module):
             "▪️PRIVATE: ID без минуса.\n\n"
             "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
             "▪️PUBLIC: https://t.me/ or t.me/\n"
-            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n" n
+            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n"
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
             "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
