@@ -27,7 +27,7 @@ class BENGALSOFTMod(loader.Module):
         "manual_basic": (
             "<b>🔗 Базовая настройка:</b>\n"
             "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
-            "Для упрощения ставим как на сервере (по 15-20 аккаунтов). "
+            "Делаем группы по 10-15 аккаунтов, по несколько с каждого сервера. "
             "Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
             "▪️Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
             "Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n\n"
@@ -45,8 +45,8 @@ class BENGALSOFTMod(loader.Module):
             "▪️PUBLIC: https://t.me/, t.me/ or @\n"
             "▪️PRIVATE: ID без минуса.\n\n"
             "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            "▪️PUBLIC: https://t.me/chan/post\n"
-            "▪️PRIVATE: https://t.me/c/chan/post\n\n"
+            "▪️PUBLIC: https://t.me/ or t.me/\n"
+            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n" n
             "<b>🔗 REFERAL START: /ref [link]</b>\n"
             "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
             "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
@@ -192,7 +192,7 @@ class BENGALSOFTMod(loader.Module):
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
         try:
-            chan, post = target.split("//t.me/c/")[1].split("/")
+            chan, post = target.split("t.me/c/")[1].split("/")
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
@@ -204,7 +204,7 @@ class BENGALSOFTMod(loader.Module):
     async def button_public(self, target):
         """Нажатие кнопки в публичных."""
         try:
-            chan, post = target.split("//t.me/")[1].split("/")
+            chan, post = target.split("t.me/")[1].split("/")
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
@@ -215,14 +215,19 @@ class BENGALSOFTMod(loader.Module):
             
 
     async def start_ref_bot(self, bot_name, ref_key):
-      """Запуск ботов по реферальному ключу."""
-      try:
-          await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
-          done_message = f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}"
-          await self.send_module_message(done_message, delay_info=self.get_delay_host())
-      except Exception as e:
-          error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
-          await self.send_module_message(error_message)
+        """Запуск ботов по реферальному ключу."""
+        try:
+            await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
+            await asyncio.sleep(2)
+            messages = await self.client.get_messages(bot_name, limit=1)
+            response_message = "⚠️ Ошибка, бот не ответил."
+            if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
+                response_message = messages[0].message
+            done_message = f"<b>✅ START:</b> @{bot_name}\n\n{response_message}"
+            await self.send_module_message(done_message, delay_info=self.get_delay_host())
+        except Exception as e:
+            error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
+            await self.send_module_message(error_message)
 
     
     async def update_user_config(self, config_name, new_value):
