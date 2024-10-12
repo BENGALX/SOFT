@@ -27,7 +27,7 @@ class BENGALSOFTMod(loader.Module):
         "manual_basic": (
             "<b>🔗 Базовая настройка:</b>\n"
             "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
-            "Для упрощения ставим как на сервере (по 15-20 аккаунтов). "
+            "Делаем группы по 10-15 аккаунтов, по несколько с каждого сервера. "
             "Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
             "▪️Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
             "Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n\n"
@@ -192,7 +192,7 @@ class BENGALSOFTMod(loader.Module):
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
         try:
-            chan, post = target.split("//t.me/c/")[1].split("/")
+            chan, post = target.split("t.me/c/")[1].split("/")
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
@@ -204,7 +204,7 @@ class BENGALSOFTMod(loader.Module):
     async def button_public(self, target):
         """Нажатие кнопки в публичных."""
         try:
-            chan, post = target.split("//t.me/")[1].split("/")
+            chan, post = target.split("t.me/")[1].split("/")
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
