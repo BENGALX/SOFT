@@ -57,7 +57,7 @@ class BENGALSOFTMod(loader.Module):
     
     def __init__(self):
         self.owner_list = [888965441, 922318957]
-    self.owner_chat = -1002166882487
+        self.owner_chat = -1002166882487
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "logger", False, "Состояние работы логгера.",
