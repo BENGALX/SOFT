@@ -220,14 +220,10 @@ class BENGALSOFTMod(loader.Module):
             await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
             await asyncio.sleep(2)
             messages = await self.client.get_messages(bot_name, limit=1)
-            if messages:
+            response_message = "⚠️ Ошибка, бот не ответил."
+            if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
-            else:
-                response_message = "⚠️ Бот не ответил или произошла ошибка."
-            done_message = (
-                f"<b>✅ STARTED:</b> @{bot_name}, <b>Ref key:</b> {ref_key}\n\n"
-                f"<b>Ответ бота:</b>\n{response_message}"
-            )
+            done_message = f"<b>✅ STARTED:</b> @{bot_name}\n\n{response_message}"
             await self.send_module_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
