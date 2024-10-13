@@ -15,7 +15,7 @@ from telethon.tl.functions.messages import StartBotRequest
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
-           Commands: /manual @\n
+           Commands: /\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
@@ -26,19 +26,14 @@ class BENGALSOFTMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
 
-    async def send_module_message(self, text, delay_info=None):
+    async def send_module_message(self, text):
         """Логи действий модуля"""
         if not self.config["logger"]:
             return
-        if not self.owner_chat:
-            return
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
-            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
-            await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
+            await self.client.send_message(self.owner_chat, text, link_preview=False)
         except:
             pass
-    
     
 
     
@@ -50,7 +45,7 @@ class BENGALSOFTMod(loader.Module):
         if message.sender_id not in self.owner_list:
             return
         try:
-            if message.message.startswith("/sub"):
+            if message.message.startswith("/"):
                 await self.handle_subscribe(message.message)
         except:
             pass
