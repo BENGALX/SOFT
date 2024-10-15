@@ -128,7 +128,7 @@ class BENGALSOFTMod(loader.Module):
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
             next_text = (
             f"<b>⚙️ Список мануалов модуля:\n\n"
-            f"<b>.</b>"
+            f"<b>Чтобы просмотреть базовую настройку, введите:</b>\n/config @</b>"
             )
             await self.client.send_file(
                 self.owner_chat,
