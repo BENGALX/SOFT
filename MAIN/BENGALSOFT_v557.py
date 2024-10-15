@@ -378,9 +378,11 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
-            elif message.message.startswith("/manual"):
+            elif message.message.startswith("/man"):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
+            elif message.message.startswith("/basic"):
+                await self.send_basic_message()
         except:
             pass
