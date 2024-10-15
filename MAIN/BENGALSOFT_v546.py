@@ -285,19 +285,6 @@ class BENGALSOFTMod(loader.Module):
             await self.send_manual_message()
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
-
-    async def handle_configuration(self, text):
-        """Обработка команды /manual"""
-        try:
-            parts = text.split()
-            if len(parts) < 2:
-                return
-            user = await self.client.get_me()
-            if parts[1] != f"@{user.username}":
-                return
-            await self.send_manual_message()
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
@@ -383,6 +370,30 @@ class BENGALSOFTMod(loader.Module):
                 if tag == f"@{user.username}":
                     await self.update_user_config(config_name, new_value)
 
+    async def handle_configuration(self, text):
+        """Обработка USER команды /config"""        
+        parts = text.split()
+        if len(parts) < 3:
+            return
+        action = parts[1]
+        user = await self.client.get_me()
+        if action == "set":
+            if len(parts) < 4:
+                return
+            config_name = parts[2]
+            new_value = parts[3]
+            taglist = parts[4:]
+            if "all" in taglist:
+                await self.update_user_config(config_name, new_value)
+            else:
+                for tag in taglist:
+                    if tag == f"@{user.username}":
+                        await self.update_user_config(config_name, new_value)
+        else:
+            taglist = parts[1:]
+            if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
+                await self.send_configuration_message()
+
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -400,8 +411,6 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
-            elif message.message.startswith("/reconf"):
-                await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
