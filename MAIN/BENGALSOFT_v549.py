@@ -98,24 +98,6 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
         except:
             pass
-        
-    async def send_man_message(self):
-        """Вывод мануала по модулю"""
-        try:
-            image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-            await self.client.send_file(
-                self.owner_chat,
-                file=image_url,
-                caption=self.strings["manual_main"]
-            )
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.get_manual_config())
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
@@ -150,6 +132,7 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, configuration)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
+
 
     
     async def subscribe_public(self, target):
@@ -213,6 +196,8 @@ class BENGALSOFTMod(loader.Module):
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
+
+    
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
         try:
