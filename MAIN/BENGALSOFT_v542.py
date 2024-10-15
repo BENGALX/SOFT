@@ -96,8 +96,6 @@ class BENGALSOFTMod(loader.Module):
         """Логи действий модуля"""
         if not self.config["logger"]:
             return
-        if not self.owner_chat:
-            return
         try:
             delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
@@ -105,7 +103,7 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
         
-    async def send_manual_message(self):
+    async def send_man_message(self):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
@@ -120,6 +118,25 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, self.get_manual_config())
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
+    async def send_manual_message(self):
+        """Вывод мануала по модулю"""
+        try:
+            image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
+            image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
+            next_text = (
+            f"<b>⚙️ Список мануалов модуля:\n\n"
+            f"<b>После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала.</b>"
+            )
+            await self.client.send_file(
+                self.owner_chat,
+                file=image_url,
+                caption=image_cpt
+            )
+            await asyncio.sleep(2)
+            await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
