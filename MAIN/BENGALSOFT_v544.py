@@ -140,22 +140,20 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
-    async def send_config_message(self):
+    async def send_configuration_message(self):
         """Вывод текущей конфигурации"""
         try:
             variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            _config = (
+            configuration = (
                 "<b>🔒 Константы:</b>\n"
                 f"▪️<b>owner_list</b> {self.owner_list}.\n"
                 f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
                 f"<b>🔓 Переменные:</b>\n" +
                 variables
             )
-            
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, next_text)
+            await self.client.send_message(self.owner_chat, configuration)
         except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
     
     async def subscribe_public(self, target):
