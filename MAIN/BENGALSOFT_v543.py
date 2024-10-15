@@ -11,7 +11,7 @@ from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequ
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
-           Commands: /manual @\n
+           Manual: /man @user\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
@@ -135,6 +135,23 @@ class BENGALSOFTMod(loader.Module):
                 file=image_url,
                 caption=image_cpt
             )
+            await asyncio.sleep(2)
+            await self.client.send_message(self.owner_chat, next_text)
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
+    async def send_config_message(self):
+        """Вывод текущей конфигурации"""
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            _config = (
+                "<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
+                f"<b>🔓 Переменные:</b>\n" +
+                variables
+            )
+            
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
