@@ -50,6 +50,7 @@ class BENGALSOFTMod(loader.Module):
     def __init__(self):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
+        self.owner_logs = -1002205010643
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "logger", False, "Статус работы логгера.",
@@ -71,21 +72,6 @@ class BENGALSOFTMod(loader.Module):
         """Значение задержки"""
         delay_seconds = self.config["group"] * 20
         return delay_seconds
-        
-    def get_manual_config(self):
-        """Значение manual_config."""
-        config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-        manual_config = (
-            "<b>⚙️ BENGALSOFT CONFIG</b>\n\n"
-            "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
-            "<b>Редактируемые параметры:</b>\n" +
-            config_string +
-            "\nПримеры изменения конфигурации:\n"
-            "/reconf logger True @user1 @user2\n/reconf group 2 all"
-        )
-        return (manual_config)
     
 
     async def send_module_message(self, text, delay_info=None):
@@ -117,6 +103,21 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
+    async def send_config_message(self):
+        """Вывод текущей конфигурации"""
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            configuration = (
+                "<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
+                f"<b>🔓 Переменные:</b>\n" +
+                variables
+            )
+            await self.client.send_message(self.owner_chat, configuration)
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
     async def send_config_message(self):
         """Вывод текущей конфигурации"""
