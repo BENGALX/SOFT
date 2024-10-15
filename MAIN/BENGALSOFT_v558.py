@@ -11,7 +11,7 @@ from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequ
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
-           Manual: /man @user\n
+           Manual: /man @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
@@ -118,11 +118,11 @@ class BENGALSOFTMod(loader.Module):
                 f"▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
                 f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
                 f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
-                f"/config set group 2 @twink1\n"
-                f"/config set group 5 @twink5 @twink7\n\n"
+                f"/config set group 2 @u1\n"
+                f"/config set group 5 @u5 @u7\n\n"
                 f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
                 f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
-                f"/config set logger 1 @twink1 @twink6\n"
+                f"/config set logger 1 @u1 @u6\n"
                 f"/config set logger False all\n"
             )
             await self.client.send_message(self.owner_chat, manual_basic)
