@@ -85,7 +85,7 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
 
-    async def send_manual_message(self):
+    async def send_starting_message(self):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
@@ -102,37 +102,37 @@ class BENGALSOFTMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_starting_message: {e}")
+
+    async def send_config_message(self):
+        """Вывод текущей конфигурации"""
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            configuration = (
+                "<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
+                f"<b>🔓 Переменные:</b>\n" +
+                variables
+            )
+            await self.client.send_message(self.owner_chat, configuration)
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
+
+    async def send_manual_message(self):
+        """Вывод базовой настройки."""
+        try:
+            manual_basic = (
+                "<b>Базовая настройка:</b>\n"
+                "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
+                "Делаем группы по 10-15 аккаунтов, по несколько с каждого сервера. "
+                "Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
+                "▪️Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+                "Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n\n"
+            )
+            await self.client.send_message(self.owner_chat, manual_basic)
+        except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
-
-    async def send_config_message(self):
-        """Вывод текущей конфигурации"""
-        try:
-            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            configuration = (
-                "<b>🔒 Константы:</b>\n"
-                f"▪️<b>owner_list</b> {self.owner_list}.\n"
-                f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
-                f"<b>🔓 Переменные:</b>\n" +
-                variables
-            )
-            await self.client.send_message(self.owner_chat, configuration)
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
-
-    async def send_config_message(self):
-        """Вывод текущей конфигурации"""
-        try:
-            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            configuration = (
-                "<b>🔒 Константы:</b>\n"
-                f"▪️<b>owner_list</b> {self.owner_list}.\n"
-                f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
-                f"<b>🔓 Переменные:</b>\n" +
-                variables
-            )
-            await self.client.send_message(self.owner_chat, configuration)
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
 
     
@@ -271,7 +271,7 @@ class BENGALSOFTMod(loader.Module):
             user = await self.client.get_me()
             if parts[1] != f"@{user.username}":
                 return
-            await self.send_manual_message()
+            await self.send_starting_message()
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
