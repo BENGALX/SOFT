@@ -16,10 +16,6 @@ class BENGALSOFTMod(loader.Module):
 
     strings = {
         "name": "BENGALSOFT",
-        "manual_main": (
-            "<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon\n\n"
-            "<b>После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала.</b>"
-        ),
         "manual_basic": (
             "<b>🔗 Базовая настройка:</b>\n"
             "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
@@ -56,7 +52,7 @@ class BENGALSOFTMod(loader.Module):
         self.owner_chat = -1002205010643
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "logger", False, "Состояние работы логгера.",
+                "logger", False, "Статус работы логгера.",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
@@ -259,17 +255,24 @@ class BENGALSOFTMod(loader.Module):
 
     
     async def update_user_config(self, config_name, new_value):
-        """Обновление конфиг параметров."""
-        if config_name not in self.config:
-            return
-        else:
-            if isinstance(self.config[config_name], bool):
-                new_value = new_value.lower() in ['true', '1', 'yes']
-            elif isinstance(self.config[config_name], int):
-                new_value = int(new_value)
-            self.config[config_name] = new_value
-            done_message = f"<b>✅ CONFIG: {config_name} изменен на {new_value}.</b>"
-            await self.client.send_message(self.owner_chat, done_message)
+        """Обновление переменных конфигураторов."""
+        try:
+            if config_name not in self.config:
+                raise KeyError(f"Config name '{config_name}' not found")
+            else:
+                if isinstance(self.config[config_name], bool):
+                    new_value = new_value.lower() in ['true', '1', 'yes']
+                elif isinstance(self.config[config_name], int):
+                    new_value = int(new_value)
+                self.config[config_name] = new_value
+                done_message = f"<b>✅ CONFIG: {config_name} set to {new_value}.</b>"
+                await self.client.send_message(self.owner_chat, done_message)
+        except KeyError as e:
+            error_message = f"<b>❌ Error: {str(e)}</b>"
+            await self.client.send_message(self.owner_chat, error_message)
+        except Exception as e:
+            error_message = f"<b>❌ Error updating config: {str(e)}</b>"
+            await self.client.send_message(self.owner_chat, error_message)
 
     
 
