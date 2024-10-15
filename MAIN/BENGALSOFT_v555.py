@@ -340,13 +340,11 @@ class BENGALSOFTMod(loader.Module):
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""        
         parts = text.split()
-        if len(parts) < 3:
+        if len(parts) < 4:
             return
         action = parts[1]
         user = await self.client.get_me()
         if action == "set":
-            if len(parts) < 4:
-                return
             config_name = parts[2]
             new_value = parts[3]
             taglist = parts[4:]
@@ -356,10 +354,12 @@ class BENGALSOFTMod(loader.Module):
                 for tag in taglist:
                     if tag == f"@{user.username}":
                         await self.update_user_config(config_name, new_value)
-        else:
-            taglist = parts[1:]
+        elif action == "self":
+            taglist = parts[2:]
             if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
                 await self.send_config_message()
+        else:
+            return
 
     
     @loader.watcher()
