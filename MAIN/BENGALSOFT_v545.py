@@ -285,6 +285,19 @@ class BENGALSOFTMod(loader.Module):
             await self.send_manual_message()
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
+
+    async def handle_configuration(self, text):
+        """Обработка команды /manual"""
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            user = await self.client.get_me()
+            if parts[1] != f"@{user.username}":
+                return
+            await self.send_manual_message()
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
@@ -390,6 +403,8 @@ class BENGALSOFTMod(loader.Module):
             elif message.message.startswith("/reconf"):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/manual"):
+                await self.handle_manual(message.message)
+            elif message.message.startswith("/config"):
                 await self.handle_manual(message.message)
         except:
             pass
