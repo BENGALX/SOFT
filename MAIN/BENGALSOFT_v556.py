@@ -71,7 +71,7 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
 
-    async def send_starting_message(self):
+    async def send_manual_message(self):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
@@ -88,7 +88,7 @@ class BENGALSOFTMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_starting_message: {e}")
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
     async def send_config_message(self):
         """Вывод текущей конфигурации"""
@@ -105,7 +105,7 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
-    async def send_manual_message(self):
+    async def send_basic_message(self):
         """Вывод базовой настройки."""
         try:
             manual_basic = (
@@ -266,7 +266,7 @@ class BENGALSOFTMod(loader.Module):
             user = await self.client.get_me()
             if parts[1] != f"@{user.username}":
                 return
-            await self.send_starting_message()
+            await self.send_manual_message()
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
     
