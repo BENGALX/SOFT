@@ -140,7 +140,7 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
-    async def send_configuration_message(self):
+    async def send_config_message(self):
         """Вывод текущей конфигурации"""
         try:
             variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
@@ -353,24 +353,7 @@ class BENGALSOFTMod(loader.Module):
         else:
             await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
     
-
     async def handle_user_config(self, text):
-        """USER configuration of module"""
-        parts = text.split()
-        if len(parts) < 4:
-            return
-        config_name = parts[1]
-        new_value = parts[2]
-        taglist = parts[3:]
-        user = await self.client.get_me()
-        if "all" in taglist:
-            await self.update_user_config(config_name, new_value)
-        else:
-            for tag in taglist:
-                if tag == f"@{user.username}":
-                    await self.update_user_config(config_name, new_value)
-
-    async def handle_configuration(self, text):
         """Обработка USER команды /config"""        
         parts = text.split()
         if len(parts) < 3:
@@ -392,7 +375,7 @@ class BENGALSOFTMod(loader.Module):
         else:
             taglist = parts[1:]
             if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
-                await self.send_configuration_message()
+                await self.send_config_message()
 
     
     @loader.watcher()
@@ -414,6 +397,6 @@ class BENGALSOFTMod(loader.Module):
             elif message.message.startswith("/manual"):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
-                await self.handle_manual(message.message)
+                await self.handle_user_config(message.message)
         except:
             pass
