@@ -395,9 +395,9 @@ class BENGALSOFTMod(loader.Module):
             return
         twink = await self.get_user_info()
         if parts[1] == 'twink':
-            await self.client.send_message(self.owner_chat, f"проверка хрень, {twink}")
+            await self.client.send_message(self.owner_chat, f"проверка хрень, {twink}, {parts[1]}")
         else:
-            await self.client.send_message(self.owner_chat, f"выводу пизда, {twink}")
+            await self.client.send_message(self.owner_chat, f"выводу пизда, {twink}, {parts[1]}")
 
     
     @loader.watcher()
