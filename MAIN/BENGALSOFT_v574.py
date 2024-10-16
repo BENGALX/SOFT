@@ -27,20 +27,20 @@ class BENGALSOFTMod(loader.Module):
             f"▪️PRIVATE: t.me/+\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
             f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: ID без '-'.\n\n"
+            f"▪️PRIVATE: ID без -\n\n"
             f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
             f"▪️PUBLIC: t.me/\n"
             f"▪️PRIVATE: t.me/c/\n\n"
             f"<b>🔗 REFERAL START: /ref [link]</b>\n"
             f"▪️[BOT]?start=[KEY]\n"
-            f"▪️BOTS:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
+            f"▪️SUPPORTED BOT:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
         ),
         "manual_basic": (
             f"<b>⚙️ Команда настройки</b>\n"
             f"/config set [p] [nv] [us]\n"
             f"▪️[p] — имя переменной\n"
             f"▪️[nv] — новое значение\n"
-            f"▪️[us] — @(1|неск.| all)\n\n"
+            f"▪️[us] — @(1 |неск.| all)\n\n"
             f"<b>⚙️ Базовая настройка</b>\n"
             "▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
             f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
@@ -95,9 +95,12 @@ class BENGALSOFTMod(loader.Module):
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
+            twink = f"@{self.account_name}"
             next_text = (
-            f"<b>⚙️ Список мануалов модуля:\n\n"
-            f"<b>Чтобы просмотреть базовую настройку, введите:</b>\n/config @</b>"
+                f"<b>⚙️ Список мануалов модуля:\n\n"
+                f"<b>Открыть текущие настройки:</b> <code>/config self {twink}</code>\n"
+                f"<b>Мануал по настройке:</b> <code>/manual basic {twink}</code>\n"
+                f"<b>Мануал по командам:</b> <code>/manual command {twink}</code>\n"
             )
             await self.client.send_file(
                 self.owner_chat,
