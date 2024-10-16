@@ -83,7 +83,10 @@ class BENGALSOFTMod(loader.Module):
     async def get_user_info(self):
         """Информация о пользователе."""
         user = await self.client.get_me()
-        twink = f"@{user}"
+        if user.username:
+            twink = f"@{user.username}"
+        else:
+            twink = None
         return twink
     
 
@@ -282,6 +285,8 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 2:
                 return
             twink = await self.get_user_info()
+            if twink is None:
+                return
             if len(parts) >= 3 and parts[2] == 'twink':
                 if parts[1] == "basic":
                     await self.send_basic_message()
