@@ -388,6 +388,17 @@ class BENGALSOFTMod(loader.Module):
         else:
             return
 
+    async def handle_user_(self, text):
+        """Обработка USER команды /cuser"""        
+        parts = text.split()
+        if len(parts) < 2:
+            return
+        twink = await self.get_user_info()
+        if parts[1] == 'twink':
+            await self.client.send_message(self.owner_chat, f"проверка хрень")
+        else:
+            await self.client.send_message(self.owner_chat, f"выводу пизда")
+
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -409,5 +420,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
+            elif message.message.startswith("/cuser"):
+                await self.handle_user_(message.message)
         except:
             pass
