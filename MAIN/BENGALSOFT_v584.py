@@ -83,7 +83,8 @@ class BENGALSOFTMod(loader.Module):
     async def get_user_info(self):
         """Информация о пользователе."""
         user = await self.client.get_me()
-        return user.username
+        twink = f"@{user}"
+        return twink
     
 
     async def send_module_message(self, text, delay_info=None):
@@ -362,7 +363,7 @@ class BENGALSOFTMod(loader.Module):
         parts = text.split()
         if len(parts) < 3:
             return
-        twink = f"@{await self.get_user_info()}"
+        twink = await self.get_user_info()
         if parts[1] == "set":
             if len(parts) < 4:
                 return
