@@ -299,7 +299,10 @@ class BENGALSOFTMod(loader.Module):
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
-        target = text.split("/sub", 1)[1].strip()
+        parts = text.split()
+        if len(parts) < 2:
+            return
+        target = parts[1].strip()
         if 't.me/+' in target:
             await self.delay_host()
             await self.subscribe_private(target)
@@ -311,7 +314,10 @@ class BENGALSOFTMod(loader.Module):
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
-        target = text.split("/uns", 1)[1].strip()
+        parts = text.split()
+        if len(parts) < 2:
+            return
+        target = parts[1].strip()
         if target.startswith("@"):
             await self.delay_host()
             await self.unsubscribe_tag(target)
@@ -327,7 +333,10 @@ class BENGALSOFTMod(loader.Module):
     async def handle_runner(self, text):
         """Центральная обработка /run"""
         try:
-            target = text.split("/run", 1)[1].strip()
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            target = parts[1].strip()
             if 't.me/c/' in target:
                 await self.delay_host()
                 await self.button_private(target)
@@ -389,7 +398,7 @@ class BENGALSOFTMod(loader.Module):
             return
 
     async def handle_user_search(self, text):
-        """Обработка USER команды /cuser"""        
+        """Обработка USER команды /search"""        
         parts = text.split()
         if len(parts) < 2:
             return
