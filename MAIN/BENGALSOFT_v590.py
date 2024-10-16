@@ -287,12 +287,12 @@ class BENGALSOFTMod(loader.Module):
             twink = await self.get_user_info()
             if twink is None:
                 return
-            if len(parts) >= 3 and parts[2] == 'twink':
+            if len(parts) >= 3 and parts[2] == twink:
                 if parts[1] == "basic":
                     await self.send_basic_message()
                 elif parts[1] == "command":
                     await self.send_command_message()
-            elif parts[1] == 'twink':
+            elif parts[1] == twink:
                 await self.send_manual_message()
         except:
             pass
@@ -379,11 +379,11 @@ class BENGALSOFTMod(loader.Module):
                 await self.update_user_config(config_name, new_value)
             else:
                 for tag in taglist:
-                    if tag == 'twink':
+                    if tag == twink:
                         await self.update_user_config(config_name, new_value)
         elif parts[1] == "self":
             taglist = parts[2:]
-            if "all" in taglist or any(tag == 'twink' for tag in taglist):
+            if "all" in taglist or any(tag == twink for tag in taglist):
                 await self.send_config_message()
         else:
             return
@@ -394,7 +394,7 @@ class BENGALSOFTMod(loader.Module):
         if len(parts) < 2:
             return
         twink = await self.get_user_info()
-        if parts[1] == 'twink':
+        if parts[1] == twink:
             await self.client.send_message(self.owner_chat, f"проверка хрень, {twink}, {parts[1]}")
         else:
             await self.client.send_message(self.owner_chat, f"выводу пизда, {twink}, {parts[1]}")
