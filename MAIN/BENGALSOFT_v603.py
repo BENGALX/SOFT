@@ -69,9 +69,8 @@ class BENGALSOFTMod(loader.Module):
             )
         )
 
-    async def delay_host(self):
+    async def delay_host(self, delay_seconds):
         """Задержка выполняется"""
-        delay_seconds = self.get_delay_host()
         await asyncio.sleep(delay_seconds)
         return delay_seconds
     
@@ -320,10 +319,10 @@ class BENGALSOFTMod(loader.Module):
             target = parts[1].strip()
         delay_seconds = self.get_delay_host(multiplier)
         if 't.me/+' in target:
-            await self.delay_host()
+            await self.delay_host(delay_seconds)
             await self.subscribe_private(target)
         elif "t.me/" in target or "@" in target:
-            await self.delay_host()
+            await self.delay_host(delay_seconds)
             await self.subscribe_public(target)
         else:
             await self.send_done_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
