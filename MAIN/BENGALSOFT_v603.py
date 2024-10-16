@@ -24,7 +24,7 @@ class BENGALSOFTMod(loader.Module):
             f"▪️@tag — публичный тег\n\n"
             f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
             f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: t.me/+\n"
+            f"▪️PRIVATE: t.me/+\n\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
             f"▪️PUBLIC: любые.\n"
             f"▪️PRIVATE: ID без -\n\n"
@@ -75,9 +75,11 @@ class BENGALSOFTMod(loader.Module):
         await asyncio.sleep(delay_seconds)
         return delay_seconds
     
-    def get_delay_host(self):
-        """Значение задержки"""
-        delay_seconds = self.config["group"] * 20
+    def get_delay_host(self, multiplier=None):
+        """Рассчет кастомной задержки"""
+        default_multiplier = 20
+        multiplier = int(multiplier) if multiplier else default_multiplier
+        delay_seconds = self.config["group"] * multiplier
         return delay_seconds
 
     async def get_user_info(self):
@@ -99,11 +101,10 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
 
-    async def send_error_message(self, text, delay_info=None):
+    async def send_error_message(self, text):
         """Логи ошибочных действий модуля"""
         try:
-            delay_text = f", KD: {delay_info} sec" if delay_info is not None else ""
-            logger_message = f"💻 <b>GROUP: {self.config['group']}{delay_text}</b>\n{text}"
+            logger_message = f"{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
             pass
@@ -311,7 +312,13 @@ class BENGALSOFTMod(loader.Module):
         parts = text.split()
         if len(parts) < 2:
             return
-        target = parts[1].strip()
+        if parts[1].isdigit():
+            multiplier = parts[1]
+            target = parts[2].strip()
+        else:
+            multiplier = None
+            target = parts[1].strip()
+        delay_seconds = self.get_delay_host(multiplier)
         if 't.me/+' in target:
             await self.delay_host()
             await self.subscribe_private(target)
