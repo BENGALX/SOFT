@@ -6,57 +6,61 @@ from telethon.tl import functions
 from telethon.tl.types import Message, PeerChannel
 
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Модуль управления каналами.
-           Commands: /manual @\n
+           Manual: /man @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
         "name": "BENGALSOFT",
-        "manual_main": (
-            "<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon\n\n"
-            "<b>После установки модуля нужно выполнить несколько простых действий для раскрытия полного функционала.</b>"
+        "manual_command": (
+            f"<b>⚙️ Функционал модуля</b>\n"
+            f"<b>✅ Примеры форматов:</b>\n"
+            f"▪️https://t.me/ — полная\n"
+            f"▪️t.me/ — сокращенная\n"
+            f"▪️@tag — публичный тег\n\n"
+            f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
+            f"▪️PUBLIC: любые.\n"
+            f"▪️PRIVATE: t.me/+\n"
+            f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
+            f"▪️PUBLIC: любые.\n"
+            f"▪️PRIVATE: ID без -\n\n"
+            f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
+            f"▪️PUBLIC: t.me/\n"
+            f"▪️PRIVATE: t.me/c/\n\n"
+            f"<b>🔗 REFERAL START: /ref [link]</b>\n"
+            f"▪️[BOT]?start=[KEY]\n"
+            f"▪️SUPPORTED BOT:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
         ),
         "manual_basic": (
-            "<b>🔗 Базовая настройка:</b>\n"
-            "▪️Для начала нужно разделить все ваши аккаунты на условные группы (по умолчанию стоит группа 1). "
-            "Делаем группы по 10-15 аккаунтов, по несколько с каждого сервера. "
-            "Это создает задержку между выполнениями действий каждой группы в Х*20 секунд.\n\n"
-            "▪️Далее на одном из аккаунтов каждой группы нужно включить логгирование (по умолчанию оно выключено). "
-            "Так логи будут выводиться только с выбранных аккаунтов прямо в вашу группу.\n\n"
-            "<b>🔗 Конфиг: /reconf [name] [value] [acc]</b>\n"
-            "▪️logger — булевый статус (True/False, 1/0, yes/no).\n"
-            "▪️group — номер сервера или группы аккаунтов.\n"
-            "▪️acc — один или несколько юзеров, где нужно перезаписать конфиг (all для всех).\n"
-        ),
-        "manual_channels": (
-            "<b>Текущий функционал модуля:</b>\n\n"
-            "<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
-            "▪️PRIVATE: https://t.me/+, t.me/+\n\n"
-            "<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            "▪️PUBLIC: https://t.me/, t.me/ or @\n"
-            "▪️PRIVATE: ID без минуса.\n\n"
-            "<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            "▪️PUBLIC: https://t.me/ or t.me/\n"
-            "▪️PRIVATE: https://t.me/c/ or t.me/c/\n\n"
-            "<b>🔗 REFERAL START: /ref [link]</b>\n"
-            "▪️LINK: https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
-            "▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
-            "<b>Таким образом, с помощью модуля можно подписываться и отписываться от любых каналов и групп, а также участвовать в розыгрышах в обычных и реферальых ботах.</b>\n"
-            "<b>Это стартовый модуль начинающего софтера.</b>"
+            f"<b>⚙️ Команда настройки</b>\n"
+            f"/config set [p] [nv] [us]\n"
+            f"▪️[p] — имя переменной\n"
+            f"▪️[nv] — новое значение\n"
+            f"▪️[us] — @(1 |неск.| all)\n\n"
+            f"<b>⚙️ Базовая настройка</b>\n"
+            "▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
+            f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
+            f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
+            f"/config set group 2 @u1\n"
+            f"/config set group 5 @u5 @u7\n\n"
+            f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+            f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
+            f"/config set logger 1 @u1 @u6\n"
+            f"/config set logger False all\n"
         )
     }
     
     def __init__(self):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
+        self.owner_logs = -1002205010643
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
-                "logger", False, "Состояние работы логгера.",
+                "logger", False, "Статус работы логгера.",
                 validator=loader.validators.Boolean(),
             ),
             loader.ConfigValue(
@@ -75,53 +79,70 @@ class BENGALSOFTMod(loader.Module):
         """Значение задержки"""
         delay_seconds = self.config["group"] * 20
         return delay_seconds
-        
-    def get_manual_config(self):
-        """Значение manual_config."""
-        config_string = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-        manual_config = (
-            "<b>⚙️ BENGALSOFT CONFIG</b>\n\n"
-            "<b>Неизменяемые параметры:</b>\n"
-            f"▪️<b>owner_list</b> {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> {self.owner_chat}.\n\n"
-            "<b>Редактируемые параметры:</b>\n" +
-            config_string +
-            "\nПримеры изменения конфигурации:\n"
-            "/reconf logger True @user1 @user2\n/reconf group 2 all"
-        )
-        return (manual_config)
     
 
     async def send_module_message(self, text, delay_info=None):
         """Логи действий модуля"""
-        if not self.config["logger"]:
-            return
-        if not self.owner_chat:
-            return
         try:
             delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
             logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
-            await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
+            await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
             pass
-        
+
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
+            image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
+            user = await self.client.get_me()
+            twink = f"@{user.username}"
+            
+            next_text = (
+                f"<b>⚙️ Список мануалов модуля:\n\n"
+                f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
+                f"<b>▪️Мануал по командам:</b>\n<code>/manual command {twink}</code>\n\n"
+                f"<b>▪️Посмотреть настройки:</b>\n<code>/config self {twink}</code>\n"
+            )
             await self.client.send_file(
                 self.owner_chat,
                 file=image_url,
-                caption=self.strings["manual_main"]
+                caption=image_cpt
             )
             await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.get_manual_config())
-            await asyncio.sleep(2)
-            await self.client.send_message(self.owner_chat, self.strings["manual_channels"])
+            await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
+    async def send_config_message(self):
+        """Вывод текущей конфигурации"""
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            configuration = (
+                f"<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+                f"<b>🔓 Переменные:</b>\n" + variables
+            )
+            await self.client.send_message(self.owner_chat, configuration)
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
+
+    async def send_basic_message(self):
+        """Вывод базовой настройки."""
+        try:
+            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
+    async def send_command_message(self):
+        """Вывод примеров команд модуля."""
+        try:
+            await self.client.send_message(self.owner_chat, self.strings["manual_command"])
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+
 
     
     async def subscribe_public(self, target):
@@ -185,6 +206,8 @@ class BENGALSOFTMod(loader.Module):
             await self.client.delete_dialog(channel_id)
             await self.send_module_message(user_message, delay_info=self.get_delay_host())
 
+
+    
     async def button_private(self, target):
         """Нажатие кнопки в приватных."""
         try:
@@ -227,17 +250,24 @@ class BENGALSOFTMod(loader.Module):
 
     
     async def update_user_config(self, config_name, new_value):
-        """Обновление конфиг параметров."""
-        if config_name not in self.config:
-            return
-        else:
-            if isinstance(self.config[config_name], bool):
-                new_value = new_value.lower() in ['true', '1', 'yes']
-            elif isinstance(self.config[config_name], int):
-                new_value = int(new_value)
-            self.config[config_name] = new_value
-            done_message = f"<b>✅ CONFIG: {config_name} изменен на {new_value}.</b>"
-            await self.client.send_message(self.owner_chat, done_message)
+        """Обновление переменных конфигураторов."""
+        try:
+            if config_name not in self.config:
+                raise KeyError(f"Config name '{config_name}' not found")
+            else:
+                if isinstance(self.config[config_name], bool):
+                    new_value = new_value.lower() in {'true', '1', 'yes', 'on'}
+                elif isinstance(self.config[config_name], int):
+                    new_value = int(new_value)
+                self.config[config_name] = new_value
+                done_message = f"<b>✅ CONFIG: {config_name} set to {new_value}.</b>"
+                await self.client.send_message(self.owner_chat, done_message)
+        except KeyError as e:
+            error_message = f"<b>❌ Error: {str(e)}</b>"
+            await self.client.send_message(self.owner_chat, error_message)
+        except Exception as e:
+            error_message = f"<b>❌ Error updating config: {str(e)}</b>"
+            await self.client.send_message(self.owner_chat, error_message)
 
     
 
@@ -248,11 +278,15 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 2:
                 return
             user = await self.client.get_me()
-            if parts[1] != f"@{user.username}":
-                return
-            await self.send_manual_message()
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
+            if len(parts) >= 3 and parts[2] == f"@{user.username}":
+                if parts[1] == "basic":
+                    await self.send_basic_message()
+                elif parts[1] == "command":
+                    await self.send_command_message()
+            elif parts[1] == f"@{user.username}":
+                await self.send_manual_message()
+        except:
+            pass
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
@@ -300,16 +334,15 @@ class BENGALSOFTMod(loader.Module):
         """Центральная обработка /ref"""
         bot_name = None
         ref_key = None
-        if "BestRandom_bot" in text:
-            bot_name = "BestRandom_bot"
-        elif "TheFastes_Bot" in text:
-            bot_name = "TheFastes_Bot"
-        elif "TheFastesRuBot" in text:
-            bot_name = "TheFastesRuBot"
-        elif "GiveawayLuckyBot" in text:
-            bot_name = "GiveawayLuckyBot"
-        elif "best_contests_bot" in text:
-            bot_name = "best_contests_bot"
+        supported_bots = [
+            "BestRandom_bot", "best_contests_bot",
+            "TheFastes_Bot", "TheFastesRuBot",
+            "GiveawayLuckyBot"            
+        ]
+        for bot in supported_bots:
+            if bot in text:
+                bot_name = bot
+                break
         if bot_name:
             match = re.search(r"\?start=([\w-]+)", text)
             if match:
@@ -321,22 +354,30 @@ class BENGALSOFTMod(loader.Module):
         else:
             await self.send_module_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
     
-
     async def handle_user_config(self, text):
-        """USER configuration of module"""
+        """Обработка USER команды /config"""        
         parts = text.split()
-        if len(parts) < 4:
+        if len(parts) < 3:
             return
-        config_name = parts[1]
-        new_value = parts[2]
-        taglist = parts[3:]
         user = await self.client.get_me()
-        if "all" in taglist:
-            await self.update_user_config(config_name, new_value)
+        if parts[1] == "set":
+            if len(parts) < 4:
+                return
+            config_name = parts[2]
+            new_value = parts[3]
+            taglist = parts[4:]
+            if "all" in taglist:
+                await self.update_user_config(config_name, new_value)
+            else:
+                for tag in taglist:
+                    if tag == f"@{user.username}":
+                        await self.update_user_config(config_name, new_value)
+        elif parts[1] == "self":
+            taglist = parts[2:]
+            if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
+                await self.send_config_message()
         else:
-            for tag in taglist:
-                if tag == f"@{user.username}":
-                    await self.update_user_config(config_name, new_value)
+            return
 
     
     @loader.watcher()
@@ -355,9 +396,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
-            elif message.message.startswith("/reconf"):
-                await self.handle_user_config(message.message)
-            elif message.message.startswith("/manual"):
+            elif message.message.startswith("/man"):
                 await self.handle_manual(message.message)
+            elif message.message.startswith("/config"):
+                await self.handle_user_config(message.message)
         except:
             pass
