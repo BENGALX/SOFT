@@ -362,7 +362,7 @@ class BENGALSOFTMod(loader.Module):
         parts = text.split()
         if len(parts) < 3:
             return
-        twink = await self.get_user_info()
+        twink = f"@{await self.get_user_info()}"
         if parts[1] == "set":
             if len(parts) < 4:
                 return
