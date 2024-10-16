@@ -35,7 +35,7 @@ class BENGALSOFTMod(loader.Module):
             f"▪️[BOT]?start=[KEY]\n"
             f"▪️BOTS:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
         ),
-        "manual_basic": = (
+        "manual_basic": (
             f"<b>⚙️ Команда настройки</b>\n"
             f"/config set [p] [nv] [us]\n"
             f"▪️[p] — имя переменной\n"
@@ -329,16 +329,15 @@ class BENGALSOFTMod(loader.Module):
         """Центральная обработка /ref"""
         bot_name = None
         ref_key = None
-        if "BestRandom_bot" in text:
-            bot_name = "BestRandom_bot"
-        elif "TheFastes_Bot" in text:
-            bot_name = "TheFastes_Bot"
-        elif "TheFastesRuBot" in text:
-            bot_name = "TheFastesRuBot"
-        elif "GiveawayLuckyBot" in text:
-            bot_name = "GiveawayLuckyBot"
-        elif "best_contests_bot" in text:
-            bot_name = "best_contests_bot"
+        supported_bots = [
+            "BestRandom_bot", "best_contests_bot",
+            "TheFastes_Bot", "TheFastesRuBot",
+            "GiveawayLuckyBot"            
+        ]
+        for bot in supported_bots:
+            if bot in text:
+                bot_name = bot
+                break
         if bot_name:
             match = re.search(r"\?start=([\w-]+)", text)
             if match:
