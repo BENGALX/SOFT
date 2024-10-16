@@ -18,7 +18,7 @@ class BENGALSOFTMod(loader.Module):
         "name": "BENGALSOFT",
         "manual_command": (
             f"<b>⚙️ Функционал модуля</b>\n"
-            f"✅ Примеры форматов:\n"
+            f"<b>✅ Примеры форматов:</b>\n"
             f"▪️https://t.me/(c/) — полная\n"
             f"▪️t.me/(c/) — сокращенная\n"
             f"▪️@tag — публичный тег\n\n"
@@ -34,7 +34,6 @@ class BENGALSOFTMod(loader.Module):
             f"<b>🔗 REFERAL START: /ref [link]</b>\n"
             f"▪️[BOT]?start=[KEY]\n"
             f"▪️BOTS:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
-            f"<b>Это стартовый модуль начинающего софтера.</b>"
         ),
         "manual_basic": = (
             f"<b>⚙️ Команда настройки</b>\n"
@@ -274,11 +273,15 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 2:
                 return
             user = await self.client.get_me()
-            if parts[1] != f"@{user.username}":
-                return
-            await self.send_manual_message()
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in handle_manual: {e}")
+            if parts[1] == f"@{user.username}":
+                await self.send_manual_message()
+            elif parts[1] == "basic":
+                if len(parts) >= 3 and parts[2] = f"@{user.username}":
+                    await self.send_basic_message()
+                else:
+                    return
+        except:
+            pass
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
@@ -350,11 +353,12 @@ class BENGALSOFTMod(loader.Module):
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""        
         parts = text.split()
-        if len(parts) < 4:
+        if len(parts) < 3:
             return
-        action = parts[1]
         user = await self.client.get_me()
-        if action == "set":
+        if parts[1] == "set":
+            if len(parts) < 4:
+                return
             config_name = parts[2]
             new_value = parts[3]
             taglist = parts[4:]
@@ -364,7 +368,7 @@ class BENGALSOFTMod(loader.Module):
                 for tag in taglist:
                     if tag == f"@{user.username}":
                         await self.update_user_config(config_name, new_value)
-        elif action == "self":
+        elif parts[1] == "self":
             taglist = parts[2:]
             if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
                 await self.send_config_message()
@@ -392,7 +396,5 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
-            elif message.message.startswith("/basic"):
-                await self.send_basic_message()
         except:
             pass
