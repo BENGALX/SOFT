@@ -95,7 +95,9 @@ class BENGALSOFTMod(loader.Module):
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
-            twink = f"@{self.account_name}"
+            user = await self.client.get_me()
+            twink = f"@{user.username}"
+            
             next_text = (
                 f"<b>⚙️ Список мануалов модуля:\n\n"
                 f"<b>Открыть текущие настройки:</b> <code>/config self {twink}</code>\n"
