@@ -352,13 +352,17 @@ class BENGALSOFTMod(loader.Module):
         """Центральная обработка /ref"""
         bot_name = None
         ref_key = None
-        supported_bots = [
+        sup_bot = [
             "BestRandom_bot", "best_contests_bot",
             "TheFastes_Bot", "TheFastesRuBot",
             "GiveawayLuckyBot"            
         ]
-        for bot in supported_bots:
-            if bot in text:
+        parts = text.split()
+            if len(parts) < 2:
+                return
+            target = parts[1].strip()
+        for bot in sup_bot:
+            if bot in target:
                 bot_name = bot
                 break
         if bot_name:
