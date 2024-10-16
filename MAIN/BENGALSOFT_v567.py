@@ -280,7 +280,7 @@ class BENGALSOFTMod(loader.Module):
                     await self.send_basic_message()
             elif parts[1] == "command":
                 if len(parts) >= 3 and parts[2] = f"@{user.username}":
-                    await self.send_basic_message()
+                    await self.send_command_message()
         except:
             pass
     
