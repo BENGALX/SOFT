@@ -19,18 +19,18 @@ class BENGALSOFTMod(loader.Module):
         "manual_command": (
             f"<b>⚙️ Функционал модуля</b>\n"
             f"<b>✅ Примеры форматов:</b>\n"
-            f"▪️https://t.me/(c/) — полная\n"
-            f"▪️t.me/(c/) — сокращенная\n"
+            f"▪️https://t.me/ — полная\n"
+            f"▪️t.me/ — сокращенная\n"
             f"▪️@tag — публичный тег\n\n"
             f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
             f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: любые.\n"
+            f"▪️PRIVATE: t.me/+\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
             f"▪️PUBLIC: любые.\n"
             f"▪️PRIVATE: ID без '-'.\n\n"
             f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            f"▪️PUBLIC: полн., сокр.\n"
-            f"▪️PRIVATE: полн., сокр.\n\n"
+            f"▪️PUBLIC: t.me/\n"
+            f"▪️PRIVATE: t.me/c/\n\n"
             f"<b>🔗 REFERAL START: /ref [link]</b>\n"
             f"▪️[BOT]?start=[KEY]\n"
             f"▪️BOTS:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
@@ -278,8 +278,9 @@ class BENGALSOFTMod(loader.Module):
             elif parts[1] == "basic":
                 if len(parts) >= 3 and parts[2] = f"@{user.username}":
                     await self.send_basic_message()
-                else:
-                    return
+            elif parts[1] == "command":
+                if len(parts) >= 3 and parts[2] = f"@{user.username}":
+                    await self.send_basic_message()
         except:
             pass
     
