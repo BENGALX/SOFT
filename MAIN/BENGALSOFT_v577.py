@@ -100,9 +100,9 @@ class BENGALSOFTMod(loader.Module):
             
             next_text = (
                 f"<b>⚙️ Список мануалов модуля:\n\n"
-                f"<b>Открыть текущие настройки:</b> <code>/config self {twink}</code>\n"
-                f"<b>Мануал по настройке:</b> <code>/manual basic {twink}</code>\n"
-                f"<b>Мануал по командам:</b> <code>/manual command {twink}</code>\n"
+                f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
+                f"<b>▪️Мануал по командам:</b>\n<code>/manual command {twink}</code>\n\n"
+                f"<b>▪️Посмотреть настройки:</b>\n<code>/config self {twink}</code>\n"\n
             )
             await self.client.send_file(
                 self.owner_chat,
