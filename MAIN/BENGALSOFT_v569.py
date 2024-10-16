@@ -273,14 +273,13 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 2:
                 return
             user = await self.client.get_me()
-            if parts[1] == f"@{user.username}":
-                await self.send_manual_message()
-            elif parts[1] == "basic":
-                if len(parts) >= 3 and parts[2] = f"@{user.username}":
+            if len(parts) >= 3 and parts[2] == f"@{user.username}":
+                if parts[1] == "basic":
                     await self.send_basic_message()
-            elif parts[1] == "command":
-                if len(parts) >= 3 and parts[2] = f"@{user.username}":
+                elif parts[1] == "command":
                     await self.send_command_message()
+            elif parts[1] == f"@{user.username}":
+                await self.send_manual_message()
         except:
             pass
     
