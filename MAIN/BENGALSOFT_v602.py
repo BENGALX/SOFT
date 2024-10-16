@@ -385,7 +385,7 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
     
     async def handle_user_config(self, text):
-        """Обработка USER команды /config"""        
+        """Обработка USER команды /config"""
         parts = text.split()
         if len(parts) < 3:
             return
