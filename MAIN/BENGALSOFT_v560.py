@@ -6,7 +6,7 @@ from telethon.tl import functions
 from telethon.tl.types import Message, PeerChannel
 
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -17,38 +17,42 @@ class BENGALSOFTMod(loader.Module):
     strings = {
         "name": "BENGALSOFT",
         "manual_command": (
-            f"<b>Текущий функционал модуля:</b>\n\n"
+            f"<b>⚙️ Функционал модуля</b>\n"
+            f"✅ Примеры форматов:\n"
+            f"▪️https://t.me/(c/) — полная\n"
+            f"▪️t.me/(c/) — сокращенная\n"
+            f"▪️@tag — публичный тег\n\n"
             f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            f"▪️https://t.me/, t.me/ or @\n"
-            f"▪️https://t.me/+, t.me/+\n\n"
+            f"▪️PUBLIC: любые.\n"
+            f"▪️PRIVATE: любые.\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            f"▪️https://t.me/, t.me/ or @\n"
-            f"▪️ID без минуса.\n\n"
+            f"▪️PUBLIC: любые.\n"
+            f"▪️PRIVATE: ID без '-'.\n\n"
             f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            f"▪️https://t.me/ or t.me/\n"
-            f"▪️https://t.me/c/ or t.me/c/\n\n"
+            f"▪️PUBLIC: полн., сокр.\n"
+            f"▪️PRIVATE: полн., сокр.\n\n"
             f"<b>🔗 REFERAL START: /ref [link]</b>\n"
-            f"▪️https://t.me/[BOT]?start=[KEY], t.me/[BOT]?start=[KEY] or [BOT]?start=[KEY]\n"
-            f"▪️BOTS: @BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
+            f"▪️[BOT]?start=[KEY]\n"
+            f"▪️BOTS:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
             f"<b>Это стартовый модуль начинающего софтера.</b>"
         ),
         "manual_basic": = (
-                f"<b>⚙️ Команда настройки</b>\n"
-                f"/config set [p] [nv] [us]\n"
-                f"▪️[p] — имя переменной\n"
-                f"▪️[nv] — новое значение\n"
-                f"▪️[us] — @(1|неск.| all)\n\n"
-                f"<b>⚙️ Базовая настройка</b>\n"
-                f"▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
-                f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
-                f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
-                f"/config set group 2 @u1\n"
-                f"/config set group 5 @u5 @u7\n\n"
-                f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
-                f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
-                f"/config set logger 1 @u1 @u6\n"
-                f"/config set logger False all\n"
-            )
+            f"<b>⚙️ Команда настройки</b>\n"
+            f"/config set [p] [nv] [us]\n"
+            f"▪️[p] — имя переменной\n"
+            f"▪️[nv] — новое значение\n"
+            f"▪️[us] — @(1|неск.| all)\n\n"
+            f"<b>⚙️ Базовая настройка</b>\n"
+            "▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
+            f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
+            f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
+            f"/config set group 2 @u1\n"
+            f"/config set group 5 @u5 @u7\n\n"
+            f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+            f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
+            f"/config set logger 1 @u1 @u6\n"
+            f"/config set logger False all\n"
+        )
     }
     
     def __init__(self):
