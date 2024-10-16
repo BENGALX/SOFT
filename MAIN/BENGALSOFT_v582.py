@@ -79,6 +79,11 @@ class BENGALSOFTMod(loader.Module):
         """Значение задержки"""
         delay_seconds = self.config["group"] * 20
         return delay_seconds
+
+    async def get_user_info(self):
+        """Информация о пользователе."""
+        user = await self.client.get_me()
+        return user.username
     
 
     async def send_module_message(self, text, delay_info=None):
@@ -95,9 +100,7 @@ class BENGALSOFTMod(loader.Module):
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
-            user = await self.client.get_me()
-            twink = f"@{user.username}"
-            
+            twink = await self.get_user_info()
             next_text = (
                 f"<b>⚙️ Список мануалов модуля:\n\n"
                 f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
@@ -277,13 +280,13 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            user = await self.client.get_me()
-            if len(parts) >= 3 and parts[2] == f"@{user.username}":
+            twink = await self.get_user_info()
+            if len(parts) >= 3 and parts[2] == 'twink':
                 if parts[1] == "basic":
                     await self.send_basic_message()
                 elif parts[1] == "command":
                     await self.send_command_message()
-            elif parts[1] == f"@{user.username}":
+            elif parts[1] == 'twink':
                 await self.send_manual_message()
         except:
             pass
@@ -359,7 +362,7 @@ class BENGALSOFTMod(loader.Module):
         parts = text.split()
         if len(parts) < 3:
             return
-        user = await self.client.get_me()
+        twink = await self.get_user_info()
         if parts[1] == "set":
             if len(parts) < 4:
                 return
@@ -370,11 +373,11 @@ class BENGALSOFTMod(loader.Module):
                 await self.update_user_config(config_name, new_value)
             else:
                 for tag in taglist:
-                    if tag == f"@{user.username}":
+                    if tag == 'twink':
                         await self.update_user_config(config_name, new_value)
         elif parts[1] == "self":
             taglist = parts[2:]
-            if "all" in taglist or any(tag == f"@{user.username}" for tag in taglist):
+            if "all" in taglist or any(tag == 'twink' for tag in taglist):
                 await self.send_config_message()
         else:
             return
