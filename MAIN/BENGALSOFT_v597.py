@@ -93,8 +93,8 @@ class BENGALSOFTMod(loader.Module):
     async def send_module_message(self, text, delay_info=None):
         """Логи действий модуля"""
         try:
-            delay_text = f", Delay: {delay_info} сек" if delay_info is not None else ""
-            logger_message = f"💻 <b>Server: {self.config['group']}{delay_text}</b>\n{text}"
+            delay_text = f", KD: {delay_info}с" if delay_info is not None else ""
+            logger_message = f"💻 <b>GR: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
             pass
