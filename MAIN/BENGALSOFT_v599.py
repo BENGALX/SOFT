@@ -353,14 +353,13 @@ class BENGALSOFTMod(loader.Module):
         bot_name = None
         ref_key = None
         sup_bot = [
-            "BestRandom_bot", "best_contests_bot",
-            "TheFastes_Bot", "TheFastesRuBot",
-            "GiveawayLuckyBot"            
+            "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
+            "TheFastes_Bot", "TheFastesRuBot"
         ]
         parts = text.split()
-            if len(parts) < 2:
-                return
-            target = parts[1].strip()
+        if len(parts) < 2:
+            return
+        target = parts[1]
         for bot in sup_bot:
             if bot in target:
                 bot_name = bot
