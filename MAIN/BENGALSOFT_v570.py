@@ -127,14 +127,14 @@ class BENGALSOFTMod(loader.Module):
     async def send_basic_message(self):
         """Вывод базовой настройки."""
         try:
-            await self.client.send_message(self.owner_chat, self.strings[manual_basic])
+            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
     async def send_command_message(self):
         """Вывод примеров команд модуля."""
         try:
-            await self.client.send_message(self.owner_chat, self.strings[manual_command])
+            await self.client.send_message(self.owner_chat, self.strings["manual_command"])
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
 
@@ -251,7 +251,7 @@ class BENGALSOFTMod(loader.Module):
                 raise KeyError(f"Config name '{config_name}' not found")
             else:
                 if isinstance(self.config[config_name], bool):
-                    new_value = new_value.lower() in ['true', '1', 'yes']
+                    new_value = new_value.lower() in {'true', '1', 'yes', 'on'}
                 elif isinstance(self.config[config_name], int):
                     new_value = int(new_value)
                 self.config[config_name] = new_value
