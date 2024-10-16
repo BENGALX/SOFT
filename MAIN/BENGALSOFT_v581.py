@@ -36,7 +36,7 @@ class BENGALSOFTMod(loader.Module):
             f"▪️SUPPORTED BOT:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
         ),
         "manual_basic": (
-            f"<b>⚙️ Команда настройки</b>\n"
+            f"<b>🔐 Команда настройки</b>\n"
             f"/config set [p] [nv] [us]\n"
             f"▪️[p] — имя переменной\n"
             f"▪️[nv] — новое значение\n"
@@ -123,7 +123,7 @@ class BENGALSOFTMod(loader.Module):
                 f"▪️<b>owner_list</b> {self.owner_list}.\n"
                 f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
                 f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-                f"<b>🔓 Переменные:</b>\n" + variables
+                f"<b>🔐 Переменные:</b>\n" + variables
             )
             await self.client.send_message(self.owner_chat, configuration)
         except Exception as e:
