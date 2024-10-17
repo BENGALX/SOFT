@@ -226,32 +226,32 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def button_private(self, target):
+    async def button_private(self, target, mult, delay_s):
         """Нажатие кнопки в приватных."""
         try:
             chan, post = target.split("t.me/c/")[1].split("/")
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
-            await self.send_done_message(log_message, delay_info=self.get_delay_host())
+            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
+            await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
 
-    async def button_public(self, target):
+    async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
         try:
             chan, post = target.split("t.me/")[1].split("/")
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
-            await self.send_done_message(log_message, delay_info=self.get_delay_host())
+            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
+            await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
             
 
-    async def start_ref_bot(self, bot_name, ref_key):
+    async def start_ref_bot(self, bot_name, ref_key, mult, delay_s):
         """Запуск ботов по реферальному ключу."""
         try:
             await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
@@ -261,10 +261,10 @@ class BENGALSOFTMod(loader.Module):
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
             done_message = f"<b>♻️ START:</b> @{bot_name}\n\n{response_message}"
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
+            await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
-            error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
-            await self.send_done_message(error_message)
+            error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
+            await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
     async def update_user_config(self, config_name, new_value):
@@ -385,30 +385,39 @@ class BENGALSOFTMod(loader.Module):
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
-        bot_name = None
-        ref_key = None
-        sup_bot = [
-            "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
-            "TheFastes_Bot", "TheFastesRuBot"
-        ]
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        target = parts[1]
-        for bot in sup_bot:
-            if bot in target:
-                bot_name = bot
-                break
-        if bot_name:
-            match = re.search(r"\?start=([\w-]+)", text)
-            if match:
-                ref_key = match[1]
-                await self.delay_host()
-                await self.start_ref_bot(bot_name, ref_key)
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            bot_name = None
+            ref_key = None
+            sup_bot = [
+                "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
+                "TheFastes_Bot", "TheFastesRuBot"
+            ]
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
             else:
-                await self.send_done_message(f"<b>🚫 REFERAL ERROR:</b> ref_key для @{bot_name} не найден.")
-        else:
-            await self.send_done_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            for bot in sup_bot:
+                if bot in target:
+                    bot_name = bot
+                    break
+            if bot_name:
+                match = re.search(r"\?start=([\w-]+)", text)
+                if match:
+                    ref_key = match[1]
+                    await self.delay_host(delay_s)
+                    await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
+                else:
+                    await self.send_done_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+            else:
+                await self.send_done_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
+        except Exception as e:
+            await self.send_error_message(f"🚫 HANDLE REF: {e}")
     
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""
