@@ -10,8 +10,8 @@ from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequ
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
-    """Модуль управления каналами.
-           Manual: /man @\n
+    """Основной модуль софтеров.
+           Full Info: /manual @\n
     ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
@@ -69,17 +69,16 @@ class BENGALSOFTMod(loader.Module):
             )
         )
 
-    async def delay_host(self, delay_seconds):
+    async def delay_host(self, delay_s):
         """Задержка выполняется"""
-        await asyncio.sleep(delay_seconds)
-        return delay_seconds
+        await asyncio.sleep(delay_s)
     
     def get_delay_host(self, multiplier=None):
         """Рассчет кастомной задержки"""
         default_multiplier = 20
         multiplier = int(multiplier) if multiplier else default_multiplier
-        delay_seconds = self.config["group"] * multiplier
-        return delay_seconds
+        delay_s = self.config["group"] * multiplier
+        return delay_s
 
     async def get_user_info(self):
         """Информация о пользователе."""
@@ -161,24 +160,24 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def subscribe_public(self, target):
+    async def subscribe_public(self, target, delay_s):
         """Подписывается на публичные."""
         done_message = f"<b>✅ SUBSCRIBE (Public):</b> {target}"
         fail_message = f"<b>🚫 SUB ERROR (Public):</b> "
         try:
             await self.client(JoinChannelRequest(channel=target))
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
+            await self.send_done_message(done_message, delay_info=)
         except Exception as e:
             await self.send_done_message(f"{fail_message}\n{e}")
 
-    async def subscribe_private(self, target):
+    async def subscribe_private(self, target, delay_s):
         """Подписывается на частные."""
         done_message = f"<b>✅ SUBSCRIBE (Private):</b> {target}"
         fail_message = f"<b>🚫 SUB ERROR (Private):</b> "
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
+            await self.send_done_message(done_message, delay_info=)
         except Exception as e:
             await self.send_done_message(f"{fail_message}\n{e}")
 
@@ -317,15 +316,15 @@ class BENGALSOFTMod(loader.Module):
         else:
             multiplier = None
             target = parts[1].strip()
-        delay_seconds = self.get_delay_host(multiplier)
+        delay_s = self.get_delay_host(multiplier)
         if 't.me/+' in target:
-            await self.delay_host(delay_seconds)
-            await self.subscribe_private(target)
+            await self.delay_host(delay_s)
+            await self.subscribe_private(target, delay_s)
         elif "t.me/" in target or "@" in target:
-            await self.delay_host(delay_seconds)
-            await self.subscribe_public(target)
+            await self.delay_host(delay_s)
+            await self.subscribe_public(target, delay_s)
         else:
-            await self.send_done_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
+            await self.send_error_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
