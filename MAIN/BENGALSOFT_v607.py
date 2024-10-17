@@ -18,7 +18,7 @@ class BENGALSOFTMod(loader.Module):
         "name": "BENGALSOFT",
         "manual_command": (
             f"<b>⚙️ Функционал модуля</b>\n"
-            f"<b>✅ Примеры форматов:</b>\n"
+            f"<b>♻️ Примеры форматов:</b>\n"
             f"▪️https://t.me/ — полная\n"
             f"▪️t.me/ — сокращенная\n"
             f"▪️@tag — публичный тег\n\n"
@@ -73,12 +73,12 @@ class BENGALSOFTMod(loader.Module):
         """Задержка выполняется"""
         await asyncio.sleep(delay_s)
     
-    def get_delay_host(self, multiplier=None):
+    def get_delay_host(self, mult=None):
         """Рассчет кастомной задержки"""
-        default_multiplier = 20
-        multiplier = int(multiplier) if multiplier else default_multiplier
-        delay_s = self.config["group"] * multiplier
-        return delay_s
+        default_mult = 20
+        mult = int(mult) if mult else default_mult
+        delay_s = self.config["group"] * mult
+        return mult, delay_s
 
     async def get_user_info(self):
         """Информация о пользователе."""
@@ -93,7 +93,11 @@ class BENGALSOFTMod(loader.Module):
     async def send_done_message(self, text, delay_info=None):
         """Логи успешных действий модуля"""
         try:
-            delay_text = f", KD: {delay_info} sec" if delay_info is not None else ""
+            if delay_info is not None:
+                mult, delay_s = delay_info
+                delay_text = f", M: x{mult}, KD: {delay_s} sec."
+            else:
+                delay_text = "Delay NONE"
             logger_message = f"💻 <b>GROUP: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
@@ -160,32 +164,30 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def subscribe_public(self, target, delay_s):
+    async def subscribe_public(self, target, mult, delay_s):
         """Подписывается на публичные."""
-        done_message = f"<b>✅ SUBSCRIBE (Public):</b> {target}"
-        fail_message = f"<b>🚫 SUB ERROR (Public):</b> "
+        done_message = f"<b>♻️ SUB Public:</b> {target}"
         try:
             await self.client(JoinChannelRequest(channel=target))
-            await self.send_done_message(done_message, delay_info=)
+            await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"{fail_message}\n{e}")
+            await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
-    async def subscribe_private(self, target, delay_s):
+    async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
-        done_message = f"<b>✅ SUBSCRIBE (Private):</b> {target}"
-        fail_message = f"<b>🚫 SUB ERROR (Private):</b> "
+        done_message = f"<b>♻️ SUB Private:</b> {target}"
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(done_message, delay_info=)
+            await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"{fail_message}\n{e}")
+            await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
     
     async def unsubscribe_tag(self, target):
         """Отписка по юзернейму."""
-        done_message = f"<b>✅ UNSUBSCRIBE:</b> {target}"
-        user_message = f"<b>✅ DELETE:</b> {target}"
+        done_message = f"<b>♻️ UNSUBSCRIBE:</b> {target}"
+        user_message = f"<b>♻️ DELETE:</b> {target}"
         try:
             await self.client(functions.channels.LeaveChannelRequest(target))
             await self.send_done_message(done_message, delay_info=self.get_delay_host())
@@ -196,8 +198,8 @@ class BENGALSOFTMod(loader.Module):
     async def unsubscribe_link(self, target):
         """Отписка по ссылке."""
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-        done_message = f"<b>✅ UNSUBSCRIBE:</b>\n{target}"
-        user_message = f"<b>✅ DELETE:</b>\n{target}"
+        done_message = f"<b>♻️ UNSUBSCRIBE:</b>\n{target}"
+        user_message = f"<b>♻️ DELETE:</b>\n{target}"
         if match:
             username = match.group(1)
             try:
@@ -211,8 +213,8 @@ class BENGALSOFTMod(loader.Module):
 
     async def unsubscribe_id(self, target):
         """Отписка по айди."""
-        done_message = f"<b>✅ UNSUBSCRIBE ID:</b> {target}"
-        user_message = f"<b>✅ DELETE ID:</b> {target}"
+        done_message = f"<b>♻️ UNSUBSCRIBE ID:</b> {target}"
+        user_message = f"<b>♻️ DELETE ID:</b> {target}"
         try:
             channel_id = int(target)
             await self.client(functions.channels.LeaveChannelRequest(channel_id))
@@ -230,7 +232,7 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
+            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=self.get_delay_host())
         except Exception as e:
             await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
@@ -242,7 +244,7 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>✅ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
+            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=self.get_delay_host())
         except Exception as e:
             await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
@@ -257,7 +259,7 @@ class BENGALSOFTMod(loader.Module):
             response_message = "⚠️ Ошибка, бот не ответил."
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
-            done_message = f"<b>✅ START:</b> @{bot_name}\n\n{response_message}"
+            done_message = f"<b>♻️ START:</b> @{bot_name}\n\n{response_message}"
             await self.send_done_message(done_message, delay_info=self.get_delay_host())
         except Exception as e:
             error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
@@ -275,7 +277,7 @@ class BENGALSOFTMod(loader.Module):
                 elif isinstance(self.config[config_name], int):
                     new_value = int(new_value)
                 self.config[config_name] = new_value
-                done_message = f"<b>✅ CONFIG: {config_name} set to {new_value}.</b>"
+                done_message = f"<b>♻️ CONFIG: {config_name} set to {new_value}.</b>"
                 await self.client.send_message(self.owner_chat, done_message)
         except KeyError as e:
             error_message = f"<b>❌ Error: {str(e)}</b>"
@@ -311,20 +313,20 @@ class BENGALSOFTMod(loader.Module):
         if len(parts) < 2:
             return
         if parts[1].isdigit():
-            multiplier = parts[1]
+            mult = parts[1]
             target = parts[2].strip()
         else:
-            multiplier = None
+            mult = None
             target = parts[1].strip()
-        delay_s = self.get_delay_host(multiplier)
+        mult, delay_s = self.get_delay_host(mult)
         if 't.me/+' in target:
             await self.delay_host(delay_s)
-            await self.subscribe_private(target, delay_s)
+            await self.subscribe_private(target, mult, delay_s)
         elif "t.me/" in target or "@" in target:
             await self.delay_host(delay_s)
-            await self.subscribe_public(target, delay_s)
+            await self.subscribe_public(target, mult, delay_s)
         else:
-            await self.send_error_message("<b>🚫 SUBSCRIBE ERROR:</b> Неверный формат.")
+            await self.send_error_message("<b>🚫 SUB:</b> Неверный формат.")
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
