@@ -365,17 +365,23 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            target = parts[1].strip()
-            if 't.me/c/' in target:
-                await self.delay_host()
-                await self.button_private(target)
-            elif 't.me/' in target:
-                await self.delay_host()
-                await self.button_public(target)
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
             else:
-                await self.send_done_message(f"<b>🚫 RUN ERROR:</b> {target}")
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if 't.me/c/' in target:
+                await self.delay_host(delay_s)
+                await self.button_private(target, mult, delay_s)
+            elif 't.me/' in target:
+                await self.delay_host(delay_s)
+                await self.button_public(target, mult, delay_s)
+            else:
+                await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> link not found")
         except Exception as e:
-            await self.send_done_message(f"🚫 ERROR in handle_runner: {e}")
+            await self.send_error_message(f"🚫 HANDLE RUN: {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
