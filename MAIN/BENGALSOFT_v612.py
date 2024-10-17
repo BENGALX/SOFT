@@ -192,34 +192,37 @@ class BENGALSOFTMod(loader.Module):
                 await self.client.delete_dialog(target)
                 await self.send_done_message(f"<b>♻️ DELETE:</b> {target}", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB tag:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_link(self, target, mult, delay_s):
         """Отписка по ссылке."""
         try:
-        match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-        if match:
-            username = match.group(1)
-            try:
-                await self.client(functions.channels.LeaveChannelRequest(username))
-                await self.send_done_message(f"<b>♻️ UNSUB:</b>\n{target}", delay_info=(mult, delay_s))
-            except:
-                await self.client.delete_dialog(username)
-                await self.send_done_message(f"<b>♻️ DELETE:</b>\n{target}", delay_info=(mult, delay_s))
-        else:
-            await self.send_done_message("🚫 UNSUB error")
+            match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
+            if match:
+                username = match.group(1)
+                try:
+                    await self.client(functions.channels.LeaveChannelRequest(username))
+                    await self.send_done_message(f"<b>♻️ UNSUB:</b>\n{target}", delay_info=(mult, delay_s))
+                except:
+                    await self.client.delete_dialog(username)
+                    await self.send_done_message(f"<b>♻️ DELETE:</b>\n{target}", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message("🚫 UNSUB: link not found")
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка по айди."""
-        done_message = f"<b>♻️ UNSUB ID:</b> {target}"
-        user_message = f"<b>♻️ DELETE ID:</b> {target}"
         try:
-            channel_id = int(target)
-            await self.client(functions.channels.LeaveChannelRequest(channel_id))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
-        except:
-            await self.client.delete_dialog(channel_id)
-            await self.send_done_message(user_message, delay_info=(mult, delay_s))
+            try:
+                channel_id = int(target)
+                await self.client(functions.channels.LeaveChannelRequest(channel_id))
+                await self.send_done_message(f"<b>♻️ UNSUB ID:</b> {target}", delay_info=(mult, delay_s))
+            except:
+                await self.client.delete_dialog(channel_id)
+                await self.send_done_message(f"<b>♻️ DELETE ID:</b> {target}", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
 
 
     
