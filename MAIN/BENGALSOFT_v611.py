@@ -97,7 +97,7 @@ class BENGALSOFTMod(loader.Module):
                 mult, delay_s = delay_info
                 delay_text = f", M: x{mult}, KD: {delay_s} sec."
             else:
-                delay_text = "Delay NONE"
+                delay_text = ", Delay NONE"
             logger_message = f"💻 <b>GROUP: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
@@ -166,55 +166,53 @@ class BENGALSOFTMod(loader.Module):
     
     async def subscribe_public(self, target, mult, delay_s):
         """Подписывается на публичные."""
-        done_message = f"<b>♻️ SUB Public:</b> {target}"
         try:
             await self.client(JoinChannelRequest(channel=target))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>♻️ SUB Public:</b> {target}", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
     async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
-        done_message = f"<b>♻️ SUB Private:</b> {target}"
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
     
     async def unsubscribe_tag(self, target, mult, delay_s):
         """Отписка по юзернейму."""
-        done_message = f"<b>♻️ UNSUB:</b> {target}"
-        user_message = f"<b>♻️ EXDEL:</b> {target}"
         try:
-            await self.client(functions.channels.LeaveChannelRequest(target))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
-        except:
-            await self.client.delete_dialog(target)
-            await self.send_done_message(user_message, delay_info=(mult, delay_s))
+            try:
+                await self.client(functions.channels.LeaveChannelRequest(target))
+                await self.send_done_message(f"<b>♻️ UNSUB:</b> {target}", delay_info=(mult, delay_s))
+            except:
+                await self.client.delete_dialog(target)
+                await self.send_done_message(f"<b>♻️ DELETE:</b> {target}", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_link(self, target, mult, delay_s):
         """Отписка по ссылке."""
+        try:
         match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-        done_message = f"<b>♻️ UNSUB:</b>\n{target}"
-        user_message = f"<b>♻️ EXDEL:</b>\n{target}"
         if match:
             username = match.group(1)
             try:
                 await self.client(functions.channels.LeaveChannelRequest(username))
-                await self.send_done_message(done_message, delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ UNSUB:</b>\n{target}", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(username)
-                await self.send_done_message(user_message, delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ DELETE:</b>\n{target}", delay_info=(mult, delay_s))
         else:
             await self.send_done_message("🚫 UNSUB error")
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка по айди."""
         done_message = f"<b>♻️ UNSUB ID:</b> {target}"
-        user_message = f"<b>♻️ EXDEL ID:</b> {target}"
+        user_message = f"<b>♻️ DELETE ID:</b> {target}"
         try:
             channel_id = int(target)
             await self.client(functions.channels.LeaveChannelRequest(channel_id))
