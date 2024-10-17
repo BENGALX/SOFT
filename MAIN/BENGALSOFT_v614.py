@@ -310,48 +310,54 @@ class BENGALSOFTMod(loader.Module):
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        if parts[1].isdigit():
-            mult = int(parts[1])
-            target = parts[2].strip()
-        else:
-            mult = None
-            target = parts[1].strip()
-        mult, delay_s = self.get_delay_host(mult)
-        if 't.me/+' in target:
-            await self.delay_host(delay_s)
-            await self.subscribe_private(target, mult, delay_s)
-        elif "t.me/" in target or "@" in target:
-            await self.delay_host(delay_s)
-            await self.subscribe_public(target, mult, delay_s)
-        else:
-            await self.send_error_message("<b>🚫 SUB:</b> Неверный формат.")
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
+            else:
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if 't.me/+' in target:
+                await self.delay_host(delay_s)
+                await self.subscribe_private(target, mult, delay_s)
+            elif "t.me/" in target or "@" in target:
+                await self.delay_host(delay_s)
+                await self.subscribe_public(target, mult, delay_s)
+            else:
+                await self.send_error_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
+        except Exception as e:
+            await self.send_error_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        if parts[1].isdigit():
-            mult = int(parts[1])
-            target = parts[2].strip()
-        else:
-            mult = None
-            target = parts[1].strip()
-        mult, delay_s = self.get_delay_host(mult)
-        if target.startswith("@"):
-            await self.delay_host(delay_s)
-            await self.unsubscribe_tag(target, mult, delay_s)
-        elif "t.me/" in target:
-            await self.delay_host(delay_s)
-            await self.unsubscribe_link(target, mult, delay_s)
-        elif target.isdigit():
-            await self.delay_host(delay_s)
-            await self.unsubscribe_id(target, mult, delay_s)
-        else:
-            await self.send_done_message("<b>🚫 UNSUB:</b> Неверный формат.")
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
+            else:
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if target.startswith("@"):
+                await self.delay_host(delay_s)
+                await self.unsubscribe_tag(target, mult, delay_s)
+            elif "t.me/" in target:
+                await self.delay_host(delay_s)
+                await self.unsubscribe_link(target, mult, delay_s)
+            elif target.isdigit():
+                await self.delay_host(delay_s)
+                await self.unsubscribe_id(target, mult, delay_s)
+            else:
+                await self.send_error_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
+        except Exception as e:
+            await self.send_error_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
     async def handle_runner(self, text):
         """Центральная обработка /run"""
