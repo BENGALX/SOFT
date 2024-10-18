@@ -389,33 +389,22 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            bot_name = None
-            ref_key = None
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
             sup_bot = [
                 "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
                 "TheFastes_Bot", "TheFastesRuBot"
             ]
-            if parts[1].isdigit():
-                mult = int(parts[1])
-                target = parts[2].strip()
-            else:
-                mult = None
-                target = parts[1].strip()
-            mult, delay_s = self.get_delay_host(mult)
-            for bot in sup_bot:
-                if bot in target:
-                    bot_name = bot
-                    break
-            if bot_name:
-                match = re.search(r"\?start=([\w-]+)", text)
-                if match:
-                    ref_key = match[1]
-                    await self.delay_host(delay_s)
-                    await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
-                else:
-                    await self.send_done_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
-            else:
-                await self.send_done_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
+            bot_name = next((bot for bot in sup_bot if bot in target), None)
+            if not bot_name:
+                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
+            match = re.search(r"\?start=([\w-]+)", text)
+            if not match:
+                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+            ref_key = match[1]
+            await self.delay_host(delay_s)
+            await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
         except Exception as e:
             await self.send_error_message(f"🚫 HANDLE REF: {e}")
     
