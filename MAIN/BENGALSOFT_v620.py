@@ -97,7 +97,7 @@ class BENGALSOFTMod(loader.Module):
                 mult, delay_s = delay_info
                 delay_text = f", M: x{mult}, KD: {delay_s} sec."
             else:
-                delay_text = "Delay NONE"
+                delay_text = ", Delay NONE"
             logger_message = f"💻 <b>GROUP: {self.config['group']}{delay_text}</b>\n{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
@@ -166,91 +166,92 @@ class BENGALSOFTMod(loader.Module):
     
     async def subscribe_public(self, target, mult, delay_s):
         """Подписывается на публичные."""
-        done_message = f"<b>♻️ SUB Public:</b> {target}"
         try:
             await self.client(JoinChannelRequest(channel=target))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>♻️ SUB Public:</b> {target}", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
     async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
-        done_message = f"<b>♻️ SUB Private:</b> {target}"
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(done_message, delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
     
-    async def unsubscribe_tag(self, target):
+    async def unsubscribe_tag(self, target, mult, delay_s):
         """Отписка по юзернейму."""
-        done_message = f"<b>♻️ UNSUBSCRIBE:</b> {target}"
-        user_message = f"<b>♻️ DELETE:</b> {target}"
         try:
-            await self.client(functions.channels.LeaveChannelRequest(target))
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
-        except:
-            await self.client.delete_dialog(target)
-            await self.send_done_message(user_message, delay_info=self.get_delay_host())
-
-    async def unsubscribe_link(self, target):
-        """Отписка по ссылке."""
-        match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-        done_message = f"<b>♻️ UNSUBSCRIBE:</b>\n{target}"
-        user_message = f"<b>♻️ DELETE:</b>\n{target}"
-        if match:
-            username = match.group(1)
             try:
-                await self.client(functions.channels.LeaveChannelRequest(username))
-                await self.send_done_message(done_message, delay_info=self.get_delay_host())
+                await self.client(functions.channels.LeaveChannelRequest(target))
+                await self.send_done_message(f"<b>♻️ UNSUB:</b> {target}", delay_info=(mult, delay_s))
             except:
-                await self.client.delete_dialog(username)
-                await self.send_done_message(user_message, delay_info=self.get_delay_host())
-        else:
-            await self.send_done_message("🚫 UNSUBSCRIBE error")
+                await self.client.delete_dialog(target)
+                await self.send_done_message(f"<b>♻️ DELETE:</b> {target}", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB tag:</b> {e}", delay_info=(mult, delay_s))
 
-    async def unsubscribe_id(self, target):
-        """Отписка по айди."""
-        done_message = f"<b>♻️ UNSUBSCRIBE ID:</b> {target}"
-        user_message = f"<b>♻️ DELETE ID:</b> {target}"
+    async def unsubscribe_link(self, target, mult, delay_s):
+        """Отписка по ссылке."""
         try:
-            channel_id = int(target)
-            await self.client(functions.channels.LeaveChannelRequest(channel_id))
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
-        except:
-            await self.client.delete_dialog(channel_id)
-            await self.send_done_message(user_message, delay_info=self.get_delay_host())
+            match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
+            if match:
+                username = match.group(1)
+                try:
+                    await self.client(functions.channels.LeaveChannelRequest(username))
+                    await self.send_done_message(f"<b>♻️ UNSUB:</b>\n{target}", delay_info=(mult, delay_s))
+                except:
+                    await self.client.delete_dialog(username)
+                    await self.send_done_message(f"<b>♻️ DELETE:</b>\n{target}", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message("🚫 UNSUB: link not found")
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
+
+    async def unsubscribe_id(self, target, mult, delay_s):
+        """Отписка по айди."""
+        try:
+            try:
+                channel_id = int(target)
+                await self.client(functions.channels.LeaveChannelRequest(channel_id))
+                await self.send_done_message(f"<b>♻️ UNSUB ID:</b> {target}", delay_info=(mult, delay_s))
+            except:
+                await self.client.delete_dialog(channel_id)
+                await self.send_done_message(f"<b>♻️ DELETE ID:</b> {target}", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
 
 
     
-    async def button_private(self, target):
+    async def button_private(self, target, mult, delay_s):
         """Нажатие кнопки в приватных."""
         try:
             chan, post = target.split("t.me/c/")[1].split("/")
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/c/{chan}/{post}\n\n{clicked_message}"
-            await self.send_done_message(log_message, delay_info=self.get_delay_host())
+            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
+            await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
 
-    async def button_public(self, target):
+    async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
         try:
             chan, post = target.split("t.me/")[1].split("/")
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ BUTTON PUSH:</b> https://t.me/{chan}/{post}\n\n{clicked_message}"
-            await self.send_done_message(log_message, delay_info=self.get_delay_host())
+            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 ERROR:</b> {e}")
+            await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
             
 
-    async def start_ref_bot(self, bot_name, ref_key):
+    async def start_ref_bot(self, bot_name, ref_key, mult, delay_s):
         """Запуск ботов по реферальному ключу."""
         try:
             await self.client(StartBotRequest(bot=bot_name, peer=bot_name, start_param=ref_key))
@@ -260,10 +261,10 @@ class BENGALSOFTMod(loader.Module):
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
             done_message = f"<b>♻️ START:</b> @{bot_name}\n\n{response_message}"
-            await self.send_done_message(done_message, delay_info=self.get_delay_host())
+            await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
-            error_message = f"<b>🚫 START BOT ERROR:</b> @{bot_name}\n{e}"
-            await self.send_done_message(error_message)
+            error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
+            await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
     async def update_user_config(self, config_name, new_value):
@@ -309,42 +310,54 @@ class BENGALSOFTMod(loader.Module):
     
     async def handle_subscribe(self, text):
         """Центральная обработка /sub"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        if parts[1].isdigit():
-            mult = parts[1]
-            target = parts[2].strip()
-        else:
-            mult = None
-            target = parts[1].strip()
-        mult, delay_s = self.get_delay_host(mult)
-        if 't.me/+' in target:
-            await self.delay_host(delay_s)
-            await self.subscribe_private(target, mult, delay_s)
-        elif "t.me/" in target or "@" in target:
-            await self.delay_host(delay_s)
-            await self.subscribe_public(target, mult, delay_s)
-        else:
-            await self.send_error_message("<b>🚫 SUB:</b> Неверный формат.")
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
+            else:
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if 't.me/+' in target:
+                await self.delay_host(delay_s)
+                await self.subscribe_private(target, mult, delay_s)
+            elif "t.me/" in target or "@" in target:
+                await self.delay_host(delay_s)
+                await self.subscribe_public(target, mult, delay_s)
+            else:
+                await self.send_error_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
+        except Exception as e:
+            await self.send_error_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        target = parts[1].strip()
-        if target.startswith("@"):
-            await self.delay_host()
-            await self.unsubscribe_tag(target)
-        elif "t.me/" in target:
-            await self.delay_host()
-            await self.unsubscribe_link(target)
-        elif target.isdigit():
-            await self.delay_host()
-            await self.unsubscribe_id(target)
-        else:
-            await self.send_done_message("<b>🚫 UNSUBSCRIBE ERROR:</b> Неверный формат.")
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
+            else:
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if target.startswith("@"):
+                await self.delay_host(delay_s)
+                await self.unsubscribe_tag(target, mult, delay_s)
+            elif "t.me/" in target:
+                await self.delay_host(delay_s)
+                await self.unsubscribe_link(target, mult, delay_s)
+            elif target.isdigit():
+                await self.delay_host(delay_s)
+                await self.unsubscribe_id(target, mult, delay_s)
+            else:
+                await self.send_error_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
+        except Exception as e:
+            await self.send_error_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
     async def handle_runner(self, text):
         """Центральная обработка /run"""
@@ -352,44 +365,48 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            target = parts[1].strip()
-            if 't.me/c/' in target:
-                await self.delay_host()
-                await self.button_private(target)
-            elif 't.me/' in target:
-                await self.delay_host()
-                await self.button_public(target)
+            if parts[1].isdigit():
+                mult = int(parts[1])
+                target = parts[2].strip()
             else:
-                await self.send_done_message(f"<b>🚫 RUN ERROR:</b> {target}")
+                mult = None
+                target = parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if 't.me/c/' in target:
+                await self.delay_host(delay_s)
+                await self.button_private(target, mult, delay_s)
+            elif 't.me/' in target:
+                await self.delay_host(delay_s)
+                await self.button_public(target, mult, delay_s)
+            else:
+                await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> link not found")
         except Exception as e:
-            await self.send_done_message(f"🚫 ERROR in handle_runner: {e}")
+            await self.send_error_message(f"🚫 HANDLE RUN: {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
-        bot_name = None
-        ref_key = None
-        sup_bot = [
-            "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
-            "TheFastes_Bot", "TheFastesRuBot"
-        ]
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        target = parts[1]
-        for bot in sup_bot:
-            if bot in target:
-                bot_name = bot
-                break
-        if bot_name:
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            sup_bot = [
+                "BestRandom_bot", "best_contests_bot", "GiveawayLuckyBot",
+                "TheFastes_Bot", "TheFastesRuBot"
+            ]
+            bot_name = next((bot for bot in sup_bot if bot in target), None)
+            if not bot_name:
+                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
             match = re.search(r"\?start=([\w-]+)", text)
-            if match:
-                ref_key = match[1]
-                await self.delay_host()
-                await self.start_ref_bot(bot_name, ref_key)
-            else:
-                await self.send_done_message(f"<b>🚫 REFERAL ERROR:</b> ref_key для @{bot_name} не найден.")
-        else:
-            await self.send_done_message(f"<b>🚫 REFERAL ERROR:</b> бот не распознан в: {text}")
+            if not match:
+                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+            ref_key = match[1]
+            await self.delay_host(delay_s)
+            await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
+        except Exception as e:
+            await self.send_error_message(f"🚫 HANDLE REF: {e}")
     
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""
@@ -444,7 +461,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_runner(message.message)
             elif message.message.startswith("/ref"):
                 await self.handle_referal(message.message)
-            elif message.message.startswith("/man"):
+            elif message.message.startswith("/manual"):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
