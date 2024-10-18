@@ -1,5 +1,4 @@
-import re
-import asyncio
+import asyncio, re
 from .. import loader, utils
 
 from telethon.tl import functions
@@ -103,8 +102,8 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
 
-    async def send_error_message(self, text):
-        """Логи ошибочных действий модуля"""
+    async def send_else_message(self, text):
+        """Логи действий модуля"""
         try:
             logger_message = f"{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
@@ -169,6 +168,7 @@ class BENGALSOFTMod(loader.Module):
         try:
             await self.client(JoinChannelRequest(channel=target))
             await self.send_done_message(f"<b>♻️ SUB Public:</b> {target}", delay_info=(mult, delay_s))
+            await self.views_post(self.client, target)
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
@@ -178,6 +178,7 @@ class BENGALSOFTMod(loader.Module):
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
             await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
+            await self.views_post(self.client, target)
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
@@ -267,6 +268,20 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
+    async def views_post(self, client, channel):
+        """Шарманка для накрута просмотров постов."""
+        try:
+            messages = await client.get_messages(channel, limit=10)
+            if messages:
+                message_ids = [msg.id for msg in messages]
+                await client(GetMessagesViewsRequest(peer=messages[0].peer_id, id=message_ids, increment=True))
+                await self.send_else_message(f"Счетчик просмотров для последних {len(message_ids)} сообщений в канале {channel} увеличен.")
+            else:
+                await self.send_else_message(f"Сообщения не найдены в канале {channel}.")
+        except Exception as e:
+            await self.send_else_message(f"Ошибка при увеличении просмотров для {channel}: {e}")
+            
+    
     async def update_user_config(self, config_name, new_value):
         """Обновление переменных конфигураторов."""
         try:
@@ -324,9 +339,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.subscribe_public(target, mult, delay_s)
             else:
-                await self.send_error_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
         except Exception as e:
-            await self.send_error_message(f"<b>🚫 HANDLE SUB:</b> {e}")
+            await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
     async def handle_unsubscribe(self, text):
         """Центральная обработка /uns"""
@@ -347,9 +362,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.unsubscribe_id(target, mult, delay_s)
             else:
-                await self.send_error_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
         except Exception as e:
-            await self.send_error_message(f"<b>🚫 HANDLE UNS:</b> {e}")
+            await self.send_else_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
     async def handle_runner(self, text):
         """Центральная обработка /run"""
@@ -367,9 +382,9 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.button_public(target, mult, delay_s)
             else:
-                await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> link not found")
+                await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> link not found")
         except Exception as e:
-            await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> {e}")
+            await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
@@ -386,15 +401,15 @@ class BENGALSOFTMod(loader.Module):
             ]
             bot_name = next((bot for bot in sup_bot if bot in target), None)
             if not bot_name:
-                return await self.send_error_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
+                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
             match = re.search(r"\?start=([\w-]+)", text)
             if not match:
-                return await self.send_error_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
             ref_key = match[1]
             await self.delay_host(delay_s)
             await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
         except Exception as e:
-            await self.send_error_message(f"<b>🚫 HANDLE REF:</b> {e}")
+            await self.send_else_message(f"<b>🚫 HANDLE REF:</b> {e}")
     
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""
