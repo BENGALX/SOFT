@@ -314,12 +314,8 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            if parts[1].isdigit():
-                mult = int(parts[1])
-                target = parts[2].strip()
-            else:
-                mult = None
-                target = parts[1].strip()
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
             if 't.me/+' in target:
                 await self.delay_host(delay_s)
@@ -338,12 +334,8 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            if parts[1].isdigit():
-                mult = int(parts[1])
-                target = parts[2].strip()
-            else:
-                mult = None
-                target = parts[1].strip()
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
             if target.startswith("@"):
                 await self.delay_host(delay_s)
@@ -365,12 +357,8 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            if parts[1].isdigit():
-                mult = int(parts[1])
-                target = parts[2].strip()
-            else:
-                mult = None
-                target = parts[1].strip()
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
             if 't.me/c/' in target:
                 await self.delay_host(delay_s)
@@ -381,7 +369,7 @@ class BENGALSOFTMod(loader.Module):
             else:
                 await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> link not found")
         except Exception as e:
-            await self.send_error_message(f"🚫 HANDLE RUN: {e}")
+            await self.send_error_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
     async def handle_referal(self, text):
         """Центральная обработка /ref"""
@@ -398,15 +386,15 @@ class BENGALSOFTMod(loader.Module):
             ]
             bot_name = next((bot for bot in sup_bot if bot in target), None)
             if not bot_name:
-                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
+                return await self.send_error_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
             match = re.search(r"\?start=([\w-]+)", text)
             if not match:
-                return await self.send_done_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+                return await self.send_error_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
             ref_key = match[1]
             await self.delay_host(delay_s)
             await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
         except Exception as e:
-            await self.send_error_message(f"🚫 HANDLE REF: {e}")
+            await self.send_error_message(f"<b>🚫 HANDLE REF:</b> {e}")
     
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""
