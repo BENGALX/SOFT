@@ -176,9 +176,17 @@ class BENGALSOFTMod(loader.Module):
         """Подписывается на частные."""
         try:
             invite_hash = target.split("t.me/+")[1]
-            await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
-            await self.views_post(self.client, target)
+            result = await self.client(ImportChatInviteRequest(invite_hash))
+            channel = None
+            for update in result.chats:
+                if isinstance(update, Channel):
+                    channel = update
+                    break
+            if channel:
+                await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
+                await self.views_post(self.client, channel)
+            else:
+                await self.send_done_message(f"<b>🚫 SUB Private:</b> Не удалось получить объект канала.", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
@@ -274,7 +282,8 @@ class BENGALSOFTMod(loader.Module):
             messages = await client.get_messages(channel, limit=10)
             if messages:
                 message_ids = [msg.id for msg in messages]
-                await client(GetMessagesViewsRequest(peer=messages[0].peer_id, id=message_ids, increment=True))
+                await client(GetMessagesViewsRequest(peer=channel.id, id=message_ids, increment=True))
+                #await client(GetMessagesViewsRequest(peer=messages[0].peer_id, id=message_ids, increment=True))
                 await self.send_else_message(f"Счетчик просмотров для последних {len(message_ids)} сообщений в канале {channel} увеличен.")
             else:
                 await self.send_else_message(f"Сообщения не найдены в канале {channel}.")
