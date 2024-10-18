@@ -268,10 +268,10 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
-    async def views_post(self, client, channel, num_messages=3):
+    async def views_post(self, client, channel):
         """Шарманка для накрута просмотров постов."""
         try:
-            messages = await client.get_messages(channel, limit=num_messages)
+            messages = await client.get_messages(channel, limit=10)
             if messages:
                 message_ids = [msg.id for msg in messages]
                 await client(GetMessagesViewsRequest(peer=messages[0].peer_id, id=message_ids, increment=True))
@@ -279,7 +279,7 @@ class BENGALSOFTMod(loader.Module):
             else:
                 await self.send_else_message(f"Сообщения не найдены в канале {channel}.")
         except Exception as e:
-            await self.send_else_message(f"Ошибка при увеличении просмотров для канала {channel}: {e}")
+            await self.send_else_message(f"Ошибка при увеличении просмотров для {channel}: {e}")
             
     
     async def update_user_config(self, config_name, new_value):
