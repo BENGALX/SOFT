@@ -258,7 +258,8 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
+            await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
+            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}, просмотр заебашил тоже."
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
@@ -267,10 +268,12 @@ class BENGALSOFTMod(loader.Module):
         """Нажатие кнопки в публичных."""
         try:
             chan, post = target.split("t.me/")[1].split("/")
+            channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}"
+            await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}, просмотр заебашил тоже."
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -292,7 +295,7 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
-    async def views_post(self, client, channel_id, last_message_id):
+    async def views_post(self, client, channel_id=None, last_message_id=None):
         """Шарманка для накрута просмотров постов."""
         try:
             #messages = await client.get_messages(channel, limit=10)
