@@ -1,5 +1,4 @@
-import re
-import asyncio
+import asyncio, re
 from .. import loader, utils
 
 from telethon.tl import functions
