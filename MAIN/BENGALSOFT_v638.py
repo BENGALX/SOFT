@@ -273,9 +273,8 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH + {view_result}</b>\nt.me/{chan}/{post}\n\n{clicked_message}"
             log_message = (
-                f"<b>♻️ PUSH {view_result}</b>"
+                f"<b>♻️ PUSH {view_result}</b> "
                 f"<a href='https://t.me/{chan}/{post}'>POST</a>\n\n"
                 f"{clicked_message}"
             )
