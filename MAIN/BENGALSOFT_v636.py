@@ -258,8 +258,8 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}, просмотр заебашил тоже."
+            view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
+            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
@@ -272,8 +272,8 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}, просмотр заебашил тоже."
+            view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+            log_message = f"<b>♻️ PUSH <a href='{target}'>BUTTON</a></b>{view_result}\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -298,15 +298,13 @@ class BENGALSOFTMod(loader.Module):
     async def views_post(self, client, channel_id=None, last_message_id=None):
         """Шарманка для накрута просмотров постов."""
         try:
-            #messages = await client.get_messages(channel, limit=10)
-            #message_ids = [msg.id for msg in messages]
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                await self.send_else_message(f"Счетчик просмотров для сообщения {last_message_id} в канале {channel_id} увеличен.")
+                return f"and VIEW post"
             else:
-                await self.send_else_message(f"Ласт смс не найдено в {channel_id}.")    
+                return f"but not VIEW"
         except Exception as e:
-            await self.send_else_message(f"Ошибка при увеличении просмотров для {channel_id}: {e}")
+            return f"| error VIEW {e}"
             
     
     async def update_user_config(self, config_name, new_value):
