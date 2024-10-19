@@ -259,7 +259,7 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIVATE BUTTON</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
@@ -273,7 +273,7 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH <a href='{target}'>BUTTON</a></b>{view_result}\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC BUTTON</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -300,11 +300,11 @@ class BENGALSOFTMod(loader.Module):
         try:
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                return f"and VIEW post"
+                return f", VIEW."
             else:
-                return f"but not VIEW"
+                return f", dont VIEW."
         except Exception as e:
-            return f"| error VIEW {e}"
+            return f", error VIEW\n{e}"
             
     
     async def update_user_config(self, config_name, new_value):
