@@ -183,12 +183,10 @@ class BENGALSOFTMod(loader.Module):
         """Подписывается на публичные."""
         try:
             await self.client(JoinChannelRequest(channel=target))
-            await self.send_done_message(f"<b>♻️ SUB Public:</b> {target}", delay_info=(mult, delay_s))
-            channel_id, last_message_id = await self.get_channel_info(target)
-            if channel_id is not None:
-                await self.views_post(self.client, channel_id, last_message_id)
-            else:
-                await self.send_else_message(f"<b>🚫 SUB Public:</b> Не удалось получить информацию о канале.")
+            if target.startswith("@"):
+                target = f"https://t.me/{target[1:]}"
+            view_result = await self.views_post(self.client, target)
+            await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PUBL LINC</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
@@ -259,7 +257,7 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIV BUTTON</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
@@ -273,11 +271,7 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = (
-                f"<b>♻️ PUSH {view_result}</b> "
-                f"<a href='https://t.me/{chan}/{post}'>POST</a>\n\n"
-                f"{clicked_message}"
-            )
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBL BUTTON</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -304,11 +298,19 @@ class BENGALSOFTMod(loader.Module):
         try:
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                return "and VIEW"
+                return f", DVW."
+            elif channel_id is not None:
+                messages = await client.get_messages(channel_id, limit=5)
+                message_ids = [msg.id for msg in messages]
+                if message_ids:
+                    await client(GetMessagesViewsRequest(peer=channel_id, id=message_ids, increment=True))
+                    return f", DVW (L{limit})."
+                else:
+                    return f", FVW."
             else:
-                return "but no VIEW"
+                return f", FVW."
         except Exception as e:
-            await self.send_else_message(f"Ошибка просмотров: {e}")
+            return f", EVW {e}."
             
     
     async def update_user_config(self, config_name, new_value):
