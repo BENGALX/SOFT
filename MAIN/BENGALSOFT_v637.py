@@ -1,8 +1,9 @@
 import asyncio, re
 from .. import loader, utils
 
+from telethon import TelegramClient
 from telethon.tl import functions
-from telethon.tl.types import Message, PeerChannel
+from telethon.tl.types import Message, PeerChannel, Channel
 
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
@@ -87,6 +88,21 @@ class BENGALSOFTMod(loader.Module):
         else:
             twink = None
         return twink
+
+    async def get_channel_info(self, channel):
+        """Получает ID канала и ласт поста."""
+        try:
+            channel_entity = await self.client.get_entity(channel)
+            channel_id = channel_entity.id
+            messages = await self.client.get_messages(channel_entity, limit=1)
+            if messages:
+                last_message_id = messages[0].id
+                return channel_id, last_message_id
+            else:
+                return channel_id, None
+        except Exception as e:
+            await self.send_else_message(f"Ошибка в get_channel_info при получении инфо: {e}")
+            return None, None
     
 
     async def send_done_message(self, text, delay_info=None):
@@ -168,7 +184,11 @@ class BENGALSOFTMod(loader.Module):
         try:
             await self.client(JoinChannelRequest(channel=target))
             await self.send_done_message(f"<b>♻️ SUB Public:</b> {target}", delay_info=(mult, delay_s))
-            await self.views_post(self.client, target)
+            channel_id, last_message_id = await self.get_channel_info(target)
+            if channel_id is not None:
+                await self.views_post(self.client, channel_id, last_message_id)
+            else:
+                await self.send_else_message(f"<b>🚫 SUB Public:</b> Не удалось получить информацию о канале.")
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
@@ -178,7 +198,11 @@ class BENGALSOFTMod(loader.Module):
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
             await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
-            await self.views_post(self.client, target)
+            channel_id, last_message_id = await self.get_channel_info(target)
+            if channel_id is not None:
+                await self.views_post(self.client, channel_id, last_message_id)
+            else:
+                await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> Не удалось получить информацию о канале.")
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
@@ -234,6 +258,7 @@ class BENGALSOFTMod(loader.Module):
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
+            view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
             log_message = f"<b>♻️ PUSH:</b> t.me/c/{chan}/{post}\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
@@ -243,10 +268,17 @@ class BENGALSOFTMod(loader.Module):
         """Нажатие кнопки в публичных."""
         try:
             chan, post = target.split("t.me/")[1].split("/")
+            channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
-            log_message = f"<b>♻️ PUSH:</b> t.me/{chan}/{post}\n\n{clicked_message}"
+            view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+            log_message = f"<b>♻️ PUSH + {view_result}</b>\nt.me/{chan}/{post}\n\n{clicked_message}"
+            log_message = (
+                f"<b>♻️ PUSH {view_result}</b>"
+                f"<a href='https://t.me/{chan}/{post}'>POST</a>\n\n"
+                f"{clicked_message}"
+            )
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -268,19 +300,16 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
     
-    async def views_post(self, client, channel):
+    async def views_post(self, client, channel_id=None, last_message_id=None):
         """Шарманка для накрута просмотров постов."""
         try:
-            messages = await client.get_messages(channel, limit=10)
-            if messages:
-                message_ids = [msg.id for msg in messages]
-                #await client(GetMessagesViewsRequest(peer=channel.id, id=message_ids, increment=True))
-                await client(GetMessagesViewsRequest(peer=messages[0].peer_id, id=message_ids, increment=True))
-                await self.send_else_message(f"Счетчик просмотров для последних {len(message_ids)} сообщений в канале {channel} увеличен.")
+            if last_message_id is not None:
+                await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
+                return "and VIEW"
             else:
-                await self.send_else_message(f"Сообщения не найдены в канале {channel}.")
+                return "but no VIEW"
         except Exception as e:
-            await self.send_else_message(f"Ошибка при увеличении просмотров для {channel}: {e}")
+            await self.send_else_message(f"Ошибка просмотров: {e}")
             
     
     async def update_user_config(self, config_name, new_value):
