@@ -198,10 +198,7 @@ class BENGALSOFTMod(loader.Module):
             await self.client(ImportChatInviteRequest(invite_hash))
             await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
             channel_id, last_message_id = await self.get_channel_info(target)
-            if channel_id is not None:
-                await self.views_post(self.client, channel_id, last_message_id)
-            else:
-                await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> Не удалось получить информацию о канале.")
+            await self.views_post(self.client, channel_id, last_message_id)
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
