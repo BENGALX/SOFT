@@ -187,7 +187,7 @@ class BENGALSOFTMod(loader.Module):
                 target = f"https://t.me/{target[1:]}"
             target_entity = await self.client.get_entity(target)
             view_result = await self.views_post(self.client, channel_id=target_entity.id)
-            await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PUBL LINC</a>{view_result}</b>", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PUBL LINK</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
 
@@ -196,9 +196,9 @@ class BENGALSOFTMod(loader.Module):
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            await self.send_done_message(f"<b>♻️ SUB Private:</b> {target}", delay_info=(mult, delay_s))
-            channel_id, last_message_id = await self.get_channel_info(target)
-            await self.views_post(self.client, channel_id, last_message_id)
+            target_entity = await self.client.get_entity(target)
+            view_result = await self.views_post(self.client, channel_id=target_entity.id)
+            await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PRIV LINK</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
@@ -206,14 +206,15 @@ class BENGALSOFTMod(loader.Module):
     async def unsubscribe_tag(self, target, mult, delay_s):
         """Отписка по юзернейму."""
         try:
+            link = f"https://t.me/{target[1:]}"
             try:
                 await self.client(functions.channels.LeaveChannelRequest(target))
-                await self.send_done_message(f"<b>♻️ UNSUB:</b> {target}", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ UNS <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(target)
-                await self.send_done_message(f"<b>♻️ DELETE:</b> {target}", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ DEL <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB tag:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNS tag:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_link(self, target, mult, delay_s):
         """Отписка по ссылке."""
@@ -223,14 +224,14 @@ class BENGALSOFTMod(loader.Module):
                 username = match.group(1)
                 try:
                     await self.client(functions.channels.LeaveChannelRequest(username))
-                    await self.send_done_message(f"<b>♻️ UNSUB:</b>\n{target}", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>♻️ UNS <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except:
                     await self.client.delete_dialog(username)
-                    await self.send_done_message(f"<b>♻️ DELETE:</b>\n{target}", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>♻️ DEL <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
             else:
-                await self.send_done_message("🚫 UNSUB: link not found")
+                await self.send_done_message("🚫 UNS link not found.")
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNS link:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка по айди."""
@@ -238,12 +239,12 @@ class BENGALSOFTMod(loader.Module):
             try:
                 channel_id = int(target)
                 await self.client(functions.channels.LeaveChannelRequest(channel_id))
-                await self.send_done_message(f"<b>♻️ UNSUB ID:</b> {target}", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ UNS for ID {target}</b>", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(channel_id)
-                await self.send_done_message(f"<b>♻️ DELETE ID:</b> {target}", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ DEL for ID {target}</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNS ID:</b> {e}", delay_info=(mult, delay_s))
 
 
     
@@ -255,10 +256,10 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIV BUTTON</a>{view_result}</b>\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIV LINK</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 RUN private:</b> {e}")
+            await self.send_done_message(f"<b>🚫 PUSH private:</b> {e}")
 
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
@@ -269,7 +270,7 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBL BUTTON</a>{view_result}</b>\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBL LINK</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
@@ -296,17 +297,17 @@ class BENGALSOFTMod(loader.Module):
         try:
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                return f", DVW."
+                return f", SEE."
             elif channel_id is not None:
                 messages = await client.get_messages(channel_id, limit=5)
                 message_ids = [msg.id for msg in messages]
                 if message_ids:
                     await client(GetMessagesViewsRequest(peer=channel_id, id=message_ids, increment=True))
-                    return f", DVW (L{len(message_ids)})."
+                    return f", SEE (L{len(message_ids)})."
                 else:
-                    return f", FVW."
+                    return f", Snt."
             else:
-                return f", FVW."
+                return f", Snt."
         except Exception as e:
             return f", EVW {e}."
             
