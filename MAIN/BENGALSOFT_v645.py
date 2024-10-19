@@ -185,7 +185,8 @@ class BENGALSOFTMod(loader.Module):
             await self.client(JoinChannelRequest(channel=target))
             if target.startswith("@"):
                 target = f"https://t.me/{target[1:]}"
-            view_result = await self.views_post(self.client, target)
+            target_entity = await self.client.get_entity(target)
+            view_result = await self.views_post(self.client, channel_id=target_entity.id)
             await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PUBL LINC</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Public:</b> {e}", delay_info=(mult, delay_s))
@@ -304,7 +305,7 @@ class BENGALSOFTMod(loader.Module):
                 message_ids = [msg.id for msg in messages]
                 if message_ids:
                     await client(GetMessagesViewsRequest(peer=channel_id, id=message_ids, increment=True))
-                    return f", DVW (L{limit})."
+                    return f", DVW (L{len(message_ids)})."
                 else:
                     return f", FVW."
             else:
