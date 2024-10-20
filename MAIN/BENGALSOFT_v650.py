@@ -181,7 +181,8 @@ class BENGALSOFTMod(loader.Module):
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            full_channel = await self.client(GetFullChannelRequest(channel=await self.client.get_entity(target)))
+            channel_entity = await self.client.get_entity(target)
+            full_channel = await self.client(GetFullChannelRequest(channel=channel_entity))
             channel_id = full_channel.full_chat.id
             await self.send_else_message(f"{channel_id}")
             view_result = await self.views_post(self.client, channel_id=channel_id)
