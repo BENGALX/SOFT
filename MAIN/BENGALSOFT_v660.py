@@ -240,7 +240,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.client.delete_dialog(channel_id)
                 await self.send_done_message(f"<b>♻️ DEL by ID {target}</b>", delay_info=(mult, delay_s))
         except (ChannelInvalidError, PeerIdInvalidError):
-                await self.send_done_message(f"<b>🚫 UNS: INVALID ID:</b>")
+            await self.send_done_message(f"<b>🚫 UNS: INVALID ID:</b>")
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNS ID:</b> {e}", delay_info=(mult, delay_s))
 
