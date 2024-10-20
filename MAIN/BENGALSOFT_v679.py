@@ -222,9 +222,13 @@ class BENGALSOFTMod(loader.Module):
                         #await self.client(functions.channels.LeaveChannelRequest(username))
                         await self.client(functions.channels.LeaveChannelRequest(entity))
                         await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                    else:
+                        await self.send_done_message(f"<b>🚫 UNSUB: 1 INVALID LINK.</b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
                     await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                except (UsernameNotOccupiedError, ValueError):
+                except ValueError:
+                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                except UsernameNotOccupiedError:
                     await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 except:
                     await self.client.delete_dialog(username)
