@@ -7,6 +7,7 @@ from telethon.tl.types import Message, PeerChannel, Channel
 
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
+from telethon.tl.functions.contacts import ResolveUsernameRequest
 
 from telethon.errors.rpcerrorlist import UserNotParticipantError, UsernameNotOccupiedError, ChannelInvalidError, PeerIdInvalidError
 
@@ -215,7 +216,9 @@ class BENGALSOFTMod(loader.Module):
             if match:
                 username = match.group(1)
                 try:
-                    result = await self.client(ResolveUsernameRequest(username))
+                    await self.client(ResolveUsernameRequest(username))
+                    await self.send_done_message(f"<b>♻️ USER EXISTS: <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                    
                     await self.client(functions.channels.LeaveChannelRequest(username))
                     await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
