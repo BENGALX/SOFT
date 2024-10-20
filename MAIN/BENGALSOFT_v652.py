@@ -181,10 +181,11 @@ class BENGALSOFTMod(loader.Module):
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            full_channel = await self.client(GetFullChannelRequest(channel=target))
-            channel_id = full_channel.full_chat.id
-            await self.send_else_message(f"{channel_id}")
-            view_result = await self.views_post(self.client, channel_id=channel_id)
+            #full_channel = await self.client(GetFullChannelRequest(channel=target))
+            #channel_id = full_channel.full_chat.id
+            #await self.send_else_message(f"{channel_id}")
+            #view_result = await self.views_post(self.client, channel_id=channel_id)
+            view_result = f", SNT."
             await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PRIV LINK</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
@@ -292,11 +293,11 @@ class BENGALSOFTMod(loader.Module):
                     await client(GetMessagesViewsRequest(peer=channel_id, id=message_ids, increment=True))
                     return f", SEE (L{len(message_ids)})."
                 else:
-                    return f", Snt."
+                    return f", SNT."
             else:
-                return f", Snt."
+                return f", SNT."
         except Exception as e:
-            return f", EVW {e}."
+            return f", ERR {e}."
             
     
     async def update_user_config(self, config_name, new_value):
