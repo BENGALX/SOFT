@@ -9,7 +9,7 @@ from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelReque
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
 from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
-from telethon.errors import ChannelInvalidError
+from telethon.errors import UsernameNotOccupiedError, ChannelInvalidError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
