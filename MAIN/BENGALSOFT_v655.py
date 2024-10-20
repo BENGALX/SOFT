@@ -5,8 +5,10 @@ from telethon import TelegramClient
 from telethon.tl import functions
 from telethon.tl.types import Message, PeerChannel, Channel
 
-from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest
+from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
+
+from telethon.errors.rpcerrorlist import UserNotParticipantError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -88,21 +90,6 @@ class BENGALSOFTMod(loader.Module):
         else:
             twink = None
         return twink
-
-    async def get_channel_info(self, channel):
-        """Получает ID канала и ласт поста."""
-        try:
-            channel_entity = await self.client.get_entity(channel)
-            channel_id = channel_entity.id
-            messages = await self.client.get_messages(channel_entity, limit=1)
-            if messages:
-                last_message_id = messages[0].id
-                return channel_id, last_message_id
-            else:
-                return channel_id, None
-        except Exception as e:
-            await self.send_else_message(f"Ошибка в get_channel_info при получении инфо: {e}")
-            return None, None
     
 
     async def send_done_message(self, text, delay_info=None):
@@ -196,8 +183,11 @@ class BENGALSOFTMod(loader.Module):
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            target_entity = await self.client.get_entity(target)
-            view_result = await self.views_post(self.client, channel_id=target_entity.id)
+            #full_channel = await self.client(GetFullChannelRequest(channel=target))
+            #channel_id = full_channel.full_chat.id
+            #await self.send_else_message(f"{channel_id}")
+            #view_result = await self.views_post(self.client, channel_id=channel_id)
+            view_result = f""
             await self.send_done_message(f"<b>♻️ SUB <a href='{target}'>PRIV LINK</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
@@ -210,9 +200,11 @@ class BENGALSOFTMod(loader.Module):
             try:
                 await self.client(functions.channels.LeaveChannelRequest(target))
                 await self.send_done_message(f"<b>♻️ UNS <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+            except UserNotParticipantError:
+                await self.send_done_message(f"<b>⚠️ UNS:</b> NONE IN <a href='{link}'>PUBL LINK</a>", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(target)
-                await self.send_done_message(f"<b>♻️ DEL <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ DELETE Chat by<a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNS tag:</b> {e}", delay_info=(mult, delay_s))
 
@@ -297,19 +289,19 @@ class BENGALSOFTMod(loader.Module):
         try:
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                return f", SEE."
+                return f", VIEW."
             elif channel_id is not None:
                 messages = await client.get_messages(channel_id, limit=5)
                 message_ids = [msg.id for msg in messages]
                 if message_ids:
                     await client(GetMessagesViewsRequest(peer=channel_id, id=message_ids, increment=True))
-                    return f", SEE (L{len(message_ids)})."
+                    return f", VIEW (L{len(message_ids)})."
                 else:
-                    return f", Snt."
+                    return f""
             else:
-                return f", Snt."
+                return f""
         except Exception as e:
-            return f", EVW {e}."
+            return f", ERR {e}"
             
     
     async def update_user_config(self, config_name, new_value):
