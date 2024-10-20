@@ -9,7 +9,7 @@ from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelReque
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
 from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
-from telethon.errors import UsernameNotOccupiedError
+from telethon.errors import ChannelInvalidError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -216,18 +216,17 @@ class BENGALSOFTMod(loader.Module):
             if match:
                 username = match.group(1)
                 try:
-                    await self.client(GetFullChannelRequest(username))
                     await self.client(functions.channels.LeaveChannelRequest(username))
                     await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
                     await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                except (ChannelInvalidError, PeerIdInvalidError, UsernameNotOccupiedError):
+                except ChannelInvalidError:
                     await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 except:
                     await self.client.delete_dialog(username)
                     await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
             else:
-                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>")
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
 
