@@ -8,7 +8,7 @@ from telethon.tl.types import Message, PeerChannel, Channel
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
-from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
+from telethon.errors.rpcerrorlist import UserNotParticipantError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -236,11 +236,11 @@ class BENGALSOFTMod(loader.Module):
                 await self.send_done_message(f"<b>♻️ UNS by ID {target}</b>", delay_info=(mult, delay_s))
             except UserNotParticipantError:
                 await self.send_done_message(f"<b>⚠️ UNS: NONE IN {target}</b>", delay_info=(mult, delay_s))
-            except (ChannelInvalidError, PeerIdInvalidError):
-                await self.send_done_message(f"<b>🚫 UNS: INVALID ID:</b>")
             except:
                 await self.client.delete_dialog(channel_id)
                 await self.send_done_message(f"<b>♻️ DEL by ID {target}</b>", delay_info=(mult, delay_s))
+        except ValueError:
+            await self.send_done_message(f"<b>🚫 UNS: INVALID ID FORMAT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNS ID:</b> {e}", delay_info=(mult, delay_s))
 
