@@ -9,7 +9,6 @@ from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelReque
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
 from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
-from telethon.errors import UsernameNotOccupiedError, ChannelInvalidError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -220,7 +219,7 @@ class BENGALSOFTMod(loader.Module):
                     await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
                     await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                except (UsernameNotOccupiedError, ChannelInvalidError):
+                except ValueError:
                     await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 except:
                     await self.client.delete_dialog(username)
