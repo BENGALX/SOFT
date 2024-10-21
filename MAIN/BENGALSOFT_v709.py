@@ -182,7 +182,7 @@ class BENGALSOFTMod(loader.Module):
                 if any(substring in str(e) for substring in [
                     "No user has",
                     "Invalid username",
-                    "Nobody is using this username, or the username is unacceptable."
+                    "username is unacceptable"
                 ]):
                     await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
                 elif "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
