@@ -391,7 +391,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.subscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE SUB: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
@@ -411,7 +411,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.unsubscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
@@ -431,7 +431,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.button_public(target, mult, delay_s)
             else:
-                await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> link not found")
+                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
@@ -519,5 +519,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/search"):
                 await self.handle_user_search(message.message)
+            else:
+                return
         except:
             pass
