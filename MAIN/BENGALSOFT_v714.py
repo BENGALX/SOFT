@@ -179,18 +179,20 @@ class BENGALSOFTMod(loader.Module):
                 view_result = await self.views_post(self.client, channel_id=target_entity.id)
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC.</a>{view_result}</b>", delay_info=(mult, delay_s))
             except Exception as e:
-                if any(substring in str(e) for substring in [
-                    "No user has",
-                    "Invalid username",
-                    "username is unacceptable"
-                ]):
-                    await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
-                elif "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
+                if "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
                 else:
-                    await self.send_done_message(f"<b>♻️ SUBSCR ошибку локалки не нашел</b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>🚫 SUBSCR: ITS ACCOUNT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 SUBSCR PUBLIC:</b> {e}", delay_info=(mult, delay_s))
+            if any(substring in str(e) for substring in [
+                "No user has",
+                "Invalid username",
+                "username is unacceptable",
+                "Cannot find any entity corresponding"
+            ]):
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 SUBSCR PUBLIC:</b> {e}", delay_info=(mult, delay_s))
 
     async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
