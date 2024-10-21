@@ -171,13 +171,22 @@ class BENGALSOFTMod(loader.Module):
         try:
             if target.startswith("@"):
                 link = f"https://t.me/{target[1:]}"
+            else:
+                link = target
             target_entity = await self.client.get_entity(link)
             try:
                 await self.client(JoinChannelRequest(channel=target))
                 view_result = await self.views_post(self.client, channel_id=target_entity.id)
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC.</a>{view_result}</b>", delay_info=(mult, delay_s))
-            except ValueError:
-                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+            except Exception as e:
+                if any(substring in str(e) for substring in [
+                    "No user has",
+                    "Invalid username"
+                    "Nobody is using this username, or the username is unacceptable."
+                ]):
+                    await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+                elif "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
+                    await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUBSCR PUBLIC:</b> {e}", delay_info=(mult, delay_s))
 
@@ -189,10 +198,13 @@ class BENGALSOFTMod(loader.Module):
                 await self.client(ImportChatInviteRequest(invite_hash))
                 view_result = f""
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE.</a>{view_result}</b>", delay_info=(mult, delay_s))
-            except ValueError:
-                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
             except Exception as e:
-                await self.send_done_message(f"<b>🚫 локал SUBSCR PRIVATE:</b> {e}", delay_info=(mult, delay_s))
+                if "You have joined too many channels/supergroups" in str(e):
+                    await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
+                elif "The chat the user tried to join has expired and is not valid anymore (caused by ImportChatInviteRequest)" in str(e):
+                    await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+                elif "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
+                    await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 общее SUBSCR PRIVATE:</b> {e}", delay_info=(mult, delay_s))
 
