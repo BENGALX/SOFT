@@ -217,9 +217,9 @@ class BENGALSOFTMod(loader.Module):
     async def unsubscribe_public(self, target, mult, delay_s):
         """Отписка/удаление по тегу или публичной ссылке."""
         try:
-            if "@" in target:
-                username = target
-                link = f"https://t.me/{username[1:]}"
+            if target.startswith("@"):
+                username = target[1:]
+                link = f"https://t.me/{username}"
             elif "t.me" in target:
                 match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
                 if match:
