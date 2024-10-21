@@ -214,28 +214,26 @@ class BENGALSOFTMod(loader.Module):
             match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
             if match:
                 username = match.group(1)
+                await self.client.get_entity(usename)
                 try:
-                    await self.client.get_entity(username)
-                    try:
-                        await self.send_done_message(f"<b>♻️ UNSUB: ентити есть все ехуенно.</b>", delay_info=(mult, delay_s))
-                        await self.client(functions.channels.LeaveChannelRequest(username))
-                        await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                    except:
-                        await self.send_done_message(f"<b>🚫 UNSUB: ентити нету все хуйня.</b>", delay_info=(mult, delay_s))
-                except UserNotParticipantError:
-                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                except ValueError:
-                    await self.send_done_message(f"<b>🚫 UNSUB: валуе INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    #await self.client(functions.channels.LeaveChannelRequest(username))
+                    #await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                #except UserNotParticipantError:
+                    #await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                #except ValueError:
+                    #await self.send_done_message(f"<b>🚫 UNSUB: валуе INVALID LINK.</b>", delay_info=(mult, delay_s))
                 #except Exception as e:
                     #if "Nobody is using this username, or the username is unacceptable." in str(e):
                         #await self.send_done_message(f"<b>🚫 UNSUB: ексепт в 1 INVALID LINK.</b>", delay_info=(mult, delay_s))
                     #else:
                         #await self.client.delete_dialog(username)
                         #await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                except Exception as e:
+                    await self.send_done_message(f"<b>🚫 UNSUB: ексепт в ентити ебучем.</b>", delay_info=(mult, delay_s))
             else:
-                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB LINK:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка по айди."""
