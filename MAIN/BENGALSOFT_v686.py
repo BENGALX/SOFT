@@ -218,10 +218,10 @@ class BENGALSOFTMod(loader.Module):
                     await self.client.get_entity(target)))
                     try:
                         await self.send_done_message(f"<b>♻️ UNSUB: ентити есть все ехуенно.</b>", delay_info=(mult, delay_s))
+                        await self.client(functions.channels.LeaveChannelRequest(username))
+                        await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                     except:
                         await self.send_done_message(f"<b>🚫 UNSUB: ентити нету все хуйня.</b>", delay_info=(mult, delay_s))
-                    await self.client(functions.channels.LeaveChannelRequest(username))
-                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
                     await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except ValueError:
