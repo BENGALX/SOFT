@@ -8,8 +8,7 @@ from telethon.tl.types import Message, PeerChannel, Channel
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
-from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
-from telethon.errors import UsernameNotOccupiedError
+from telethon.errors.rpcerrorlist import UserNotParticipantError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -216,30 +215,27 @@ class BENGALSOFTMod(loader.Module):
             if match:
                 username = match.group(1)
                 try:
-                    await self.client(functions.channels.LeaveChannelRequest(username))
-                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                except UserNotParticipantError:
-                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
-                except Exception as e:
-                    if "Nobody is using this username, or the username is unacceptable." in str(e):
-                        await self.send_done_message(f"<b>🚫 UNSUB: 1 INVALID LINK.</b>", delay_info=(mult, delay_s))
-                    else:
+                    await self.client.get_entity(username)
+                    try:
+                        await self.client(functions.channels.LeaveChannelRequest(username))
+                        await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                    except UserNotParticipantError:
+                        await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                    except:
                         await self.client.delete_dialog(username)
                         await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                except ValueError:
+                    await self.send_done_message(f"<b>🚫 UNSUB: ENEXC INVALID LINK.</b>", delay_info=(mult, delay_s))
             else:
-                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            if "Nobody is using this username, or the username is unacceptable." in str(e):
-                await self.send_done_message(f"<b>🚫 UNSUB: 1 INVALID LINK.</b>", delay_info=(mult, delay_s))
-            else:
-                await self.send_done_message(f"<b>🚫 UNSUB link:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB LINK:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка по айди."""
         try:
+            channel_id = int(target)
             try:
-                channel_id = int(target)
                 await self.client(functions.channels.LeaveChannelRequest(channel_id))
                 await self.send_done_message(f"<b>♻️ UNS by ID {target}</b>", delay_info=(mult, delay_s))
             except UserNotParticipantError:
