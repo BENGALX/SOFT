@@ -214,70 +214,34 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def unsubscribe_tag(self, target, mult, delay_s):
-        """Отписка по юзернейму."""
+    async def unsubscribe_public(self, target, mult, delay_s):
+        """Отписка/удаление по тегу или публичной ссылке."""
         try:
-            link = f"https://t.me/{target[1:]}"
+            if "@" in target:
+                username = target
+                link = f"https://t.me/{username[1:]}"
+            elif "t.me" in target:
+                match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
+                if match:
+                    username = match.group(1)
+                    link = f"https://t.me/{username}"
+                else:
+                    await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    return
             try:
-                await self.client.get_entity(target)
+                await self.client.get_entity(username)
                 try:
-                    await self.client(functions.channels.LeaveChannelRequest(target))
-                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+                    await self.client(functions.channels.LeaveChannelRequest(username))
+                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
-                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
                 except:
-                    await self.client.delete_dialog(target)
-                    await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-            except:
+                    await self.client.delete_dialog(username)
+                    await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+            except ValueError:
                 await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNS TAG:</b> {e}", delay_info=(mult, delay_s))
-
-    async def unsubscribe_link(self, target, mult, delay_s):
-        """Отписка по ссылке."""
-        try:
-            match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-            if match:
-                username = match.group(1)
-                try:
-                    await self.client.get_entity(username)
-                    try:
-                        await self.client(functions.channels.LeaveChannelRequest(username))
-                        await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                    except UserNotParticipantError:
-                        await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                    except:
-                        await self.client.delete_dialog(username)
-                        await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                except ValueError:
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
-            else:
-                await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
-        except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB LINK:</b> {e}", delay_info=(mult, delay_s))
-
-    async def unsubscribe_link(self, target, mult, delay_s):
-        """Отписка по ссылке."""
-        try:
-            match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-            if match:
-                username = match.group(1)
-                try:
-                    await self.client.get_entity(username)
-                    try:
-                        await self.client(functions.channels.LeaveChannelRequest(username))
-                        await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                    except UserNotParticipantError:
-                        await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                    except:
-                        await self.client.delete_dialog(username)
-                        await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                except ValueError:
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
-            else:
-                await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
-        except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB LINK:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB PUBLIC:</b> {e}", delay_info=(mult, delay_s))
 
     async def unsubscribe_id(self, target, mult, delay_s):
         """Отписка/удаление по айди или приватной ссылке."""
@@ -332,6 +296,7 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
             
 
+    
     async def start_ref_bot(self, bot_name, ref_key, mult, delay_s):
         """Запуск ботов по реферальному ключу."""
         try:
@@ -347,6 +312,7 @@ class BENGALSOFTMod(loader.Module):
             error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
+    
     
     async def views_post(self, client, channel_id=None, last_message_id=None):
         """Шарманка для накрута просмотров постов."""
@@ -367,6 +333,7 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             return f", ERR {e}"
             
+
     
     async def update_user_config(self, config_name, new_value):
         """Обновление переменных конфигураторов."""
