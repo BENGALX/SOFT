@@ -272,21 +272,18 @@ class BENGALSOFTMod(loader.Module):
         try:
             chan, post = target.split("t.me/c/")[1].split("/")
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
-            if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
-                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
-                return
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PRIVATE</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
-        except ValueError:
-            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
         except AttributeError:
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "The channel specified is private and you lack permission to access it." in str(e):
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
+            elif "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
