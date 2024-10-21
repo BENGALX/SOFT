@@ -215,7 +215,7 @@ class BENGALSOFTMod(loader.Module):
             if match:
                 username = match.group(1)
                 try:
-                    await self.client.get_entity(target)
+                    await self.client.get_entity(username)
                     try:
                         await self.send_done_message(f"<b>♻️ UNSUB: ентити есть все ехуенно.</b>", delay_info=(mult, delay_s))
                         await self.client(functions.channels.LeaveChannelRequest(username))
