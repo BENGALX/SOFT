@@ -284,10 +284,11 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
         except AttributeError:
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
-        except UserNotParticipantError:
-            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
+            if "The channel specified is private and you lack permission to access it." in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
