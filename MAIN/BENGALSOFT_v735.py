@@ -275,10 +275,10 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIV LINK</a>{view_result}</b>\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PRIVATE</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 PUSH private:</b> {e}")
+            await self.send_done_message(f"<b>🚫 PUSH PRIVATE:</b> {e}")
 
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
@@ -289,10 +289,15 @@ class BENGALSOFTMod(loader.Module):
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBL LINK</a>{view_result}</b>\n\n{clicked_message}"
+            log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
+            if "" in str(e):
+                await self.client.delete_dialog(channel_id)
+                await self.send_done_message(f"<b>♻️ DELETE by <a href='{link}'>P.</a></b>", delay_info=(mult, delay_s)) 
+            elif "" in str(e):
+                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
             
 
     
