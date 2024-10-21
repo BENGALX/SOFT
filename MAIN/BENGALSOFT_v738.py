@@ -311,8 +311,8 @@ class BENGALSOFTMod(loader.Module):
                 await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON ROWS.</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
-            
 
+    
     
     async def start_ref_bot(self, bot_name, ref_key, mult, delay_s):
         """Запуск ботов по реферальному ключу."""
