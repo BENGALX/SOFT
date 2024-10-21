@@ -187,6 +187,8 @@ class BENGALSOFTMod(loader.Module):
                     await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
                 elif "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
+                else:
+                    await self.send_done_message(f"<b>♻️ SUBSCR ошибку локалки не нашел</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUBSCR PUBLIC:</b> {e}", delay_info=(mult, delay_s))
 
