@@ -284,6 +284,8 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
         except AttributeError:
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
+        except UserNotParticipantError:
+            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
