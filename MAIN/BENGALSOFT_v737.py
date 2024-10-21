@@ -283,21 +283,34 @@ class BENGALSOFTMod(loader.Module):
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
         try:
-            chan, post = target.split("t.me/")[1].split("/")
+            try:
+                chan, post = target.split("t.me/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: INVALID FORMAT.</b>", delay_info=(mult, delay_s))
+                return
             channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
-            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
+                return
+            try:
+                click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            except AttributeError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTONS TO CLICK.</b>", delay_info=(mult, delay_s))
+                return
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
-            if "" in str(e):
-                await self.client.delete_dialog(channel_id)
-                await self.send_done_message(f"<b>♻️ DELETE by <a href='{link}'>P.</a></b>", delay_info=(mult, delay_s)) 
-            elif "" in str(e):
-                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
+            if "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: INVALID TARGET.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute 'click'" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: CLICK FAILED.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute 'rows'" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON ROWS.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
             
 
     
