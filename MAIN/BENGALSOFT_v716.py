@@ -182,12 +182,13 @@ class BENGALSOFTMod(loader.Module):
                 if "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
                 else:
-                    await self.send_done_message(f"<b>♻️ SUBSCR ошибку локалки не нашел</b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>🚫 SUBSCR: ITS ACCOUNT. {e}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if any(substring in str(e) for substring in [
                 "No user has",
                 "Invalid username",
-                "username is unacceptable"
+                "Nobody is using this username, or the username is unacceptable",
+                "Cannot find any entity corresponding"
             ]):
                 await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
             else:
@@ -202,12 +203,12 @@ class BENGALSOFTMod(loader.Module):
                 view_result = f""
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE.</a>{view_result}</b>", delay_info=(mult, delay_s))
             except Exception as e:
-                if "You have joined too many channels/supergroups" in str(e):
+                if "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
+                    await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
+                elif "You have joined too many channels/supergroups" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
                 elif "The chat the user tried to join has expired and is not valid anymore (caused by ImportChatInviteRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
-                elif "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
-                    await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 общее SUBSCR PRIVATE:</b> {e}", delay_info=(mult, delay_s))
 
