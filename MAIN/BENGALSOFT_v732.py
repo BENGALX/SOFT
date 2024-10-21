@@ -177,7 +177,7 @@ class BENGALSOFTMod(loader.Module):
             try:
                 await self.client(JoinChannelRequest(channel=target))
                 view_result = await self.views_post(self.client, channel_id=target_entity.id)
-                await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC.</a>{view_result}</b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC</a>{view_result}</b>", delay_info=(mult, delay_s))
             except Exception as e:
                 if "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
@@ -198,11 +198,13 @@ class BENGALSOFTMod(loader.Module):
         try:
             invite_hash = target.split("t.me/+")[1]
             await self.client(ImportChatInviteRequest(invite_hash))
-            view_result = f""
-            await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE.</a>{view_result}</b>", delay_info=(mult, delay_s))
+            view_result = f", VIEW 0."
+            await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
                 await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
+            elif "The authenticated user is already a participant of the chat (caused by ImportChatInviteRequest)" in str(e):
+                await self.send_done_message(f"<b>⚠️ SUBSCR: ALREADY THERE.</b>", delay_info=(mult, delay_s))
             elif "You have joined too many channels/supergroups" in str(e):
                 await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
             elif "The chat the user tried to join has expired and is not valid anymore (caused by ImportChatInviteRequest)" in str(e):
@@ -229,12 +231,12 @@ class BENGALSOFTMod(loader.Module):
             await self.client.get_entity(username)
             try:
                 await self.client(functions.channels.LeaveChannelRequest(username))
-                await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
             except UserNotParticipantError:
-                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(username)
-                await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{link}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
         except ValueError:
             await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
         except Exception as e:
@@ -389,7 +391,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.subscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE SUB:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE SUB: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
@@ -409,7 +411,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.unsubscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE UNS:</b> Неверный формат.")
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
@@ -429,7 +431,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.button_public(target, mult, delay_s)
             else:
-                await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> link not found")
+                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORNAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
@@ -517,5 +519,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/search"):
                 await self.handle_user_search(message.message)
+            else:
+                return
         except:
             pass
