@@ -208,7 +208,7 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNS tag:</b> {e}", delay_info=(mult, delay_s))
 
-    async def unsubscrib_link(self, target, mult, delay_s):
+    async def unsubscribe_link(self, target, mult, delay_s):
         """Отписка по ссылке."""
         try:
             match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
@@ -228,22 +228,6 @@ class BENGALSOFTMod(loader.Module):
                 except:
                     await self.send_done_message(f"<b>🚫 UNSUB: ексепт в ентити ебучем.</b>", delay_info=(mult, delay_s))
                     await self.send_done_message(f"<b>🚫 UNSUB: ENEXC INVALID LINK.</b>", delay_info=(mult, delay_s))
-            else:
-                await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
-        except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB LINK:</b> {e}", delay_info=(mult, delay_s))
-
-    async def unsubscribe_link(self, target, mult, delay_s):
-        """Отписка по ссылке."""
-        try:
-            match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-            if match:
-                username = match.group(1)
-                try:
-                    await self.client.get_entity(username)
-                    await self.send_done_message(f"<b>♻️ UNSUB: ексепта нет.</b>", delay_info=(mult, delay_s))
-                except Exception as e:
-                    await self.send_done_message(f"<b>🚫 UNSUB: ексепт в ентити ебучем. {e}</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
