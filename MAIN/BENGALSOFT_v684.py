@@ -8,8 +8,7 @@ from telethon.tl.types import Message, PeerChannel, Channel
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
-from telethon.errors.rpcerrorlist import UserNotParticipantError, ChannelInvalidError, PeerIdInvalidError
-from telethon.errors import UsernameNotOccupiedError
+from telethon.errors.rpcerrorlist import UserNotParticipantError
 
 @loader.tds
 class BENGALSOFTMod(loader.Module):
@@ -220,15 +219,14 @@ class BENGALSOFTMod(loader.Module):
                     await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except UserNotParticipantError:
                     await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 except ValueError:
-                    await self.send_done_message(f"<b> UNSUB: валуе INVALID LINK.</b>", delay_info=(mult, delay_s))
-                except Exception as e:
-                    if "Nobody is using this username, or the username is unacceptable." in str(e):
-                        await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
-                    else:
-                        await self.client.delete_dialog(username)
-                        await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>🚫 UNSUB: валуе INVALID LINK.</b>", delay_info=(mult, delay_s))
+                #except Exception as e:
+                    #if "Nobody is using this username, or the username is unacceptable." in str(e):
+                        #await self.send_done_message(f"<b>🚫 UNSUB: ексепт в 1 INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    #else:
+                        #await self.client.delete_dialog(username)
+                        #await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
