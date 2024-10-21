@@ -286,15 +286,22 @@ class BENGALSOFTMod(loader.Module):
             chan, post = target.split("t.me/")[1].split("/")
             channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
+            if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
+                return
             click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
+        except ValueError:
+            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT.</b>", delay_info=(mult, delay_s))
+        except AttributeError:
+            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 RUN public:</b> {e}")
-            
+            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
 
+    
     
     async def start_ref_bot(self, bot_name, ref_key, mult, delay_s):
         """Запуск ботов по реферальному ключу."""
@@ -318,7 +325,7 @@ class BENGALSOFTMod(loader.Module):
         try:
             if last_message_id is not None:
                 await client(GetMessagesViewsRequest(peer=channel_id, id=[last_message_id], increment=True))
-                return f", VIEW."
+                return f", VIEW POST."
             elif channel_id is not None:
                 messages = await client.get_messages(channel_id, limit=5)
                 message_ids = [msg.id for msg in messages]
