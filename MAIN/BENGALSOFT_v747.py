@@ -279,11 +279,15 @@ class BENGALSOFTMod(loader.Module):
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
         except AttributeError:
             await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
+        except ValueError:
+            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            if "The channel specified is private and you lack permission to access it." in str(e):
+            if any(substring in str(e) for substring in [
+                "Could not find the input entity for PeerChannel",
+                "The channel specified is private"
+            ]):
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
-            elif "not enough values to unpack" in str(e):
-                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
+            #elif "not enough values to unpack" in str(e):
             else:
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
