@@ -216,6 +216,7 @@ class BENGALSOFTMod(loader.Module):
                 username = match.group(1)
                 await self.client.get_entity(username)
                 try:
+                    await self.send_done_message(f"<b>🚫 UNSUB: ексепта нет.</b>", delay_info=(mult, delay_s))
                     #await self.client(functions.channels.LeaveChannelRequest(username))
                     #await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 #except UserNotParticipantError:
