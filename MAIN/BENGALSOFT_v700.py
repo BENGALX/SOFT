@@ -192,19 +192,24 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.send_done_message(f"<b>🚫 SUB Private:</b> {e}", delay_info=(mult, delay_s))
 
+
     
     async def unsubscribe_tag(self, target, mult, delay_s):
         """Отписка по юзернейму."""
         try:
             link = f"https://t.me/{target[1:]}"
             try:
-                await self.client(functions.channels.LeaveChannelRequest(target))
-                await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
-            except UserNotParticipantError:
-                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                await self.client.get_entity(target)
+                try:
+                    await self.client(functions.channels.LeaveChannelRequest(target))
+                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                except UserNotParticipantError:
+                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                except:
+                    await self.client.delete_dialog(target)
+                    await self.send_done_message(f"<b>♻️ DELETE Chat by<a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
             except:
-                await self.client.delete_dialog(target)
-                await self.send_done_message(f"<b>♻️ DELETE Chat by<a href='{link}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNS tag:</b> {e}", delay_info=(mult, delay_s))
 
@@ -225,7 +230,7 @@ class BENGALSOFTMod(loader.Module):
                         await self.client.delete_dialog(username)
                         await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBL LINK</a></b>", delay_info=(mult, delay_s))
                 except ValueError:
-                    await self.send_done_message(f"<b>🚫 UNSUB: ENEXC INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
         except Exception as e:
@@ -239,14 +244,14 @@ class BENGALSOFTMod(loader.Module):
                 await self.client(functions.channels.LeaveChannelRequest(channel_id))
                 await self.send_done_message(f"<b>♻️ UNS by ID {target}</b>", delay_info=(mult, delay_s))
             except UserNotParticipantError:
-                await self.send_done_message(f"<b>⚠️ UNSUB: NOT MEMBER.</b>", delay_info=(mult, delay_s))
+                await self.send_done_message(f"<b>⚠️ UNSUB: NO MEMBER.</b>", delay_info=(mult, delay_s))
             except:
                 await self.client.delete_dialog(channel_id)
                 await self.send_done_message(f"<b>♻️ DEL by ID {target}</b>", delay_info=(mult, delay_s))
         except ValueError:
-            await self.send_done_message(f"<b>🚫 UNS: INVALID ID FORMAT.</b>", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB: IN NOT FOUND.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNS ID:</b> {e}", delay_info=(mult, delay_s))
+            await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
 
 
     
