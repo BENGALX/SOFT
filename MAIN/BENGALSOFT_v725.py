@@ -181,12 +181,11 @@ class BENGALSOFTMod(loader.Module):
             except Exception as e:
                 if "You have joined too many channels/supergroups (caused by JoinChannelRequest)" in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
-                else:
+                elif "Cannot cast InputPeerUser to any kind of InputChannel." in str(e):
                     await self.send_done_message(f"<b>🚫 SUBSCR: ITS ACCOUNT. {e}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if any(substring in str(e) for substring in [
-                "No user has",
-                "Invalid username",
+                "No user has", "Invalid username",
                 "Nobody is using this username, or the username is unacceptable",
                 "Cannot find any entity corresponding"
             ]):
@@ -198,19 +197,18 @@ class BENGALSOFTMod(loader.Module):
         """Подписывается на частные."""
         try:
             invite_hash = target.split("t.me/+")[1]
-            try:
-                await self.client(ImportChatInviteRequest(invite_hash))
-                view_result = f""
-                await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE.</a>{view_result}</b>", delay_info=(mult, delay_s))
-            except Exception as e:
-                if "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
-                    await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
-                elif "You have joined too many channels/supergroups" in str(e):
-                    await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
-                elif "The chat the user tried to join has expired and is not valid anymore (caused by ImportChatInviteRequest)" in str(e):
-                    await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+            await self.client(ImportChatInviteRequest(invite_hash))
+            view_result = f""
+            await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE.</a>{view_result}</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 общее SUBSCR PRIVATE:</b> {e}", delay_info=(mult, delay_s))
+            if "RPCError 400: INVITE_REQUEST_SENT (caused by ImportChatInviteRequest)" in str(e):
+                await self.send_done_message(f"<b>⚠️ SUBSCR: INV REQUEST SENT.</b>", delay_info=(mult, delay_s))
+            elif "You have joined too many channels/supergroups" in str(e):
+                await self.send_done_message(f"<b>🚫 SUBSCR: ACC OWERFLOWING.</b>", delay_info=(mult, delay_s))
+            elif "The chat the user tried to join has expired and is not valid anymore (caused by ImportChatInviteRequest)" in str(e):
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 SUBSCR PRIVATE:</b> {e}", delay_info=(mult, delay_s))
 
 
     
@@ -226,20 +224,19 @@ class BENGALSOFTMod(loader.Module):
                     username = match.group(1)
                     link = f"https://t.me/{username}"
                 else:
-                    await self.send_done_message(f"<b>🚫 UNSUB: ELSE INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                     return
+            await self.client.get_entity(username)
             try:
-                await self.client.get_entity(username)
-                try:
-                    await self.client(functions.channels.LeaveChannelRequest(username))
-                    await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                except UserNotParticipantError:
-                    await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-                except:
-                    await self.client.delete_dialog(username)
-                    await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
-            except ValueError:
-                await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
+                await self.client(functions.channels.LeaveChannelRequest(username))
+                await self.send_done_message(f"<b>♻️ UNSUB by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+            except UserNotParticipantError:
+                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+            except:
+                await self.client.delete_dialog(username)
+                await self.send_done_message(f"<b>♻️ DELETE Chat by <a href='{target}'>PUBLIC.</a></b>", delay_info=(mult, delay_s))
+        except ValueError:
+            await self.send_done_message(f"<b>🚫 UNSUB: INVALID ENTITY.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"<b>🚫 UNSUB PUBLIC:</b> {e}", delay_info=(mult, delay_s))
 
@@ -253,18 +250,18 @@ class BENGALSOFTMod(loader.Module):
             elif target.isdigit():
                 channel_id = int(target)
                 link = f"https://t.me/c/{channel_id}"
-            try:
-                await self.client(functions.channels.LeaveChannelRequest(channel_id))
-                await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
-            except UserNotParticipantError:
-                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
-            except:
-                await self.client.delete_dialog(channel_id)
-                await self.send_done_message(f"<b>♻️ DELETE by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
+            await self.client(functions.channels.LeaveChannelRequest(channel_id))
+            await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
         except ValueError:
             await self.send_done_message(f"<b>🚫 UNSUB: ID NOT FOUND.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
+            if "Cannot cast InputPeerUser to any kind of InputChannel" in str(e):
+                await self.client.delete_dialog(channel_id)
+                await self.send_done_message(f"<b>♻️ DELETE by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s)) 
+            elif "The channel specified is private and you lack permission to access it." in str(e):
+                await self.send_done_message(f"<b>⚠️ UNSUB: NONE IN <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 UNSUB ID:</b> {e}", delay_info=(mult, delay_s))
 
 
     
