@@ -160,6 +160,15 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
+    async def send_spam_message(self, target, message_text, mult, delay_s):
+        """Сообщение в указанный чат."""  
+        try:
+            chat_entity = await self.client.get_entity(target)
+            await self.client.send_message(peer=chat_entity, message=message_text)
+            await self.send_done_message(f"<b>♻️ SPAM: {target}</b>", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"🚫 SPAM: {e}", delay_info=(mult, delay_s))
+
     
     
     async def subscribe_public(self, target, mult, delay_s):
@@ -548,6 +557,24 @@ class BENGALSOFTMod(loader.Module):
             if tag == twink:
                 await self.client.send_message(self.owner_chat, f"это я наху {twink}")
 
+    async def handle_spamer(self, text):
+        """Центральная обработка /sms"""
+        try:
+            parts = text.split()
+            if len(parts) < 3:
+                return
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if not (target.startswith("@") or re.match(r"https?://t\.me/", target)):
+                await self.send_else_message(f"<b>🚫 HANDLE MESS: TARGET</b>")
+                return
+            message_text = parts[3] if mult else parts[2]
+            await self.delay_host(delay_s)
+            await self.send_spam_message(target, message_text, mult, delay_s)
+        except Exception as e:
+            await self.send_else_message(f"<b>🚫 HANDLE MESS:</b> {e}")
+
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -571,6 +598,10 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/search"):
                 await self.handle_user_search(message.message)
+            elif message.message.startswith("/sms"):
+                await self.handle_spamer(message.message)
+            elif message.message.startswith("/react"):
+                await self.handle_reactor(message.message)
             else:
                 return
         except:
