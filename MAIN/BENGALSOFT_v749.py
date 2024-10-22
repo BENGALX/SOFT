@@ -270,47 +270,64 @@ class BENGALSOFTMod(loader.Module):
     async def button_private(self, target, mult, delay_s):
         """Нажатие кнопки в приватных."""
         try:
-            chan, post = target.split("t.me/c/")[1].split("/")
+            try:
+                chan, post = target.split("t.me/c/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT 1.</b>", delay_info=(mult, delay_s))
+                return
             inline_button = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
-            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
+                return
+            try:
+                click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            except AttributeError:
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PRIVATE</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
-        except AttributeError:
-            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO BUTTON.</b>", delay_info=(mult, delay_s))
-        except ValueError:
-            await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if any(substring in str(e) for substring in [
                 "Could not find the input entity for PeerChannel",
                 "The channel specified is private"
             ]):
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
-            #elif "not enough values to unpack" in str(e):
+            elif "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: CLICK FAIL.</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
         try:
-            chan, post = target.split("t.me/")[1].split("/")
+            try:
+                chan, post = target.split("t.me/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT 1.</b>", delay_info=(mult, delay_s))
+                return
             channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
             if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
                 await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
                 return
-            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            try:
+                click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            except AttributeError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
-        except ValueError:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT.</b>", delay_info=(mult, delay_s))
-        except AttributeError:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
+            if "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: CLICK FAIL.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
 
     
     
