@@ -432,7 +432,7 @@ class BENGALSOFTMod(loader.Module):
             mult = int(parts[1]) if parts[1].isdigit() else None
             target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
-            if 't.me/+' in target or 't.me/joinchat/' in target::
+            if 't.me/+' in target or 't.me/joinchat/' in target:
                 await self.delay_host(delay_s)
                 await self.subscribe_private(target, mult, delay_s)
             elif "t.me/" in target or "@" in target:
