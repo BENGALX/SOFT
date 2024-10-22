@@ -15,8 +15,8 @@ from telethon.errors.rpcerrorlist import UserNotParticipantError
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Основной модуль софтеров.
-           Full Info: <code>/manual @\n</code>
-    ⚙️ <b>By @pavlyxa_rezon</b>\n"""
+           Full Info: /manual @\n
+    ⚙️ By @pavlyxa_rezon\n"""
 
     strings = {
         "name": "BENGALSOFT",
