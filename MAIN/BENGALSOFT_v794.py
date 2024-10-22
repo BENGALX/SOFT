@@ -417,7 +417,7 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def reactor_private(self, target, mult, delay_s):
+    async def reactor_private(self, target, mult, delay_s, reaction_mode):
         """Реакция на сообщение в приватных."""
         try:
             try:
@@ -429,7 +429,10 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PRIVATE: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            reaction = random.choice(self.reactions)
+            if reaction_mode == "random":
+                reaction = random.choice(self.reactions)
+            else:
+                reaction = reaction_mode
             await message.react(reaction)
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
             log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
@@ -445,7 +448,7 @@ class BENGALSOFTMod(loader.Module):
             else:
                 await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
-    async def reactor_public(self, target, mult, delay_s):
+    async def reactor_public(self, target, mult, delay_s, reaction_mode):
         """Реакция на сообщение в публичных."""
         try:
             try:
@@ -458,7 +461,10 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            reaction = random.choice(self.reactions)
+            if reaction_mode == "random":
+                reaction = random.choice(self.reactions)
+            else:
+                reaction = reaction_mode
             await message.react(reaction)
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
             log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
