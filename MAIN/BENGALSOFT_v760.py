@@ -96,6 +96,8 @@ class BENGALSOFTMod(loader.Module):
     async def send_done_message(self, text, delay_info=None):
         """Логи успешных действий модуля"""
         try:
+            if not self.config["logger"]:
+                return
             if delay_info is not None:
                 mult, delay_s = delay_info
                 delay_text = f", M: x{mult}, KD: {delay_s} sec."
@@ -109,10 +111,20 @@ class BENGALSOFTMod(loader.Module):
     async def send_else_message(self, text):
         """Логи действий модуля"""
         try:
+            if not self.config["logger"]:
+                return
             logger_message = f"{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
             pass
+
+    async def send_manuals_message(self, manual_text):
+        """Выводы мануалов"""
+        try:
+            manuals_message = f"{manual_text}"
+            await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
+        except:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
     async def send_manual_message(self):
         """Вывод мануала по модулю"""
@@ -151,21 +163,7 @@ class BENGALSOFTMod(loader.Module):
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
-    async def send_basic_message(self):
-        """Вывод базовой настройки."""
-        try:
-            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
-
-    async def send_command_message(self):
-        """Вывод примеров команд модуля."""
-        try:
-            await self.client.send_message(self.owner_chat, self.strings["manual_command"])
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
-
-
+    
     
     async def subscribe_public(self, target, mult, delay_s):
         """Подписывается на публичные."""
@@ -420,9 +418,10 @@ class BENGALSOFTMod(loader.Module):
                 return
             if len(parts) >= 3 and parts[2] == twink:
                 if parts[1] == "basic":
-                    await self.send_basic_message()
+                    manual_text = self.strings["manual_basic"]
                 elif parts[1] == "command":
-                    await self.send_command_message()
+                    manual_text = self.strings["manual_command"]
+                await self.send_manual_message(manual_text)
             elif parts[1] == twink:
                 await self.send_manual_message()
         except:
