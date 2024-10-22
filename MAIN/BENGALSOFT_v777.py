@@ -105,12 +105,11 @@ class BENGALSOFTMod(loader.Module):
             full_name = f"{first_name} {last_name}"
             username = f"@{user.username}" if user.username else "NOTSET"
             phone = user.phone if user.phone else "NOTSET"
-            user_id = user.id
             status_message = (
-                f"TWINK — {full_name}\n"
-                f"├UID: <code>{user_id}</code>\n"
-                f"├NUM: <code>+{phone}</code>\n"
-                f"└USER: {username}\n"
+                f"💻 {full_name}\n"
+                f"<b>├UID: </b><code>{user.id}</code>\n"
+                f"<b>├NUM: </b><code>+{phone}</code>\n"
+                f"<b>└USER: </b>{username}\n"
             )
             return status_message
         except Exception as e:
