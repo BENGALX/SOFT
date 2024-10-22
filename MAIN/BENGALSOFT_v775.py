@@ -3,8 +3,10 @@ from .. import loader, utils
 
 from telethon import TelegramClient
 from telethon.tl import functions
-from telethon.tl.types import Message, PeerChannel, Channel
+from telethon.tl.types import Message, PeerUser, PeerChannel, Channel
 
+from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.functions.account import GetAuthorizationsRequest
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
@@ -113,9 +115,9 @@ class BENGALSOFTMod(loader.Module):
                 if match:
                     verification_code = match.group(0)
                     formatted_code = ".".join(verification_code)
-                    return f"<b>♻️ VERIF: {formatted_code}<b>"
+                    return f"<b>♻️ VERIF: CODE {formatted_code}<b>"
         except Exception as e:
-            return f""
+            return f"<b>🚫 VERIF: </b>{e}"
             
     
 
@@ -543,33 +545,26 @@ class BENGALSOFTMod(loader.Module):
         if parts[1] == "set":
             if len(parts) < 4:
                 return
-            config_name = parts[2]
-            new_value = parts[3]
-            taglist = parts[4:]
-            if "all" in taglist:
+            config_name, new_value, taglist = parts[2], parts[3], parts[4:]
+            if "all" in taglist or any(tag == twink for tag in taglist):
                 await self.update_user_config(config_name, new_value)
-            else:
-                for tag in taglist:
-                    if tag == twink:
-                        await self.update_user_config(config_name, new_value)
         elif parts[1] == "self":
             taglist = parts[2:]
             if "all" in taglist or any(tag == twink for tag in taglist):
                 custom_text = await self.get_config_info()
                 await self.send_custom_message(custom_text)
+        elif parts[1] == "status":
+            taglist = parts[2:]
+            if "all" in taglist or any(tag == twink for tag in taglist):
+                custom_text = await self.get_()
+                await self.send_custom_message(custom_text)
+        elif parts[1] == "verif":
+            taglist = parts[2:]
+            if any(tag == twink for tag in taglist):
+                custom_text = await self.get_verif_code()
+                await self.send_custom_message(custom_text)
         else:
             return
-
-    async def handle_user_search(self, text):
-        """Обработка USER команды /search"""        
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        twink = await self.get_user_info()
-        twink_search = parts[1:]
-        for tag in twink_search:
-            if tag == twink:
-                await self.client.send_message(self.owner_chat, f"это я наху {twink}")
 
     async def handle_spamer(self, text):
         """Центральная обработка /sms"""
@@ -592,8 +587,6 @@ class BENGALSOFTMod(loader.Module):
             await self.send_spam_message(target, message_text, mult, delay_s)
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE MESS:</b> {e}")
-
-    handle_verifer
     
 
     
@@ -617,14 +610,10 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
-            elif message.message.startswith("/search"):
-                await self.handle_user_search(message.message)
             elif message.message.startswith("/sms"):
                 await self.handle_spamer(message.message)
             elif message.message.startswith("/react"):
                 await self.handle_reactor(message.message)
-            elif message.message.startswith("/verif"):
-                await self.handle_verifer(message.message)
             else:
                 return
         except:
