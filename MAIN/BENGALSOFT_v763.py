@@ -21,38 +21,39 @@ class BENGALSOFTMod(loader.Module):
         "manual_command": (
             f"<b>⚙️ Функционал модуля</b>\n"
             f"<b>♻️ Примеры форматов:</b>\n"
-            f"▪️https://t.me/ — полная\n"
-            f"▪️t.me/ — сокращенная\n"
-            f"▪️@tag — публичный тег\n\n"
+            f"▪️https://t.me/, t.me/, @ — публичные ссылки, тег.\n"
+            f"▪️https://t.me/c/, t.me/c/ — приватные ссылки на пост.\n"
+            f"▪️https://t.me/+, t.me/joinchat/ — приватные инвайты.\n"
+            f"\n\n"
+            f"В подписках, отписках, кнопке, рефе по умолчанию стоит мультиплаер задержки Х20. "
+            f"Если нужен другой — вторым аргументом добавляем число: <code>/sub [M] [target]</code>."
+            f"\n\n"
             f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: t.me/+\n\n"
+            f"▪Тег, ссылка или инвайт в любом формате.\n\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: ID без -\n\n"
-            f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            f"▪️PUBLIC: t.me/\n"
-            f"▪️PRIVATE: t.me/c/\n\n"
-            f"<b>🔗 REFERAL START: /ref [link]</b>\n"
-            f"▪️[BOT]?start=[KEY]\n"
-            f"▪️SUPPORTED BOT:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
+            f"▪Тег, ссылка либо айди.\n\n"
+            f"<b>🔗 BUTTON: /run [link]</b>\n"
+            f"▪️Ссылка на пост с кнопкой.\n\n"
+            f"<b>🔗 REF START: /ref [link]</b>\n"
+            f"▪️Отправляете реферальную ссылку на нужного бота. Поддерживаемые: "
+            f"@BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
         ),
         "manual_basic": (
             f"<b>🔐 Команда настройки</b>\n"
-            f"/config set [p] [nv] [us]\n"
+            f"<code>/config set</code> [p] [nv] [us]\n"
             f"▪️[p] — имя переменной\n"
             f"▪️[nv] — новое значение\n"
             f"▪️[us] — @(1 |неск.| all)\n\n"
             f"<b>⚙️ Базовая настройка</b>\n"
-            "▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
+            "Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
             f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
             f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
-            f"/config set group 2 @u1\n"
-            f"/config set group 5 @u5 @u7\n\n"
-            f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+            f"<code>/config set group 2 @u1</code>\n"
+            f"<code>/config set group 5 @u5 @u7</code>\n\n"
+            f"Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
             f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
-            f"/config set logger 1 @u1 @u6\n"
-            f"/config set logger False all\n"
+            f"<code>/config set logger 1 @u1 @u6</code>\n"
+            f"<code>/config set logger False all</code>\n"
         )
     }
     
@@ -90,11 +91,25 @@ class BENGALSOFTMod(loader.Module):
         else:
             twink = None
         return twink
+
+    async def get_config_info(self):
+        """Информация о конфигурации."""
+        variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            configuration = (
+                f"<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+                f"<b>🔐 Переменные:</b>\n" + variables
+            )
+        return configuration
     
 
     async def send_done_message(self, text, delay_info=None):
         """Логи успешных действий модуля"""
         try:
+            if not self.config["logger"]:
+                return
             if delay_info is not None:
                 mult, delay_s = delay_info
                 delay_text = f", M: x{mult}, KD: {delay_s} sec."
@@ -108,17 +123,27 @@ class BENGALSOFTMod(loader.Module):
     async def send_else_message(self, text):
         """Логи действий модуля"""
         try:
+            if not self.config["logger"]:
+                return
             logger_message = f"{text}"
             await self.client.send_message(self.owner_logs, logger_message, link_preview=False)
         except:
             pass
 
-    async def send_manual_message(self):
+    async def send_custom_message(self, custom_text):
+        """Выводы любыхх текстов."""
+        try:
+            custom_text = f"{custom_text}"
+            await self.client.send_message(self.owner_chat, manuals_message, link_preview=False)
+        except Exception as e:
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
+
+    async def send_manual_message(self, twink):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
-            twink = await self.get_user_info()
+            twink = twink
             next_text = (
                 f"<b>⚙️ Список мануалов модуля:\n\n"
                 f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
@@ -133,38 +158,9 @@ class BENGALSOFTMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
-    async def send_config_message(self):
-        """Вывод текущей конфигурации"""
-        try:
-            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            configuration = (
-                f"<b>🔒 Константы:</b>\n"
-                f"▪️<b>owner_list</b> {self.owner_list}.\n"
-                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
-                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-                f"<b>🔐 Переменные:</b>\n" + variables
-            )
-            await self.client.send_message(self.owner_chat, configuration)
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
-
-    async def send_basic_message(self):
-        """Вывод базовой настройки."""
-        try:
-            await self.client.send_message(self.owner_chat, self.strings["manual_basic"])
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
-
-    async def send_command_message(self):
-        """Вывод примеров команд модуля."""
-        try:
-            await self.client.send_message(self.owner_chat, self.strings["manual_command"])
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
-
-
+    
     
     async def subscribe_public(self, target, mult, delay_s):
         """Подписывается на публичные."""
@@ -419,11 +415,12 @@ class BENGALSOFTMod(loader.Module):
                 return
             if len(parts) >= 3 and parts[2] == twink:
                 if parts[1] == "basic":
-                    await self.send_basic_message()
+                    manual_text = self.strings["manual_basic"]
                 elif parts[1] == "command":
-                    await self.send_command_message()
+                    manual_text = self.strings["manual_command"]
+                await self.send_custom_message(manual_text)
             elif parts[1] == twink:
-                await self.send_manual_message()
+                await self.send_manual_message(twink)
         except:
             pass
     
@@ -535,7 +532,8 @@ class BENGALSOFTMod(loader.Module):
         elif parts[1] == "self":
             taglist = parts[2:]
             if "all" in taglist or any(tag == twink for tag in taglist):
-                await self.send_config_message()
+                custom_text = await self.get_config_info()
+                await self.send_custom_message(custom_text)
         else:
             return
 
