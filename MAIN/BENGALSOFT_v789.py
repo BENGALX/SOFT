@@ -1,4 +1,4 @@
-import asyncio, re
+import asyncio, re, random
 from .. import loader, utils
 
 from telethon import TelegramClient, events
