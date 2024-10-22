@@ -164,7 +164,7 @@ class BENGALSOFTMod(loader.Module):
         """Сообщение в указанный чат."""  
         try:
             chat_entity = await self.client.get_entity(target)
-            await self.client.send_message(peer=chat_entity, message=message_text)
+            await self.client.send_message(chat_entity, message_text)
             await self.send_done_message(f"<b>♻️ SPAM: {target}</b>", delay_info=(mult, delay_s))
         except Exception as e:
             await self.send_done_message(f"🚫 SPAM: {e}", delay_info=(mult, delay_s))
