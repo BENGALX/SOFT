@@ -231,10 +231,13 @@ class BENGALSOFTMod(loader.Module):
                 username = target[1:]
                 link = f"https://t.me/{username}"
             elif "t.me" in target:
-                match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-                if match:
-                    username = match.group(1)
-                    link = f"https://t.me/{username}"
+                try:
+                    chan = target.split("t.me/")[1].split("/")[0]
+                    link = f"https://t.me/{chan}"
+                except IndexError:
+                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    return
+                username = chan
             else:
                 await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 return
@@ -353,7 +356,8 @@ class BENGALSOFTMod(loader.Module):
             response_message = "⚠️ Ошибка, бот не ответил."
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
-            done_message = f"<b>♻️ START:</b> @{bot_name}\n\n{response_message}"
+            link = f"https://t.me/{bot_name}?start={ref_key}"
+            done_message = f"<b>♻️ START BOT: <a href='{link}'>REFERAL KEY.</a></b>\n\n{response_message}"
             await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
             error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
@@ -503,7 +507,7 @@ class BENGALSOFTMod(loader.Module):
                 return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
             match = re.search(r"\?start=([\w-]+)", text)
             if not match:
-                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> ref_key not found.")
             ref_key = match[1]
             await self.delay_host(delay_s)
             await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
