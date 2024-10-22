@@ -170,12 +170,16 @@ class BENGALSOFTMod(loader.Module):
         """Подписывается на публичные."""
         try:
             if target.startswith("@"):
-                link = f"https://t.me/{target[1:]}"
+                chan = target[1:]
+            elif "t.me/" in target:
+                chan = target.split("t.me/")[1].split("/")[0]
             else:
-                link = target
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
+            link = f"https://t.me/{chan}"
             target_entity = await self.client.get_entity(link)
             try:
-                await self.client(JoinChannelRequest(channel=target))
+                await self.client(JoinChannelRequest(channel=chan))
                 view_result = await self.views_post(self.client, channel_id=target_entity.id)
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC</a>{view_result}</b>", delay_info=(mult, delay_s))
             except Exception as e:
@@ -225,9 +229,9 @@ class BENGALSOFTMod(loader.Module):
                 if match:
                     username = match.group(1)
                     link = f"https://t.me/{username}"
-                else:
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
-                    return
+            else:
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client.get_entity(username)
             try:
                 await self.client(functions.channels.LeaveChannelRequest(username))
@@ -252,6 +256,9 @@ class BENGALSOFTMod(loader.Module):
             elif target.isdigit():
                 channel_id = int(target)
                 link = f"https://t.me/c/{channel_id}"
+            else:
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client(functions.channels.LeaveChannelRequest(channel_id))
             await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
         except ValueError:
@@ -293,31 +300,41 @@ class BENGALSOFTMod(loader.Module):
                 "The channel specified is private"
             ]):
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
-            #elif "not enough values to unpack" in str(e):
-                #await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            elif "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PRIVATE: CLICK FAIL.</b>", delay_info=(mult, delay_s))
             else:
                 await self.send_done_message(f"<b>🚫 PUSH PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
     async def button_public(self, target, mult, delay_s):
         """Нажатие кнопки в публичных."""
         try:
-            chan, post = target.split("t.me/")[1].split("/")
+            try:
+                chan, post = target.split("t.me/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT 1.</b>", delay_info=(mult, delay_s))
+                return
             channel_entity = await self.client.get_entity(chan)
             inline_button = await self.client.get_messages(chan, ids=int(post))
             if not inline_button or not hasattr(inline_button, 'reply_markup') or not inline_button.reply_markup:
                 await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
                 return
-            click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            try:
+                click = await inline_button.click(data=inline_button.reply_markup.rows[0].buttons[0].data)
+            except AttributeError:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
             clicked_message = click.message
             view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
             log_message = f"<b>♻️ PUSH <a href='{target}'>PUBLIC</a>{view_result}</b>\n\n{clicked_message}"
             await self.send_done_message(log_message, delay_info=(mult, delay_s))
-        except ValueError:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT.</b>", delay_info=(mult, delay_s))
-        except AttributeError:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: NO BUTTON.</b>", delay_info=(mult, delay_s))
         except Exception as e:
-            await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
+            if "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            elif "'NoneType' object has no attribute" in str(e):
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: CLICK FAIL.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 PUSH PUBLIC: </b>{e}", delay_info=(mult, delay_s))
 
     
     
@@ -432,6 +449,8 @@ class BENGALSOFTMod(loader.Module):
             if target.isdigit() or "t.me/c/" in target:
                 await self.delay_host(delay_s)
                 await self.unsubscribe_id(target, mult, delay_s)
+            elif 't.me/+' in target:
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
             elif target.startswith("@") or "t.me/" in target:
                 await self.delay_host(delay_s)
                 await self.unsubscribe_public(target, mult, delay_s)
