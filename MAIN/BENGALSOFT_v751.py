@@ -433,7 +433,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.subscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE SUB: FORNAT.</b>")
+                await self.send_else_message("<b>🚫 HANDLE SUB: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
@@ -450,12 +450,12 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.unsubscribe_id(target, mult, delay_s)
             elif 't.me/+' in target:
-                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORMAT.</b>")
             elif target.startswith("@") or "t.me/" in target:
                 await self.delay_host(delay_s)
                 await self.unsubscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
@@ -475,7 +475,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.button_public(target, mult, delay_s)
             else:
-                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORNAT.</b>")
+                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
