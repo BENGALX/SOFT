@@ -8,7 +8,7 @@ from telethon.tl.types import Message, PeerUser, PeerChannel, Channel
 from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.functions.account import GetAuthorizationsRequest
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest, SendReactionRequest
 
 from telethon.errors.rpcerrorlist import UserNotParticipantError
 
@@ -417,7 +417,7 @@ class BENGALSOFTMod(loader.Module):
 
 
     
-    async def reactor_private(self, target, mult, delay_s):
+    async def reactor_private(self, target, mult, delay_s, reaction_mode):
         """Реакция на сообщение в приватных."""
         try:
             try:
@@ -429,7 +429,10 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PRIVATE: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            reaction = random.choice(self.reactions)
+            if reaction_mode == "random":
+                reaction = random.choice(self.reactions)
+            else:
+                reaction = reaction_mode
             await message.react(reaction)
             view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
             log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
@@ -445,7 +448,7 @@ class BENGALSOFTMod(loader.Module):
             else:
                 await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{e}", delay_info=(mult, delay_s))
 
-    async def reactor_public(self, target, mult, delay_s):
+    async def reactor_public(self, target, mult, delay_s, reaction_mode):
         """Реакция на сообщение в публичных."""
         try:
             try:
@@ -458,11 +461,23 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            reaction = random.choice(self.reactions)
-            await message.react(reaction)
-            view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
-            await self.send_done_message(log_message, delay_info=(mult, delay_s))
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                if reaction_mode == "random":
+                    reaction = random.choice(self.reactions)
+                else:
+                    reaction = reaction_mode
+                try:
+                    await message.react(reaction)
+                    view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+                    log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
+                    await self.send_done_message(log_message, delay_info=(mult, delay_s))
+                    return
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {e}</b>", delay_info=(mult, delay_s))
+                    else:
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "not enough values to unpack" in str(e):
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
@@ -626,15 +641,28 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            mult = int(parts[1]) if parts[1].isdigit() else None
-            target = parts[2].strip() if mult else parts[1].strip()
+            twink = await self.get_user_info()
+            if parts[1] == "random":
+                reaction_mode = "random"
+            elif parts[1] in self.reactions:
+                reaction_mode = parts[1]
+            else:
+                return
+            if parts[2].isdigit():
+                mult = int(parts[2])
+                target = parts[3] if len(parts) > 3 else None
+            else:
+                mult = None
+                target = parts[2] if len(parts) > 2 else None
+            if not target:
+                return
             mult, delay_s = self.get_delay_host(mult)
             if 't.me/c/' in target:
                 await self.delay_host(delay_s)
-                await self.reactor_private(target, mult, delay_s)
+                await self.reactor_private(target, mult, delay_s, reaction_mode)
             elif 't.me/' in target:
                 await self.delay_host(delay_s)
-                await self.reactor_public(target, mult, delay_s)
+                await self.reactor_public(target, mult, delay_s, reaction_mode)
             else:
                 await self.send_else_message(f"<b>🚫 HANDLE REACT: FORMAT.</b>")
         except Exception as e:
