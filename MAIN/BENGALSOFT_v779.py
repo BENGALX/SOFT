@@ -124,8 +124,8 @@ class BENGALSOFTMod(loader.Module):
                 f"<b>🔐 Переменные:</b>\n" + variables
             )
             return configuration
-         except Exception as e:
-             return f"<b>🚫 CONFIG INFO: </b>{e}"
+        except Exception as e:
+            return f"<b>🚫 CONFIG INFO: </b>{e}"
 
     async def get_verif_code(self):
         try:
