@@ -27,18 +27,22 @@ class BENGALSOFTMod(loader.Module):
             f"▪️https://t.me/c/, t.me/c/ — приватные ссылки на пост.\n"
             f"▪️https://t.me/+, t.me/joinchat/ — приватные инвайты.\n"
             f"\n\n"
-            f"В подписках, отписках, кнопке, рефе по умолчанию стоит мультиплаер задержки Х20. "
+            f"В подписках, отписках, кнопке, рефе, смс, реакции по умолчанию стоит мультиплаер задержки Х10. "
             f"Если нужен другой — вторым аргументом добавляем число: <code>/sub [M] [target]</code>."
             f"\n\n"
-            f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
+            f"<b>🔗 SUBSCRIBE: /sub [] [target]</b>\n"
             f"▪Тег, ссылка или инвайт в любом формате.\n\n"
-            f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
+            f"<b>🔗 UNSUBSCRIBE: /uns [] [target]</b>\n"
             f"▪Тег, ссылка либо айди.\n\n"
-            f"<b>🔗 BUTTON: /run [link]</b>\n"
+            f"<b>🔗 BUTTON: /run [] [link]</b>\n"
             f"▪️Ссылка на пост с кнопкой.\n\n"
-            f"<b>🔗 REF START: /ref [link]</b>\n"
+            f"<b>🔗 REF START: /ref [] [link]</b>\n"
             f"▪️Отправляете реферальную ссылку на нужного бота. Поддерживаемые: "
             f"@BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
+            f"<b>🔗 SPAMER: /sms [] [target] [text]</b>\n"
+            f"▪️Отправляет смс указанному получателю (юзер или ссылка).\n\n"
+            f"<b>🔗 REACTOR: /react [] [target]</b>\n"
+            f"▪️Отправляет смс указанному получателю (юзер или ссылка).\n\n"
         ),
         "manual_basic": (
             f"<b>🔐 Команда настройки</b>\n"
@@ -48,14 +52,14 @@ class BENGALSOFTMod(loader.Module):
             f"▪️[us] — @(1 |неск.| all)\n\n"
             f"<b>⚙️ Базовая настройка</b>\n"
             "Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
-            f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
-            f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
+            f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их делаем по 5 акков. "
+            f"Это множитель задержки х10 сек, выставляется числом. Например:\n"
             f"<code>/config set group 2 @u1</code>\n"
             f"<code>/config set group 5 @u5 @u7</code>\n\n"
             f"Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
             f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
             f"<code>/config set logger 1 @u1 @u6</code>\n"
-            f"<code>/config set logger False all</code>\n"
+            f"<code>/config set logger False all</code>\n\n"
         )
     }
     
@@ -80,7 +84,7 @@ class BENGALSOFTMod(loader.Module):
     
     def get_delay_host(self, mult=None):
         """Рассчет кастомной задержки"""
-        default_mult = 20
+        default_mult = 10
         mult = int(mult) if mult else default_mult
         delay_s = self.config["group"] * mult
         return mult, delay_s
@@ -98,13 +102,14 @@ class BENGALSOFTMod(loader.Module):
         """Информация о пользователе."""
         try:
             user = await self.client.get_me()
-            first_name, last_name = user.first_name, user.last_name
-            full_name = f"{first_name} {last_name}"
+            first_name = user.first_name or ""
+            last_name = user.last_name or ""
+            full_name = f"{first_name} {last_name}".strip()
             username = f"@{user.username}" if user.username else "NOTSET"
             phone = user.phone if user.phone else "NOTSET"
             status_message = (
                 f"💻 {full_name}\n"
-                f"<b>├UID: </b><code>{user.id}</code>\n"
+                f"<b>├USER ID: </b><code>{user.id}</code>\n"
                 f"<b>├NUM: </b><code>+{phone}</code>\n"
                 f"<b>└USER: </b>{username}\n"
             )
@@ -115,7 +120,7 @@ class BENGALSOFTMod(loader.Module):
     async def get_config_info(self):
         """Информация о конфигурации."""
         try:
-            variables = ''.join([f"▪️<b>{key}</b> <code>{value}</code>.\n" for key, value in self.config.items()])
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
             configuration = (
                 f"<b>🔒 Константы:</b>\n"
                 f"▪️<b>owner_list</b> {self.owner_list}.\n"
@@ -136,7 +141,7 @@ class BENGALSOFTMod(loader.Module):
                 if match:
                     verification_code = match.group(0)
                     formatted_code = ".".join(verification_code)
-                    return f"<b>♻️ VERIF: CODE <code>{formatted_code}</code><b>"
+                    return f"<b>♻️ VERIF CODE: </b><code>{formatted_code}</code>"
         except Exception as e:
             return f"<b>🚫 VERIF: </b>{e}"
             
@@ -179,13 +184,16 @@ class BENGALSOFTMod(loader.Module):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-            image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
+            image_cpt = f"<b>⚙️ <code>BENGALSOFT</code> for BENGAL\n💻 By @pavlyxa_rezon"
             twink = twink
             next_text = (
-                f"<b>⚙️ Список мануалов модуля:\n\n"
+                f"<b>⚙️ Список manual команд:\n\n</b>"
                 f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
                 f"<b>▪️Мануал по командам:</b>\n<code>/manual command {twink}</code>\n\n"
-                f"<b>▪️Посмотреть настройки:</b>\n<code>/config self {twink}</code>\n"
+                f"<b>⚙️ Список config команд:\n\n</b>"
+                f"<b>▪️Вывести настройки:</b>\n<code>/config self {twink}</code>\n\n"
+                f"<b>▪️Вывести инфо акка:</b>\n<code>/config status {twink}</code>\n\n"
+                f"<b>▪️Вывести вериф код:</b>\n<code>/config verif {twink}</code>(or number/UID)\n\n"
             )
             await self.client.send_file(
                 self.owner_chat,
