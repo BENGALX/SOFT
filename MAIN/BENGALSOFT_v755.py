@@ -200,7 +200,13 @@ class BENGALSOFTMod(loader.Module):
     async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
         try:
-            invite_hash = target.split("t.me/+")[1]
+            if "t.me/+" in target:
+                invite_hash = target.split("t.me/+")[1]
+            elif "t.me/joinchat/" in target:
+                invite_hash = target.split("t.me/joinchat/")[1]
+            else:
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client(ImportChatInviteRequest(invite_hash))
             view_result = f", VIEW 0."
             await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE</a>{view_result}</b>", delay_info=(mult, delay_s))
@@ -225,10 +231,13 @@ class BENGALSOFTMod(loader.Module):
                 username = target[1:]
                 link = f"https://t.me/{username}"
             elif "t.me" in target:
-                match = re.search(r't\.me/([a-zA-Z0-9_]+)', target)
-                if match:
-                    username = match.group(1)
-                    link = f"https://t.me/{username}"
+                try:
+                    chan = target.split("t.me/")[1].split("/")[0]
+                    link = f"https://t.me/{chan}"
+                except IndexError:
+                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                    return
+                username = chan
             else:
                 await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
                 return
@@ -426,7 +435,7 @@ class BENGALSOFTMod(loader.Module):
             mult = int(parts[1]) if parts[1].isdigit() else None
             target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
-            if 't.me/+' in target:
+            if 't.me/+' in target or 't.me/joinchat/' in target:
                 await self.delay_host(delay_s)
                 await self.subscribe_private(target, mult, delay_s)
             elif "t.me/" in target or "@" in target:
