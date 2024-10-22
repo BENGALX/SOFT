@@ -122,16 +122,16 @@ class BENGALSOFTMod(loader.Module):
         """Выводы мануалов"""
         try:
             manuals_message = f"{manual_text}"
-            await self.client.send_message(self.owner_chat, logger_message, link_preview=False)
-        except:
+            await self.client.send_message(self.owner_chat, manuals_message, link_preview=False)
+        except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
-    async def send_manual_message(self):
+    async def send_manual_message(self, twink):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
             image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
-            twink = await self.get_user_info()
+            twink = twink
             next_text = (
                 f"<b>⚙️ Список мануалов модуля:\n\n"
                 f"<b>▪️Мануал по настройке:</b>\n<code>/manual basic {twink}</code>\n\n"
@@ -146,7 +146,7 @@ class BENGALSOFTMod(loader.Module):
             await asyncio.sleep(2)
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_manual_message: {e}")
+            await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
     async def send_config_message(self):
         """Вывод текущей конфигурации"""
@@ -421,9 +421,9 @@ class BENGALSOFTMod(loader.Module):
                     manual_text = self.strings["manual_basic"]
                 elif parts[1] == "command":
                     manual_text = self.strings["manual_command"]
-                await self.send_manual_message(manual_text)
+                await self.send_manuals_message(manual_text)
             elif parts[1] == twink:
-                await self.send_manual_message()
+                await self.send_manual_message(twink)
         except:
             pass
     
