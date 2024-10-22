@@ -134,7 +134,7 @@ class BENGALSOFTMod(loader.Module):
         """Выводы любыхх текстов."""
         try:
             custom_text = f"{custom_text}"
-            await self.client.send_message(self.owner_chat, manuals_message, link_preview=False)
+            await self.client.send_message(self.owner_chat, custom_text, link_preview=False)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
