@@ -564,12 +564,12 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 3:
                 return
             mult = int(parts[1]) if parts[1].isdigit() else None
+            start_index = 3 if mult else 2
             target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
             if not (target.startswith("@") or re.match(r"https?://t\.me/", target)):
                 await self.send_else_message(f"<b>🚫 HANDLE MESS: TARGET</b>")
                 return
-            start_index = 3 if mult else 1
             message_text = " ".join(parts[start_index:])
             if not message_text:
                 await self.send_else_message("<b>🚫 HANDLE MESS: SMS</b>")
