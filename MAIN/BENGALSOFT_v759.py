@@ -21,38 +21,39 @@ class BENGALSOFTMod(loader.Module):
         "manual_command": (
             f"<b>⚙️ Функционал модуля</b>\n"
             f"<b>♻️ Примеры форматов:</b>\n"
-            f"▪️https://t.me/ — полная\n"
-            f"▪️t.me/ — сокращенная\n"
-            f"▪️@tag — публичный тег\n\n"
+            f"▪️https://t.me/, t.me/, @ — публичные ссылки, тег.\n"
+            f"▪️https://t.me/c/, t.me/c/ — приватные ссылки на пост.\n"
+            f"▪️https://t.me/+, t.me/joinchat/ — приватные инвайты.\n"
+            f"\n\n"
+            f"В подписках, отписках, кнопке, рефе по умолчанию стоит мультиплаер задержки Х20. "
+            f"Если нужен другой — вторым аргументом добавляем число: <code>/sub [M] [target]</code>."
+            f"\n\n"
             f"<b>🔗 SUBSCRIBE: /sub [target]</b>\n"
-            f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: t.me/+\n\n"
+            f"▪Тег, ссылка или инвайт в любом формате.\n\n"
             f"<b>🔗 UNSUBSCRIBE: /uns [target]</b>\n"
-            f"▪️PUBLIC: любые.\n"
-            f"▪️PRIVATE: ID без -\n\n"
-            f"<b>🔗 BUTTON PUSH: /run [link]</b>\n"
-            f"▪️PUBLIC: t.me/\n"
-            f"▪️PRIVATE: t.me/c/\n\n"
-            f"<b>🔗 REFERAL START: /ref [link]</b>\n"
-            f"▪️[BOT]?start=[KEY]\n"
-            f"▪️SUPPORTED BOT:\n@BestRandom_bot\n@TheFastes_Bot\n@TheFastesRuBot\n@GiveawayLuckyBot\n@best_contests_bot\n\n"
+            f"▪Тег, ссылка либо айди.\n\n"
+            f"<b>🔗 BUTTON: /run [link]</b>\n"
+            f"▪️Ссылка на пост с кнопкой.\n\n"
+            f"<b>🔗 REF START: /ref [link]</b>\n"
+            f"▪️Отправляете реферальную ссылку на нужного бота. Поддерживаемые: "
+            f"@BestRandom_bot @TheFastes_Bot @TheFastesRuBot @GiveawayLuckyBot @best_contests_bot\n\n"
         ),
         "manual_basic": (
             f"<b>🔐 Команда настройки</b>\n"
-            f"/config set [p] [nv] [us]\n"
+            f"<code>/config set</code> [p] [nv] [us]\n"
             f"▪️[p] — имя переменной\n"
             f"▪️[nv] — новое значение\n"
             f"▪️[us] — @(1 |неск.| all)\n\n"
             f"<b>⚙️ Базовая настройка</b>\n"
-            "▪️Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
+            "Для начала нужно разделить все аккаунты на виртуальные группы (изначально стоит 1). "
             f"Не путайте группу (пачка твинков, их много) с группой (чат, у нас он один). Их ставим по 5-10 акков. "
             f"Это множитель задержки х20 сек, выставляется числом. Например:\n"
-            f"/config set group 2 @u1\n"
-            f"/config set group 5 @u5 @u7\n\n"
-            f"▪️Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
+            f"<code>/config set group 2 @u1</code>\n"
+            f"<code>/config set group 5 @u5 @u7</code>\n\n"
+            f"Далее на одном из акков каждой группы нужно включить логгирование (по умолчанию оно выключено). "
             f"Логгер у нас булевый — принимает значения True/False, 1/0, on/off и т.п. Например:\n"
-            f"/config set logger 1 @u1 @u6\n"
-            f"/config set logger False all\n"
+            f"<code>/config set logger 1 @u1 @u6</code>\n"
+            f"<code>/config set logger False all</code>\n"
         )
     }
     
@@ -356,7 +357,8 @@ class BENGALSOFTMod(loader.Module):
             response_message = "⚠️ Ошибка, бот не ответил."
             if messages and messages[0].sender_id == (await self.client.get_input_entity(bot_name)).user_id:
                 response_message = messages[0].message
-            done_message = f"<b>♻️ START:</b> @{bot_name}\n\n{response_message}"
+            link = f"https://t.me/{bot_name}?start={ref_key}"
+            done_message = f"<b>♻️ START BOT: <a href='{link}'>REFERAL KEY.</a></b>\n\n{response_message}"
             await self.send_done_message(done_message, delay_info=(mult, delay_s))
         except Exception as e:
             error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
@@ -506,7 +508,7 @@ class BENGALSOFTMod(loader.Module):
                 return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> bot_name not found.")
             match = re.search(r"\?start=([\w-]+)", text)
             if not match:
-                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> ref_key for @{bot_name} not found.")
+                return await self.send_else_message(f"<b>🚫 HANDLE REF:</b> ref_key not found.")
             ref_key = match[1]
             await self.delay_host(delay_s)
             await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
