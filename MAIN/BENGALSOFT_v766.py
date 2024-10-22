@@ -91,6 +91,18 @@ class BENGALSOFTMod(loader.Module):
         else:
             twink = None
         return twink
+
+    async def get_config_info(self):
+        """Информация о конфигурации."""
+        variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+        configuration = (
+            f"<b>🔒 Константы:</b>\n"
+            f"▪️<b>owner_list</b> {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+            f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+            f"<b>🔐 Переменные:</b>\n" + variables
+        )
+        return configuration
     
 
     async def send_done_message(self, text, delay_info=None):
@@ -118,11 +130,11 @@ class BENGALSOFTMod(loader.Module):
         except:
             pass
 
-    async def send_manuals_message(self, manual_text):
-        """Выводы мануалов"""
+    async def send_custom_message(self, custom_text):
+        """Выводы любыхх текстов."""
         try:
-            manuals_message = f"{manual_text}"
-            await self.client.send_message(self.owner_chat, manuals_message, link_preview=False)
+            custom_text = f"{custom_text}"
+            await self.client.send_message(self.owner_chat, custom_text, link_preview=False)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
 
@@ -147,21 +159,6 @@ class BENGALSOFTMod(loader.Module):
             await self.client.send_message(self.owner_chat, next_text)
         except Exception as e:
             await self.client.send_message(self.owner_chat, f"🚫 ERROR: {e}")
-
-    async def send_config_message(self):
-        """Вывод текущей конфигурации"""
-        try:
-            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            configuration = (
-                f"<b>🔒 Константы:</b>\n"
-                f"▪️<b>owner_list</b> {self.owner_list}.\n"
-                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
-                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-                f"<b>🔐 Переменные:</b>\n" + variables
-            )
-            await self.client.send_message(self.owner_chat, configuration)
-        except Exception as e:
-            await self.client.send_message(self.owner_chat, f"🚫 ERROR in send_configuration_message: {e}")
 
     
     
@@ -421,7 +418,7 @@ class BENGALSOFTMod(loader.Module):
                     manual_text = self.strings["manual_basic"]
                 elif parts[1] == "command":
                     manual_text = self.strings["manual_command"]
-                await self.send_manuals_message(manual_text)
+                await self.send_custom_message(manual_text)
             elif parts[1] == twink:
                 await self.send_manual_message(twink)
         except:
@@ -535,7 +532,8 @@ class BENGALSOFTMod(loader.Module):
         elif parts[1] == "self":
             taglist = parts[2:]
             if "all" in taglist or any(tag == twink for tag in taglist):
-                await self.send_config_message()
+                custom_text = await self.get_config_info()
+                await self.send_custom_message(custom_text)
         else:
             return
 
