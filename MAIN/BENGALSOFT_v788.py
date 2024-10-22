@@ -67,6 +67,8 @@ class BENGALSOFTMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
         self.owner_logs = -1002205010643
+        self.reactions = ["👍", "😊", "😁", "😎", "🔥", "💪", "👌", "👏", 
+                          "🎉", "❤️‍🔥", "❤️", "😇", "🙏", "💯", "⚡️", "💪", "🏆"]
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "logger", False, "Статус работы логгера.",
@@ -413,6 +415,59 @@ class BENGALSOFTMod(loader.Module):
             error_message = f"<b>🚫 START:</b> @{bot_name}\n{e}"
             await self.send_done_message(error_message, delay_info=(mult, delay_s))
 
+
+    
+    async def reactor_private(self, target, mult, delay_s):
+        """Реакция на сообщение в приватных."""
+        try:
+            try:
+                chan, post = target.split("t.me/c/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 REACT PRIVATE: FORMAT 1.</b>", delay_info=(mult, delay_s))
+                return
+            message = await self.client.get_messages(PeerChannel(int(chan)), ids=int(post))
+            if not message:
+                await self.send_done_message(f"<b>🚫 REACT PRIVATE: NO MESSAGE.</b>", delay_info=(mult, delay_s))
+                return
+            reaction = random.choice(self.reactions)
+            await message.react(reaction)
+            view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
+            log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
+        except Exception as e:
+            if any(substring in str(e) for substring in [
+                "Could not find the input entity for PeerChannel",
+                "The channel specified is private"
+            ]):
+                await self.send_done_message(f"<b>🚫 REACT PRIVATE: NO MEMBER.</b>", delay_info=(mult, delay_s))
+            elif "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 REACT PRIVATE: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{e}", delay_info=(mult, delay_s))
+
+    async def reactor_public(self, target, mult, delay_s):
+        """Реакция на сообщение в публичных."""
+        try:
+            try:
+                chan, post = target.split("t.me/")[1].split("/")
+            except ValueError:
+                await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 1.</b>", delay_info=(mult, delay_s))
+                return
+            channel_entity = await self.client.get_entity(chan)
+            message = await self.client.get_messages(chan, ids=int(post))
+            if not message:
+                await self.send_done_message(f"<b>🚫 REACT PUBLIC: NO MESSAGE.</b>", delay_info=(mult, delay_s))
+                return
+            reaction = random.choice(self.reactions)
+            await message.react(reaction)
+            view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+            log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
+            await self.send_done_message(log_message, delay_info=(mult, delay_s))
+        except Exception as e:
+            if "not enough values to unpack" in str(e):
+                await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
+            else:
+                await self.send_done_message(f"<b>🚫 REACT PUBLIC: </b>{e}", delay_info=(mult, delay_s))
     
     
     async def views_post(self, client, channel_id=None, last_message_id=None):
