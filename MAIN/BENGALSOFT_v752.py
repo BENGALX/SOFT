@@ -170,12 +170,16 @@ class BENGALSOFTMod(loader.Module):
         """Подписывается на публичные."""
         try:
             if target.startswith("@"):
-                link = f"https://t.me/{target[1:]}"
+                chan = target[1:]
+            elif "t.me/" in target:
+                chan = target.split("t.me/")[1].split("/")[0]
             else:
-                link = target
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
+            link = f"https://t.me/{chan}"
             target_entity = await self.client.get_entity(link)
             try:
-                await self.client(JoinChannelRequest(channel=target))
+                await self.client(JoinChannelRequest(channel=chan))
                 view_result = await self.views_post(self.client, channel_id=target_entity.id)
                 await self.send_done_message(f"<b>♻️ SUBSCR <a href='{link}'>PUBLIC</a>{view_result}</b>", delay_info=(mult, delay_s))
             except Exception as e:
@@ -196,7 +200,13 @@ class BENGALSOFTMod(loader.Module):
     async def subscribe_private(self, target, mult, delay_s):
         """Подписывается на частные."""
         try:
-            invite_hash = target.split("t.me/+")[1]
+            if "t.me/+" in target:
+                invite_hash = target.split("t.me/+")[1]
+            elif "t.me/joinchat/" in target:
+                invite_hash = target.split("t.me/joinchat/")[1]
+            else:
+                await self.send_done_message(f"<b>🚫 SUBSCR: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client(ImportChatInviteRequest(invite_hash))
             view_result = f", VIEW 0."
             await self.send_done_message(f"<b>♻️ SUBSCR <a href='{target}'>PRIVATE</a>{view_result}</b>", delay_info=(mult, delay_s))
@@ -225,9 +235,9 @@ class BENGALSOFTMod(loader.Module):
                 if match:
                     username = match.group(1)
                     link = f"https://t.me/{username}"
-                else:
-                    await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
-                    return
+            else:
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client.get_entity(username)
             try:
                 await self.client(functions.channels.LeaveChannelRequest(username))
@@ -252,6 +262,9 @@ class BENGALSOFTMod(loader.Module):
             elif target.isdigit():
                 channel_id = int(target)
                 link = f"https://t.me/c/{channel_id}"
+            else:
+                await self.send_done_message(f"<b>🚫 UNSUB: INVALID LINK.</b>", delay_info=(mult, delay_s))
+                return
             await self.client(functions.channels.LeaveChannelRequest(channel_id))
             await self.send_done_message(f"<b>♻️ UNSUB by <a href='{link}'>PRIVATE.</a></b>", delay_info=(mult, delay_s))
         except ValueError:
@@ -419,14 +432,14 @@ class BENGALSOFTMod(loader.Module):
             mult = int(parts[1]) if parts[1].isdigit() else None
             target = parts[2].strip() if mult else parts[1].strip()
             mult, delay_s = self.get_delay_host(mult)
-            if 't.me/+' in target:
+            if 't.me/+' in target or 't.me/joinchat/' in target::
                 await self.delay_host(delay_s)
                 await self.subscribe_private(target, mult, delay_s)
             elif "t.me/" in target or "@" in target:
                 await self.delay_host(delay_s)
                 await self.subscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE SUB: FORNAT.</b>")
+                await self.send_else_message("<b>🚫 HANDLE SUB: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE SUB:</b> {e}")
 
@@ -442,11 +455,13 @@ class BENGALSOFTMod(loader.Module):
             if target.isdigit() or "t.me/c/" in target:
                 await self.delay_host(delay_s)
                 await self.unsubscribe_id(target, mult, delay_s)
+            elif 't.me/+' in target:
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORMAT.</b>")
             elif target.startswith("@") or "t.me/" in target:
                 await self.delay_host(delay_s)
                 await self.unsubscribe_public(target, mult, delay_s)
             else:
-                await self.send_else_message("<b>🚫 HANDLE UNS: FORNAT.</b>")
+                await self.send_else_message("<b>🚫 HANDLE UNS: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE UNS:</b> {e}")
 
@@ -466,7 +481,7 @@ class BENGALSOFTMod(loader.Module):
                 await self.delay_host(delay_s)
                 await self.button_public(target, mult, delay_s)
             else:
-                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORNAT.</b>")
+                await self.send_else_message(f"<b>🚫 HANDLE RUN: FORMAT.</b>")
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE RUN:</b> {e}")
             
