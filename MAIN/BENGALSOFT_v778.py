@@ -87,15 +87,12 @@ class BENGALSOFTMod(loader.Module):
 
     async def get_user_info(self):
         """Информация о пользователе."""
-        try:
-            user = await self.client.get_me()
-            if user.username:
-                twink = f"@{user.username}"
-            else:
-                twink = None
-            return twink
-        except Exception as e:
-            return f"<b>🚫 USER INFO: </b>{e}"
+        user = await self.client.get_me()
+        if user.username:
+            twink = f"@{user.username}"
+        else:
+            twink = None
+        return twink
 
     async def get_user_fullinfo(self):
         """Информация о пользователе."""
