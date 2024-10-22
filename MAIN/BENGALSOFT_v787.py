@@ -1,7 +1,7 @@
 import asyncio, re
 from .. import loader, utils
 
-from telethon import TelegramClient
+from telethon import TelegramClient, events
 from telethon.tl import functions
 from telethon.tl.types import Message, PeerUser, PeerChannel, Channel
 
@@ -42,7 +42,7 @@ class BENGALSOFTMod(loader.Module):
             f"<b>🔗 SPAMER: /sms [] [target] [text]</b>\n"
             f"▪️Отправляет смс указанному получателю (юзер или ссылка).\n\n"
             f"<b>🔗 REACTOR: /react [] [target]</b>\n"
-            f"▪️Отправляет смс указанному получателю (юзер или ссылка).\n\n"
+            f"▪️Ставит реакцию на пост/смс.\n\n"
         ),
         "manual_basic": (
             f"<b>🔐 Команда настройки</b>\n"
@@ -184,7 +184,7 @@ class BENGALSOFTMod(loader.Module):
         """Вывод мануала по модулю"""
         try:
             image_url = "https://raw.githubusercontent.com/BENGALX/SOFT/bengal/IMAGE/BENGAL.jpg"
-            image_cpt = f"<b>⚙️ <code>BENGALSOFT</code> for BENGAL\n💻 By @pavlyxa_rezon"
+            image_cpt = f"<b>⚙️ BENGALSOFT for BENGAL\n💻 By @pavlyxa_rezon"
             twink = twink
             next_text = (
                 f"<b>⚙️ Список manual команд:\n\n</b>"
@@ -193,7 +193,7 @@ class BENGALSOFTMod(loader.Module):
                 f"<b>⚙️ Список config команд:\n\n</b>"
                 f"<b>▪️Вывести настройки:</b>\n<code>/config self {twink}</code>\n\n"
                 f"<b>▪️Вывести инфо акка:</b>\n<code>/config status {twink}</code>\n\n"
-                f"<b>▪️Вывести вериф код:</b>\n<code>/config verif {twink}</code>(or number/UID)\n\n"
+                f"<b>▪️Вывести вериф код:</b>\n<code>/config verif {twink}</code> (or number/UID)\n\n"
             )
             await self.client.send_file(
                 self.owner_chat,
@@ -564,6 +564,27 @@ class BENGALSOFTMod(loader.Module):
             await self.start_ref_bot(bot_name, ref_key, mult, delay_s)
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE REF:</b> {e}")
+
+    async def handle_reactor(self, text):
+        """Центральная обработка /react"""
+        try:
+            parts = text.split()
+            if len(parts) < 2:
+                return
+            mult = int(parts[1]) if parts[1].isdigit() else None
+            target = parts[2].strip() if mult else parts[1].strip()
+            mult, delay_s = self.get_delay_host(mult)
+            if 't.me/c/' in target:
+                await self.delay_host(delay_s)
+                await self.reactor_private(target, mult, delay_s)
+            elif 't.me/' in target:
+                await self.delay_host(delay_s)
+                await self.reactor_public(target, mult, delay_s)
+            else:
+                await self.send_else_message(f"<b>🚫 HANDLE REACT: FORMAT.</b>")
+        except Exception as e:
+            await self.send_else_message(f"<b>🚫 HANDLE REACT:</b> {e}")
+        
     
     async def handle_user_config(self, text):
         """Обработка USER команды /config"""
