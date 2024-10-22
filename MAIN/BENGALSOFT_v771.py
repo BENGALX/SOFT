@@ -569,7 +569,8 @@ class BENGALSOFTMod(loader.Module):
             if not (target.startswith("@") or re.match(r"https?://t\.me/", target)):
                 await self.send_else_message(f"<b>🚫 HANDLE MESS: TARGET</b>")
                 return
-            message_text = " ".join(parts[3:]) if mult else " ".join(parts[2:])
+            start_index = 3 if mult else 2
+            message_text = " ".join(parts[start_index:])
             if not message_text:
                 await self.send_else_message("<b>🚫 HANDLE MESS: SMS</b>")
                 return
