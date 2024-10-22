@@ -87,24 +87,49 @@ class BENGALSOFTMod(loader.Module):
 
     async def get_user_info(self):
         """Информация о пользователе."""
-        user = await self.client.get_me()
-        if user.username:
-            twink = f"@{user.username}"
-        else:
-            twink = None
-        return twink
+        try:
+            user = await self.client.get_me()
+            if user.username:
+                twink = f"@{user.username}"
+            else:
+                twink = None
+            return twink
+        except Exception as e:
+            return f"<b>🚫 USER INFO: </b>{e}"
+
+    async def get_user_fullinfo(self):
+        """Информация о пользователе."""
+        try:
+            user = await self.client.get_me()
+            first_name, last_name = user.first_name, user.last_name
+            full_name = f"{first_name} {last_name}"
+            username = f"@{user.username}" if user.username else "NOTSET"
+            phone = user.phone if user.phone else "NOTSET"
+            user_id = user.id
+            status_message = (
+                f"TWINK — {full_name}\n"
+                f"├UID: <code>{user_id}</code>\n"
+                f"├NUM: <code>+{phone}</code>\n"
+                f"└USER: {username}\n"
+            )
+            return status_message
+        except Exception as e:
+            return f"<b>🚫 USER FULLINFO: </b>{e}"
 
     async def get_config_info(self):
         """Информация о конфигурации."""
-        variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-        configuration = (
-            f"<b>🔒 Константы:</b>\n"
-            f"▪️<b>owner_list</b> {self.owner_list}.\n"
-            f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
-            f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-            f"<b>🔐 Переменные:</b>\n" + variables
-        )
-        return configuration
+        try:
+            variables = ''.join([f"▪️<b>{key}</b> <code>{value}</code>.\n" for key, value in self.config.items()])
+            configuration = (
+                f"<b>🔒 Константы:</b>\n"
+                f"▪️<b>owner_list</b> {self.owner_list}.\n"
+                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+                f"<b>🔐 Переменные:</b>\n" + variables
+            )
+            return configuration
+         except Exception as e:
+             return f"<b>🚫 CONFIG INFO: </b>{e}"
 
     async def get_verif_code(self):
         try:
@@ -115,7 +140,7 @@ class BENGALSOFTMod(loader.Module):
                 if match:
                     verification_code = match.group(0)
                     formatted_code = ".".join(verification_code)
-                    return f"<b>♻️ VERIF: CODE {formatted_code}<b>"
+                    return f"<b>♻️ VERIF: CODE <code>{formatted_code}</code><b>"
         except Exception as e:
             return f"<b>🚫 VERIF: </b>{e}"
             
@@ -556,7 +581,7 @@ class BENGALSOFTMod(loader.Module):
         elif parts[1] == "status":
             taglist = parts[2:]
             if "all" in taglist or any(tag == twink for tag in taglist):
-                custom_text = await self.get_()
+                custom_text = await self.get_user_fullinfo()
                 await self.send_custom_message(custom_text)
         elif parts[1] == "verif":
             taglist = parts[2:]
