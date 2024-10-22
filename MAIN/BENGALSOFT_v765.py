@@ -95,13 +95,13 @@ class BENGALSOFTMod(loader.Module):
     async def get_config_info(self):
         """Информация о конфигурации."""
         variables = ''.join([f"▪️<b>{key}</b> {value}.\n" for key, value in self.config.items()])
-            configuration = (
-                f"<b>🔒 Константы:</b>\n"
-                f"▪️<b>owner_list</b> {self.owner_list}.\n"
-                f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
-                f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
-                f"<b>🔐 Переменные:</b>\n" + variables
-            )
+        configuration = (
+            f"<b>🔒 Константы:</b>\n"
+            f"▪️<b>owner_list</b> {self.owner_list}.\n"
+            f"▪️<b>owner_chat</b> {self.owner_chat}.\n"
+            f"▪️<b>owner_logs</b> {self.owner_logs}.\n\n"
+            f"<b>🔐 Переменные:</b>\n" + variables
+        )
         return configuration
     
 
