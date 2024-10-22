@@ -626,15 +626,28 @@ class BENGALSOFTMod(loader.Module):
             parts = text.split()
             if len(parts) < 2:
                 return
-            mult = int(parts[1]) if parts[1].isdigit() else None
-            target = parts[2].strip() if mult else parts[1].strip()
+            twink = await self.get_user_info()
+            if parts[1] == "random":
+                reaction_mode = "random"
+            elif parts[1] in self.reactions:
+                reaction_mode = parts[1]
+            else:
+                return
+            if parts[2].isdigit():
+                mult = int(parts[2])
+                target = parts[3] if len(parts) > 3 else None
+            else:
+                mult = None
+                target = parts[2] if len(parts) > 2 else None
+            if not target:
+                return
             mult, delay_s = self.get_delay_host(mult)
             if 't.me/c/' in target:
                 await self.delay_host(delay_s)
-                await self.reactor_private(target, mult, delay_s)
+                await self.reactor_private(target, mult, delay_s, reaction_mode)
             elif 't.me/' in target:
                 await self.delay_host(delay_s)
-                await self.reactor_public(target, mult, delay_s)
+                await self.reactor_public(target, mult, delay_s, reaction_mode)
             else:
                 await self.send_else_message(f"<b>🚫 HANDLE REACT: FORMAT.</b>")
         except Exception as e:
