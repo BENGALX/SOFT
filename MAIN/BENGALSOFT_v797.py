@@ -429,14 +429,23 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PRIVATE: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            if reaction_mode == "random":
-                reaction = random.choice(self.reactions)
-            else:
-                reaction = reaction_mode
-            await message.react(reaction)
-            view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-            log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
-            await self.send_done_message(log_message, delay_info=(mult, delay_s))
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                if reaction_mode == "random":
+                    reaction = random.choice(self.reactions)
+                else:
+                    reaction = reaction_mode
+                try:
+                    await message.react(reaction)
+                    view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
+                    log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
+                    await self.send_done_message(log_message, delay_info=(mult, delay_s))
+                    return
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        await self.send_done_message(f"<b>🚫 REACT PRIVATE: {e}</b>", delay_info=(mult, delay_s))
+                    else:
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PRIVATE: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if any(substring in str(e) for substring in [
                 "Could not find the input entity for PeerChannel",
@@ -461,14 +470,23 @@ class BENGALSOFTMod(loader.Module):
             if not message:
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: NO MESSAGE.</b>", delay_info=(mult, delay_s))
                 return
-            if reaction_mode == "random":
-                reaction = random.choice(self.reactions)
-            else:
-                reaction = reaction_mode
-            await message.react(reaction)
-            view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
-            log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
-            await self.send_done_message(log_message, delay_info=(mult, delay_s))
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                if reaction_mode == "random":
+                    reaction = random.choice(self.reactions)
+                else:
+                    reaction = reaction_mode
+                try:
+                    await message.react(reaction)
+                    view_result = await self.views_post(self.client, channel_id=channel_entity.id, last_message_id=int(post))
+                    log_message = f"<b>♻️ REACT <a href='{target}'>PUBLIC</a> {reaction}{view_result}</b>"
+                    await self.send_done_message(log_message, delay_info=(mult, delay_s))
+                    return
+                except Exception as e:
+                    if attempt == max_attempts - 1:
+                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {e}</b>", delay_info=(mult, delay_s))
+                    else:
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "not enough values to unpack" in str(e):
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
