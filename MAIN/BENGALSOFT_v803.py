@@ -67,9 +67,12 @@ class BENGALSOFTMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
         self.owner_logs = -1002205010643
-        self.positive_reactions = ["👍", "😁", "😎", "💪", "👌", "👏", "🎉", "❤️", "😇", "🙏", "💯", "⚡️", "🏆", "🎊", "🥳", "😍", "🥰"]
-        self.negative_reactions = ["☹️", "😡", "😠", "😤", "🤬", "👎", "🙄", "👿", "😱", "💩"]
-        self.neutral_reactions = ["😶", "😐", "😏", "🤔", "😑", "😬", "😳", "🤷‍♂️", "🤷‍♀️", "💤", "😭", "💔"]
+        self.positive_reactions = ["👍", "❤️", "🔥", "🥰", "👏", "😁", "🎉", "🤩", "😍", "❤️‍🔥", "💯", "⚡️", "🏆", "💋",
+                                   "😇", "🤝", "🤗", "🆒", "💘", "😘", "😎"]
+        self.negative_reactions =  ["👎", "🤯", "🤬", "🤮", "💩", "🤡", "🖕", "😈", "🙊", "🙈", "🙉", "", "🤪", "😡"]
+        self.neutral_reactions = ["🤔", "😱", "😢", "🙏", "👌", "🕊", "🥱", "🥴", "🐳", "🌚", "🌭", "🤣", "🍌", "💔",
+                                  "🤨", "😐", "🍓", "🍾", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "😨", "✍️", "🫡",
+                                  "🎅", "🎄", "☃️", "💅", "🗿", "🦄", "💊", "👾", "🤷‍♂️", "🤷", "🤷‍♀️"]
                                     
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
@@ -135,6 +138,19 @@ class BENGALSOFTMod(loader.Module):
             return configuration
         except Exception as e:
             return f"<b>🚫 CONFIG INFO: </b>{e}"
+
+    async def get_reactor_info(self):
+        """Информация о доступных реакциях."""
+        try:
+            reactor = (
+                f"<b>♻️ REACTOR INFO:</b>\n"
+                f"▪️<b>positive</b> {self.positive_reactions}\n\n"
+                f"▪️<b>negatives</b> {self.negative_reactions}\n"
+                f"▪️<b>neutral</b> {self.neutral_reactions}\n\n"
+            )
+            return reactor
+        except Exception as e:
+            return f"<b>🚫 REACTOR INFO: </b>{e}"
 
     async def get_verif_code(self):
         try:
@@ -450,7 +466,7 @@ class BENGALSOFTMod(loader.Module):
                 except Exception as e:
                     if "Invalid reaction provided" in str(e):
                         await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{reaction}", delay_info=(mult, delay_s))
-                        if attempt == max_attempts - 1:
+                    elif attempt == max_attempts - 1:
                             await self.send_done_message(f"<b>🚫 REACT PRIVATE: {reaction_mode} </b>{e}", delay_info=(mult, delay_s))
                     else:
                         await self.send_done_message(f"<b>⚠️ RETRY REACT PRIVATE: {reaction_mode} Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
@@ -480,8 +496,12 @@ class BENGALSOFTMod(loader.Module):
                 return
             max_attempts = 3
             for attempt in range(max_attempts):
-                if reaction_mode == "random":
-                    reaction = random.choice(self.reactions)
+                if reaction_mode == "positive":
+                    reaction = random.choice(self.positive_reactions)
+                elif reaction_mode == "negative":
+                    reaction = random.choice(self.negative_reactions)
+                elif reaction_mode == "neutral":
+                    reaction = random.choice(self.neutral_reactions)
                 else:
                     reaction = reaction_mode
                 try:
@@ -491,8 +511,10 @@ class BENGALSOFTMod(loader.Module):
                     await self.send_done_message(log_message, delay_info=(mult, delay_s))
                     return
                 except Exception as e:
-                    if attempt == max_attempts - 1:
-                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {reaction} {e}</b>", delay_info=(mult, delay_s))
+                    if "Invalid reaction provided" in str(e):
+                        await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{reaction}", delay_info=(mult, delay_s))
+                    elif attempt == max_attempts - 1:
+                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {reaction} </b>{e}", delay_info=(mult, delay_s))
                     else:
                         await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: {reaction} Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
@@ -670,6 +692,9 @@ class BENGALSOFTMod(loader.Module):
                 reaction_mode = "neutral"
             elif mode in self.positive_reactions + self.negative_reactions + self.neutral_reactions:
                 reaction_mode = parts[1]
+            elif mode :
+                twink = await self.get_user_info()
+                reaction_mode = "neutral"
             else:
                 await self.send_else_message(f"<b>🚫 HANDLE REACT: MODE {mode}</b>")
                 return
