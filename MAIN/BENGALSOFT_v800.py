@@ -67,8 +67,10 @@ class BENGALSOFTMod(loader.Module):
         self.owner_list = [922318957]
         self.owner_chat = -1002205010643
         self.owner_logs = -1002205010643
-        self.reactions = ["👍", "😊", "😁", "😎", "🔥", "💪", "👌", "👏", 
-                          "🎉", "❤️‍🔥", "❤️", "😇", "🙏", "💯", "⚡️", "💪", "🏆"]
+        self.positive_reactions = ["👍", "😁", "😎", "💪", "👌", "👏", "🎉", "❤️", "😇", "🙏", "💯", "⚡️", "🏆", "🎊", "🥳", "😍", "🥰"]
+        self.negative_reactions = ["☹️", "😡", "😠", "😤", "🤬", "👎", "🙄", "👿", "😱", "💩"]
+        self.neutral_reactions = ["😶", "😐", "😏", "🤔", "😑", "😬", "😳", "🤷‍♂️", "🤷‍♀️", "💤", "😭", "💔"]
+                                    
         self.config = loader.ModuleConfig(
             loader.ConfigValue(
                 "logger", False, "Статус работы логгера.",
@@ -431,21 +433,27 @@ class BENGALSOFTMod(loader.Module):
                 return
             max_attempts = 3
             for attempt in range(max_attempts):
-                if reaction_mode == "random":
-                    reaction = random.choice(self.reactions)
+                if reaction_mode == "positive":
+                    reaction = random.choice(self.positive_reactions)
+                elif reaction_mode == "negative":
+                    reaction = random.choice(self.negative_reactions)
+                elif reaction_mode == "neutral":
+                    reaction = random.choice(self.neutral_reactions)
                 else:
                     reaction = reaction_mode
                 try:
                     await message.react(reaction)
                     view_result = await self.views_post(self.client, channel_id=int(chan), last_message_id=int(post))
-                    log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction}{view_result}</b>"
+                    log_message = f"<b>♻️ REACT <a href='{target}'>PRIVATE</a> {reaction_mode}{view_result}</b>"
                     await self.send_done_message(log_message, delay_info=(mult, delay_s))
                     return
                 except Exception as e:
-                    if attempt == max_attempts - 1:
-                        await self.send_done_message(f"<b>🚫 REACT PRIVATE: {e}</b>", delay_info=(mult, delay_s))
+                    if "Invalid reaction provided" in str(e):
+                        await self.send_done_message(f"<b>🚫 REACT PRIVATE: </b>{reaction}", delay_info=(mult, delay_s))
+                        if attempt == max_attempts - 1:
+                            await self.send_done_message(f"<b>🚫 REACT PRIVATE: {reaction_mode} </b>{e}", delay_info=(mult, delay_s))
                     else:
-                        await self.send_done_message(f"<b>⚠️ RETRY REACT PRIVATE: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PRIVATE: {reaction_mode} Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if any(substring in str(e) for substring in [
                 "Could not find the input entity for PeerChannel",
@@ -484,9 +492,9 @@ class BENGALSOFTMod(loader.Module):
                     return
                 except Exception as e:
                     if attempt == max_attempts - 1:
-                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {e}</b>", delay_info=(mult, delay_s))
+                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {reaction} {e}</b>", delay_info=(mult, delay_s))
                     else:
-                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: {reaction} Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "not enough values to unpack" in str(e):
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
@@ -651,11 +659,19 @@ class BENGALSOFTMod(loader.Module):
             if len(parts) < 2:
                 return
             twink = await self.get_user_info()
-            if parts[1] == "random":
+            mode = parts[1]
+            if mode == "random":
                 reaction_mode = "random"
-            elif parts[1] in self.reactions:
+            elif mode == "positive":
+                reaction_mode = "positive"
+            elif mode == "negative":
+                reaction_mode = "negative"
+            elif mode == "neutral":
+                reaction_mode = "neutral"
+            elif mode in self.positive_reactions + self.negative_reactions + self.neutral_reactions:
                 reaction_mode = parts[1]
             else:
+                await self.send_else_message(f"<b>🚫 HANDLE REACT: MODE {mode}</b>")
                 return
             if parts[2].isdigit():
                 mult = int(parts[2])
