@@ -484,9 +484,9 @@ class BENGALSOFTMod(loader.Module):
                     return
                 except Exception as e:
                     if attempt == max_attempts - 1:
-                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {e}</b>", delay_info=(mult, delay_s))
+                        await self.send_done_message(f"<b>🚫 REACT PUBLIC: {reaction} {e}</b>", delay_info=(mult, delay_s))
                     else:
-                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
+                        await self.send_done_message(f"<b>⚠️ RETRY REACT PUBLIC: {reaction} Attempt {attempt + 1} failed.</b>", delay_info=(mult, delay_s))
         except Exception as e:
             if "not enough values to unpack" in str(e):
                 await self.send_done_message(f"<b>🚫 REACT PUBLIC: FORMAT 2.</b>", delay_info=(mult, delay_s))
